@@ -6,23 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0d1f14">
-<title>CultivoApp — Flor de Minas</title>
+<title>CultivoApp — Planejador</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="og-image.png">
-
-<!-- Open Graph / Social Sharing -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://flordeminas.github.io/AppCultivo/">
-<meta property="og:title" content="CultivoApp — Flor de Minas">
-<meta property="og:description" content="Planejador de cultivo automático para cannabis medicinal. Controle fases, adubação e MIP direto no celular.">
-<meta property="og:image" content="og-image.png">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://flordeminas.github.io/AppCultivo/">
-<meta property="twitter:title" content="CultivoApp — Flor de Minas">
-<meta property="twitter:description" content="Planejador de cultivo automático para cannabis medicinal. Controle fases, adubação e MIP direto no celular.">
-<meta property="twitter:image" content="og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -384,7 +369,77 @@ html, body {
 .progress-pct { font-family: var(--serif); font-size: 36px; color: var(--text); line-height: 1; }
 .progress-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
 
-/* ── Scrollbar ──────────────────────────────────── */
+/* ── Strain card ─────────────────────────────────── */
+.strain-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.strain-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--purple), var(--amber));
+}
+.strain-loading { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text3); padding:4px 0; }
+.strain-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse-dot 1.2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+.strain-name { font-family:var(--serif); font-size:20px; color:var(--text); margin-bottom:4px; line-height:1.2; }
+.strain-type-badge { display:inline-block; font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; margin-bottom:12px; letter-spacing:.06em; }
+.strain-desc { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:14px; }
+.strain-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+.strain-tag { font-size:11px; font-weight:500; padding:4px 10px; border-radius:20px; background:var(--bg3); border:1px solid var(--border2); color:var(--text2); }
+.strain-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.strain-stat { background:var(--bg3); border-radius:var(--radius-sm); padding:10px; text-align:center; }
+.strain-stat-val { font-family:var(--serif); font-size:17px; color:var(--green); line-height:1; }
+.strain-stat-label { font-size:10px; color:var(--text3); margin-top:3px; font-weight:500; }
+.strain-tip { background:var(--amber-dim); border:1px solid rgba(232,164,58,.25); border-radius:var(--radius-sm); padding:10px 12px; font-size:12px; color:var(--amber); line-height:1.5; margin-top:12px; }
+.strain-error { font-size:12px; color:var(--text3); font-style:italic; padding:4px 0; }
+
+/* ── Manual ──────────────────────────────────────── */
+.manual-section { margin-bottom: 24px; }
+.manual-section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  margin-bottom: 10px; cursor: pointer;
+}
+.manual-section-icon { font-size: 20px; flex-shrink: 0; }
+.manual-section-title { font-family: var(--serif); font-size: 17px; flex: 1; }
+.manual-section-chevron { color: var(--text3); font-size: 13px; transition: transform .2s; }
+.manual-section-chevron.open { transform: rotate(180deg); }
+.manual-body { display: none; }
+.manual-body.open { display: block; }
+.manual-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 8px;
+}
+.manual-item-q {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 8px; line-height: 1.4;
+}
+.manual-item-a {
+  font-size: 12px; color: var(--text2); line-height: 1.7;
+}
+.manual-example {
+  background: var(--bg3); border-left: 2px solid var(--green);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 12px; margin: 8px 0;
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+}
+.manual-example strong { color: var(--green); }
+.manual-tip {
+  background: var(--amber-dim); border: 1px solid rgba(232,164,58,.25);
+  border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 8px;
+  font-size: 12px; color: var(--amber); line-height: 1.6;
+}
+.manual-warn {
+  background: var(--red-dim); border: 1px solid rgba(224,92,92,.2);
+  border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 8px;
+  font-size: 12px; color: var(--red); line-height: 1.6;
+}
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
@@ -419,6 +474,9 @@ html, body {
     </button>
     <button class="nav-tab" onclick="gotoPage(4)" id="tab-4">
       <span class="icon">📖</span>Guia
+    </button>
+    <button class="nav-tab" onclick="gotoPage(5)" id="tab-5">
+      <span class="icon">📘</span>Manual
     </button>
   </nav>
 
@@ -566,6 +624,70 @@ html, body {
           </div>
         </div>
 
+        <!-- Strain info card -->
+        <div class="strain-card" id="strain-card" style="display:none">
+          <div id="strain-inner">
+            <div class="strain-loading">
+              <div class="strain-dot"></div>
+              <span>Buscando informações da strain...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strain info panel -->
+        <div id="strain-panel" style="display:none;margin-bottom:16px">
+          <div id="strain-card" class="card" style="padding:0;overflow:hidden">
+            <div id="strain-loading" style="padding:18px;text-align:center;color:var(--text3);font-size:13px">
+              <div style="font-size:24px;margin-bottom:6px">🔍</div>
+              Buscando informações sobre <strong id="strain-loading-name" style="color:var(--text2)"></strong>...
+            </div>
+            <div id="strain-data" style="display:none">
+              <div id="strain-header" style="padding:16px 18px 12px;border-bottom:1px solid var(--border)">
+                <div style="display:flex;align-items:flex-start;gap:12px">
+                  <div id="strain-type-badge" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0"></div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-family:var(--serif);font-size:18px;color:var(--text)" id="strain-name-display"></div>
+                    <div style="font-size:12px;color:var(--text3);margin-top:2px" id="strain-type-label"></div>
+                  </div>
+                  <div style="text-align:right;flex-shrink:0">
+                    <div style="font-family:var(--serif);font-size:20px;color:var(--amber)" id="strain-thc"></div>
+                    <div style="font-size:10px;color:var(--text3)">THC</div>
+                  </div>
+                </div>
+                <p id="strain-desc" style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6"></p>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+                <div style="background:var(--surface);padding:12px 14px">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Floração</div>
+                  <div style="font-size:15px;font-weight:600;color:var(--purple)" id="strain-flower"></div>
+                </div>
+                <div style="background:var(--surface);padding:12px 14px">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">CBD</div>
+                  <div style="font-size:15px;font-weight:600;color:var(--green)" id="strain-cbd"></div>
+                </div>
+                <div style="background:var(--surface);padding:12px 14px">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Efeito principal</div>
+                  <div style="font-size:13px;color:var(--text2)" id="strain-effect"></div>
+                </div>
+                <div style="background:var(--surface);padding:12px 14px">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Aromas</div>
+                  <div style="font-size:13px;color:var(--text2)" id="strain-aroma"></div>
+                </div>
+              </div>
+              <div style="padding:12px 14px;background:var(--surface)">
+                <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Dica de cultivo</div>
+                <div style="font-size:12px;color:var(--text2);line-height:1.6" id="strain-tip"></div>
+              </div>
+              <div id="strain-warn" style="display:none;padding:10px 14px;background:var(--amber-dim);border-top:1px solid rgba(232,164,58,.2)">
+                <div style="font-size:11px;color:var(--amber);line-height:1.5" id="strain-warn-text"></div>
+              </div>
+            </div>
+            <div id="strain-error" style="display:none;padding:14px 18px;font-size:12px;color:var(--text3)">
+              ⚠️ Não foi possível encontrar informações sobre esta strain. Verifique o nome e tente novamente.
+            </div>
+          </div>
+        </div>
+
         <!-- Week navigator -->
         <div class="week-nav">
           <button onclick="changeWeek(-1)">‹</button>
@@ -600,6 +722,13 @@ html, body {
       <p class="section-title">Guia Rápido</p>
       <p class="section-sub">Referência de parâmetros ideais para cannabis medicinal indoor.</p>
       <div id="guia-content"></div>
+    </div>
+
+    <!-- PAGE 5: MANUAL DE INSTRUÇÕES -->
+    <div class="page" id="page-5">
+      <p class="section-title">Manual de Instruções</p>
+      <p class="section-sub">Como ler e usar cada aba do app. Ideal para iniciantes.</p>
+      <div id="manual-content"></div>
     </div>
 
   </div><!-- /pages -->
@@ -739,10 +868,10 @@ const PROTOCOLS = {
     name: 'SuperSoil', icon: '🌍', color: '#e8a43a',
     obs: 'Solo vivo autoregula. Coberturas secas liberam nutrientes lentamente. EC/pH auto.',
     clone: [
-      {s:1, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'Biorrizas', ph:'auto', ec:'auto', obs:'Solo vivo — sem adubação química'},
+      {s:1, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'Micorrizas', ph:'auto', ec:'auto', obs:'Solo vivo — sem adubação química'},
       {s:2, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Manter solo úmido e vivo'},
       {s:3, p1:'Farinha de alga', d1:'5g/L solo', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Alga = fósforo e K suave'},
-      {s:4, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Biorrizas', ph:'auto', ec:'auto', obs:'Mel de cana alimenta microbioma'},
+      {s:4, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Micorrizas', ph:'auto', ec:'auto', obs:'Mel de cana alimenta microbioma'},
     ],
     vega: [
       {s:1, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'Vermicomposto', ph:'auto', ec:'auto', obs:'SuperSoil já contém todos os nutrientes'},
@@ -878,11 +1007,23 @@ function saveCfg() {
   if (!dateVal) { alert('Preencha a data do Dia 1 antes de continuar.'); return; }
   state.date   = dateVal;
   state.strain = strain || 'Meu cultivo';
-  state.currentWeek = 1;
+
+  // Calcular semana atual com base na data de hoje
+  const d0    = new Date(dateVal + 'T12:00:00');
+  const today = new Date(); today.setHours(12,0,0,0);
+  const daysPassed = Math.floor((today - d0) / 86400000);
+  const totalDays  = (state.weeks.clone + state.weeks.vega + state.weeks.flora + state.weeks.flush) * 7;
+  if (daysPassed >= 0 && daysPassed < totalDays) {
+    state.currentWeek = Math.floor(daysPassed / 7) + 1;
+  } else {
+    state.currentWeek = 1;
+  }
+
   localStorage.setItem('cultivoState', JSON.stringify(state));
   buildCronograma();
   buildAdubacao();
   buildMIP();
+  fetchStrainInfo(state.strain);
   gotoPage(1);
 }
 
@@ -1202,6 +1343,379 @@ function gotoPage(idx) {
 }
 
 // ═══════════════════════════════════════════════
+// MANUAL DE INSTRUÇÕES
+// ═══════════════════════════════════════════════
+function buildManual() {
+  const sections = [
+    {
+      icon: '⚙️', title: 'Aba Configurar', color: '#52b778',
+      items: [
+        {
+          q: 'O que é o "Dia 1"?',
+          a: 'É a data em que você recebe ou faz o clone — o primeiro dia de vida da planta no seu cultivo. Tudo na planilha é calculado a partir dessa data.',
+        },
+        {
+          q: 'O que são as "semanas de cada fase"?',
+          a: 'O ciclo da planta é dividido em 4 fases. Você configura quantas semanas cada fase vai durar no seu cultivo:',
+          example: `🌱 <strong>Clone:</strong> quando o clone está enraizando (2–4 sem)\n🌿 <strong>Vegetativo:</strong> crescimento com luz 18h/dia (4–12 sem)\n🌸 <strong>Floração:</strong> formação de buds com luz 12h/dia (8–16 sem)\n🚿 <strong>Flush:</strong> lavagem do substrato antes da colheita (1–2 sem)`,
+          tip: '💡 Não sabe quantas semanas de floração? Veja a aba Guia → "Duração da flora por cepa" para estimar pelo tipo da sua planta.',
+        },
+        {
+          q: 'Como escolher o protocolo de nutrição?',
+          a: 'Escolha a linha de produto que você usa ou pretende usar. O app vai mostrar os produtos corretos e as doses certas para cada semana. Se você usa outro produto não listado, escolha "Genérico".',
+          example: `<strong>BioBizz:</strong> Bio·Grow, Bio·Bloom, Top·Max...\n<strong>Remo Nutrients:</strong> Micro, Grow, Bloom, Magnifical...\n<strong>General Organics:</strong> BioThrive, BioRoot, BioBud...\n<strong>SuperSoil:</strong> coberturas secas, chás, guano...\n<strong>Genérico:</strong> qualquer outro protocolo`,
+        },
+      ]
+    },
+    {
+      icon: '📅', title: 'Aba Cronograma', color: '#2196F3',
+      items: [
+        {
+          q: 'O que é o anel de progresso?',
+          a: 'Mostra quanto do cultivo já passou, em percentual. Se estiver em 45%, significa que 45% dos dias totais do seu cultivo já se passaram desde o Dia 1.',
+        },
+        {
+          q: 'O que é a barra colorida de fases?',
+          a: 'É uma representação visual do seu cultivo inteiro. Cada cor é uma fase:',
+          example: `🟢 <strong>Verde:</strong> Clone\n🔵 <strong>Azul:</strong> Vegetativo\n🟣 <strong>Roxo:</strong> Floração\n🔴 <strong>Vermelho:</strong> Flush`,
+        },
+        {
+          q: 'Como navegar pelas semanas?',
+          a: 'Use as setas ‹ e › para ir para a semana anterior ou seguinte. O app abre automaticamente na semana atual do seu cultivo. Cada semana mostra os 7 dias com as ações de cada dia.',
+        },
+        {
+          q: 'O que significa cada linha do dia?',
+          a: 'Cada linha é um dia do cultivo. Toque no dia para expandir e ver os detalhes:',
+          example: `<strong>💊 Adubação:</strong> o que regar nesse dia\n<strong>🐛 MIP:</strong> se tem aplicação preventiva de pragas\n<strong>Marco:</strong> eventos importantes (início de fase, colheita)`,
+          tip: '💡 Adubação e MIP aparecem apenas no 1º dia de cada semana — é o dia que você deve fazer a rega com os produtos indicados.',
+        },
+      ]
+    },
+    {
+      icon: '💊', title: 'Aba Adubação', color: '#52b778',
+      items: [
+        {
+          q: 'O que significa "Produto 1" e "Produto 2"?',
+          a: 'São os nutrientes principais que você mistura na mesma água de rega naquela semana. Você pode misturá-los todos em uma única rega, exceto quando indicado o contrário.',
+          example: `<strong>Produto 1:</strong> Bio·Grow 2 mL/L\n<strong>Produto 2:</strong> Fish·Mix 2 mL/L\n\nIsso significa: para cada litro de água que você vai usar para regar, adicione 2 mL de Bio·Grow e 2 mL de Fish·Mix, misture bem e então regue a planta.`,
+        },
+        {
+          q: 'O que é o "Suplemento"?',
+          a: 'Produtos adicionais que potencializam a nutrição: estimulantes de raízes, aminoácidos, enzimas, etc. Adicione na mesma água de rega junto com os outros produtos, na dose indicada.',
+          example: `<strong>Suplemento:</strong> Molasses 2 mL/L\n\nSignifica: adicione também 2 mL de melado (Molasses) por litro de água, junto com os outros produtos.`,
+          tip: '💡 Para SuperSoil, a "dose" é aplicada diretamente no solo (g/vaso ou g/L de substrato), não dissolvida em água.',
+        },
+        {
+          q: 'O que é pH alvo?',
+          a: 'O pH ideal da sua água de rega após misturar todos os nutrientes. Meça com um pHmetro e ajuste com pH Up ou pH Down se necessário. O pH influencia diretamente a absorção dos nutrientes pela planta.',
+          example: `<strong>pH alvo:</strong> 6.2–6.5\n\nSignifica: após misturar os produtos, meça o pH da solução. Se estiver entre 6.2 e 6.5, está perfeito. Se estiver fora, ajuste antes de regar.`,
+          warn: '⚠️ Para SuperSoil e General Organics em solo, o pH se auto-regula — você não precisa ajustar.',
+        },
+        {
+          q: 'O que é EC alvo?',
+          a: 'EC (Condutividade Elétrica) mede a concentração de nutrientes na água. Quanto maior o EC, mais nutrientes tem na solução. Para medir você precisa de um medidor de EC (condutivímetro).',
+          example: `<strong>EC alvo:</strong> 1.4 mS/cm\n\nSignifica: sua solução de nutrientes deve ter uma concentração de 1.4 milisiemens por centímetro. Se estiver maior, adicione mais água. Se menor, adicione mais nutriente.`,
+          tip: '💡 No início do cultivo, use EC mais baixo. Aumente gradualmente conforme a planta cresce. Se notar folhas queimando nas pontas, o EC está alto demais.',
+        },
+        {
+          q: 'Com que frequência devo regar?',
+          a: 'A planilha indica o que aplicar por semana, mas a frequência de rega depende do seu substrato e tamanho do vaso. A regra geral é: regue quando o substrato estiver levemente seco na superfície (mas ainda úmido embaixo). Não deixe encharcar.',
+          tip: '💡 Levante o vaso para sentir o peso. Vaso leve = hora de regar. Vaso pesado = aguarde mais.',
+        },
+        {
+          q: 'Como preparar a solução de rega corretamente?',
+          a: 'Siga sempre esta ordem para evitar reações entre os produtos:',
+          example: `1. Comece com a quantidade de água que vai usar\n2. Adicione os produtos <strong>um de cada vez</strong>, misturando entre cada adição\n3. Meça e ajuste o pH\n4. Verifique o EC\n5. Regue imediatamente — não armazene a solução pronta`,
+          warn: '⚠️ Nunca misture os produtos concentrados diretamente entre si antes de diluir em água — pode causar reação química e precipitação.',
+        },
+      ]
+    },
+    {
+      icon: '🐛', title: 'Aba MIP — Pragas', color: '#e05c5c',
+      items: [
+        {
+          q: 'O que é MIP?',
+          a: 'MIP significa Manejo Integrado de Pragas. É um protocolo preventivo — você aplica os produtos mesmo sem ver pragas, para evitar que elas apareçam. É muito mais fácil prevenir do que tratar uma infestação.',
+        },
+        {
+          q: 'O que é aplicação "Foliar"?',
+          a: 'É uma aplicação direta nas folhas, borrifando a solução com um pulverizador. Molhe bem a face de baixo das folhas, onde as pragas geralmente se instalam.',
+          example: `<strong>Nim 2 mL/L — Foliar</strong>\n\nDissolva 2 mL de óleo de Nim em 1 litro de água (com um pouquinho de sabão neutro para ajudar a mistura). Borrife nas folhas, cobrindo bem a face inferior.`,
+          warn: '⚠️ NUNCA faça aplicação foliar em floração avançada (após a Semana 3 de flora). Os produtos podem contaminar os buds e alterar o sabor/aroma.',
+        },
+        {
+          q: 'O que é aplicação "Solo" ou "Rega"?',
+          a: 'O produto é diluído na água de rega e aplicado diretamente no substrato, na raiz. Não tem contato com as folhas ou buds.',
+          example: `<strong>Trichoderma 3 g/L — Solo (rega)</strong>\n\nDissolva 3 gramas de Trichoderma em 1 litro de água e regue normalmente. O fungo vai colonizar o solo ao redor das raízes.`,
+          tip: '💡 Em floração, todos os produtos MIP devem ser aplicados apenas no solo — nunca foliar.',
+        },
+        {
+          q: 'O que é Calda Sulfocálcica e Calda Bordalesa?',
+          a: 'São caldas (soluções) usadas como fungicidas e acaricidas. São produtos mais "pesados" e exigem cuidados especiais.',
+          example: `<strong>Calda Sulfocálcica:</strong> controla ácaros, oídio e escamas. Aplique ao entardecer para evitar queima foliar.\n\n<strong>Calda Bordalesa:</strong> base de cobre, controla fungos como míldio e Botrytis.`,
+          warn: '⚠️ Nunca misture Sulfocálcica com Nim — causa fitotoxidade grave (queima a planta). Deixe pelo menos 7 dias de intervalo entre eles.',
+        },
+        {
+          q: 'O que é Trichoderma e Micorrizas?',
+          a: '',
+          example: `<strong>Trichoderma harzianum:</strong> fungo benéfico que coloniza o substrato, protege as raízes contra fungos patogênicos (Pythium, Fusarium) e melhora a absorção de nutrientes.\n\n<strong>Micorrizas:</strong> outro fungo benéfico que forma uma simbiose direta com as raízes — aumenta muito a superfície de absorção e melhora a resistência a estresses.`,
+          tip: '💡 Aplique Micorrizas uma vez no transplante ou no início do cultivo. Trichoderma pode ser reaplicado a cada 3 semanas.',
+        },
+      ]
+    },
+    {
+      icon: '🌍', title: 'Protocolo SuperSoil — como funciona', color: '#e8a43a',
+      items: [
+        {
+          q: 'O que é SuperSoil?',
+          a: 'SuperSoil é um substrato vivo e pré-enriquecido com matéria orgânica suficiente para nutrir a planta por todo o ciclo. O solo tem um ecossistema de microorganismos que digerem a matéria orgânica e liberam os nutrientes lentamente para a planta.',
+        },
+        {
+          q: 'O que são as "coberturas"?',
+          a: 'São adubos orgânicos secos aplicados em cima do substrato (sem enterrar), que se decompõem gradualmente e liberam nutrientes. Você não mistura em água — coloca direto na superfície.',
+          example: `<strong>Cobertura: Farinha de osso 10g/vaso</strong>\n\nEspalhe 10 gramas de farinha de osso em cima do substrato, ao redor da base da planta (não na haste). Regue normalmente depois — a água vai ativar a decomposição e levar os nutrientes para as raízes.`,
+        },
+        {
+          q: 'O que é Chá de Compostagem?',
+          a: 'É um "chá" feito com minhocário ou composto, aerado por 24–48 horas. Rico em microorganismos vivos, alimenta o ecossistema do solo e melhora a absorção dos nutrientes.',
+          example: `Para fazer: coloque 500g de minhocário em uma meia velha, mergulhe em 5 litros de água, adicione 5 mL de melado e ligue um aquário aerador por 24–48 horas. Use imediatamente após o preparo.`,
+          tip: '💡 No SuperSoil você rega muito menos vezes com nutrientes. O solo trabalha por você!',
+        },
+        {
+          q: 'Preciso medir pH e EC no SuperSoil?',
+          a: 'Não é obrigatório da mesma forma que em cultivos minerais. O solo vivo auto-regula o pH naturalmente. Mas se quiser monitorar, o pH ideal do run-off (água que sai pelo fundo do vaso) deve estar entre 6.0–7.0.',
+        },
+      ]
+    },
+    {
+      icon: '🔬', title: 'Análise de Tricomas — quando colher', color: '#9b72cf',
+      items: [
+        {
+          q: 'O que são tricomas?',
+          a: 'Tricomas são as "pelinhas" brilhantes que cobrem os buds e folhas. São glândulas de resina onde se concentram THC, CBD e terpenos. A cor deles indica o estágio de maturação da planta.',
+        },
+        {
+          q: 'Como analisar os tricomas?',
+          a: 'Você precisa de uma lupa com pelo menos 30x de aumento (ou um microscópio digital pequeno). Corte uma pequena amostra de bud e observe a cor dos tricomas:',
+          example: `🔍 <strong>Transparentes/cristalinos:</strong> ainda estão amadurecendo. Aguarde.\n\n🥛 <strong>Leitosos/opacos (brancos):</strong> THC no pico. Efeito mais cerebral, eufórico, energético.\n\n🟡 <strong>Âmbar (10–20%):</strong> início da degradação. Efeito mais equilibrado — ótimo para uso medicinal.\n\n🟠 <strong>Âmbar (30–50%):</strong> THC degradando em CBN. Efeito mais sedativo e corporal.\n\n⚠️ <strong>Mais de 50% âmbar:</strong> esperou demais — THC degradado.`,
+          tip: '💡 Para uso medicinal ansiolítico/relaxante: 20–30% âmbar é ideal. Para efeito mais energizante: colha quando ainda maioria leitoso.',
+        },
+        {
+          q: 'Qual é a diferença entre colher cedo e colher tarde?',
+          a: '',
+          example: `<strong>Colheita precoce</strong> (maioria leitoso):\n→ Efeito mais "alto", eufórico, cerebral, pode causar ansiedade\n\n<strong>Colheita no ponto</strong> (20% âmbar):\n→ Efeito equilibrado, relaxante sem sedação excessiva — ideal medicinal\n\n<strong>Colheita tardia</strong> (50%+ âmbar):\n→ Efeito sedativo forte, "couch-lock", ótimo para dor e insônia`,
+        },
+      ]
+    },
+    {
+      icon: '❓', title: 'Dúvidas frequentes de iniciantes', color: '#a8c4ac',
+      items: [
+        {
+          q: 'Preciso usar TODOS os produtos da semana?',
+          a: 'Não necessariamente. O protocolo é uma recomendação completa. Se você não tem algum produto, pode pular — especialmente suplementos e estimulantes. Os produtos base (Grow/Bloom ou BioThrive) são os mais importantes. Nunca improvise substituições sem pesquisar antes.',
+        },
+        {
+          q: 'O que acontece se eu errar o pH?',
+          a: 'pH fora da faixa ideal "trava" a absorção de nutrientes mesmo que eles estejam presentes no solo. A planta vai mostrar sinais de deficiência (folhas amareladas, manchas) mesmo com boa adubação. Corrigir o pH resolve na maioria dos casos.',
+          warn: '⚠️ pH muito baixo (< 5.5) ou muito alto (> 7.0) causa lockout severo de nutrientes.',
+        },
+        {
+          q: 'A planta está com as folhas amarelando — o que fazer?',
+          a: 'Amarelamento pode ter várias causas. Verifique nesta ordem:',
+          example: `1. <strong>pH da água:</strong> está na faixa correta?\n2. <strong>EC:</strong> está muito alto (excesso) ou muito baixo (falta)?\n3. <strong>Overwatering:</strong> o solo está sempre encharcado?\n4. <strong>Fase natural:</strong> na floração avançada, folhas velhas amarelam normalmente`,
+        },
+        {
+          q: 'Posso mudar a duração das fases no meio do cultivo?',
+          a: 'Sim! É só voltar na aba Configurar, ajustar as semanas e gerar novamente. O cronograma inteiro se recalcula. Por exemplo, se sua planta demorou mais para florir, aumente as semanas de floração.',
+        },
+        {
+          q: 'O que significa "flush" e por que fazer?',
+          a: 'Flush é a última fase antes da colheita: você rega só com água pura (sem nutrientes) por 1–2 semanas. O objetivo é "lavar" o excesso de sais e nutrientes do substrato e da planta para ter um produto final mais limpo, com melhor sabor e combustão.',
+          tip: '💡 Após o flush, observe as folhas: elas vão começar a amarelar — isso é sinal que a planta está consumindo suas reservas. Bom sinal!',
+        },
+      ]
+    },
+  ];
+
+  function renderManual(sections) {
+    return sections.map((sec, si) => {
+      const itemsHtml = sec.items.map((item, ii) => `
+        <div class="manual-item">
+          <div class="manual-item-q">❔ ${item.q}</div>
+          ${item.a ? `<div class="manual-item-a">${item.a}</div>` : ''}
+          ${item.example ? `<div class="manual-example">${item.example.replace(/\n/g,'<br>')}</div>` : ''}
+          ${item.tip  ? `<div class="manual-tip">${item.tip}</div>` : ''}
+          ${item.warn ? `<div class="manual-warn">${item.warn}</div>` : ''}
+        </div>`).join('');
+
+      return `<div class="manual-section">
+        <div class="manual-section-header" style="background:${sec.color}18;border:1px solid ${sec.color}33" onclick="toggleManual(this)">
+          <span class="manual-section-icon">${sec.icon}</span>
+          <span class="manual-section-title" style="color:${sec.color}">${sec.title}</span>
+          <span class="manual-section-chevron">⌄</span>
+        </div>
+        <div class="manual-body">${itemsHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('manual-content').innerHTML = renderManual(sections);
+
+  // Auto-open first section
+  const firstHeader = document.querySelector('.manual-section-header');
+  if (firstHeader) toggleManual(firstHeader);
+}
+
+function toggleManual(header) {
+  const body    = header.nextElementSibling;
+  const chevron = header.querySelector('.manual-section-chevron');
+  const isOpen  = body.classList.toggle('open');
+  chevron.classList.toggle('open', isOpen);
+}
+
+// ═══════════════════════════════════════════════
+// STRAIN INFO (via Claude API)
+// ═══════════════════════════════════════════════
+async function fetchStrainInfo(strainName) {
+  if (!strainName || strainName === 'Meu cultivo') return;
+
+  const panel = document.getElementById('strain-panel');
+  const loading = document.getElementById('strain-loading');
+  const dataEl  = document.getElementById('strain-data');
+  const errorEl = document.getElementById('strain-error');
+
+  panel.style.display = '';
+  loading.style.display = '';
+  dataEl.style.display = 'none';
+  errorEl.style.display = 'none';
+  document.getElementById('strain-loading-name').textContent = strainName;
+
+  const prompt = `You are a cannabis strain database. The user is asking about the strain: "${strainName}".
+
+Return ONLY a valid JSON object with exactly these fields (no markdown, no explanation):
+{
+  "found": true,
+  "name": "official strain name",
+  "type": "indica" | "sativa" | "hybrid" | "indica-dominant" | "sativa-dominant",
+  "thc": "THC range, e.g. 18-24%",
+  "cbd": "CBD range, e.g. < 1%",
+  "flowerWeeks": "flowering time in weeks, e.g. 8-9 semanas",
+  "effects": "top 2-3 effects in Portuguese, e.g. Relaxante, Eufórico, Criativo",
+  "aromas": "top 2-3 aromas in Portuguese, e.g. Terra, Pinho, Cítrico",
+  "description": "2 sentences about this strain in Portuguese",
+  "growTip": "1 specific indoor growing tip in Portuguese for this strain",
+  "medicalNote": "main medical use in Portuguese, or empty string if not notable"
+}
+
+If the strain is unknown or you have low confidence, return: {"found": false}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const raw  = data.content?.map(b => b.text || '').join('') || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const info  = JSON.parse(clean);
+
+    loading.style.display = 'none';
+
+    if (!info.found) {
+      errorEl.style.display = '';
+      return;
+    }
+
+    // Populate
+    const typeEmoji = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
+    const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
+    const typeColor  = typeColors[info.type] || '#52b778';
+    const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
+
+    document.getElementById('strain-type-badge').textContent = typeEmoji;
+    document.getElementById('strain-type-badge').style.background = typeColor + '22';
+    document.getElementById('strain-name-display').textContent = info.name;
+    document.getElementById('strain-type-label').textContent = typeLabel;
+    document.getElementById('strain-thc').textContent = info.thc;
+    document.getElementById('strain-desc').textContent = info.description;
+    document.getElementById('strain-flower').textContent = info.flowerWeeks;
+    document.getElementById('strain-cbd').textContent = info.cbd;
+    document.getElementById('strain-effect').textContent = info.effects;
+    document.getElementById('strain-aroma').textContent = info.aromas;
+    document.getElementById('strain-tip').textContent = info.growTip;
+
+    if (info.medicalNote) {
+      document.getElementById('strain-warn').style.display = '';
+      document.getElementById('strain-warn-text').textContent = '🏥 Uso medicinal: ' + info.medicalNote;
+    }
+
+    // Check if configured flowering weeks match the strain
+    const flowerMatch = info.flowerWeeks.match(/(\d+)/);
+    if (flowerMatch) {
+      const strainFlowerWeeks = parseInt(flowerMatch[1]);
+      const configuredWeeks   = state.weeks.flora;
+      if (Math.abs(strainFlowerWeeks - configuredWeeks) >= 2) {
+        const warnEl = document.getElementById('strain-warn');
+        warnEl.style.display = '';
+        const existing = document.getElementById('strain-warn-text').textContent;
+        document.getElementById('strain-warn-text').textContent =
+          (existing ? existing + ' · ' : '') +
+          `⏱️ Esta strain floresce em ~${info.flowerWeeks}, mas você configurou ${configuredWeeks} semanas. Considere ajustar.`;
+      }
+    }
+
+    dataEl.style.display = '';
+    // Cache
+    state.strainInfo = info;
+    localStorage.setItem('cultivoState', JSON.stringify(state));
+
+  } catch(e) {
+    loading.style.display = 'none';
+    errorEl.style.display = '';
+  }
+}
+
+function restoreStrainPanel() {
+  if (!state.strainInfo || !state.date) return;
+  const info = state.strainInfo;
+  const panel = document.getElementById('strain-panel');
+  const loading = document.getElementById('strain-loading');
+  const dataEl  = document.getElementById('strain-data');
+
+  panel.style.display = '';
+  loading.style.display = 'none';
+
+  const typeEmoji  = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
+  const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
+  const typeColor  = typeColors[info.type] || '#52b778';
+  const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
+
+  document.getElementById('strain-type-badge').textContent = typeEmoji;
+  document.getElementById('strain-type-badge').style.background = typeColor + '22';
+  document.getElementById('strain-name-display').textContent = info.name;
+  document.getElementById('strain-type-label').textContent = typeLabel;
+  document.getElementById('strain-thc').textContent = info.thc;
+  document.getElementById('strain-desc').textContent = info.description;
+  document.getElementById('strain-flower').textContent = info.flowerWeeks;
+  document.getElementById('strain-cbd').textContent = info.cbd;
+  document.getElementById('strain-effect').textContent = info.effects;
+  document.getElementById('strain-aroma').textContent = info.aromas;
+  document.getElementById('strain-tip').textContent = info.growTip;
+
+  if (info.medicalNote) {
+    document.getElementById('strain-warn').style.display = '';
+    document.getElementById('strain-warn-text').textContent = '🏥 ' + info.medicalNote;
+  }
+  dataEl.style.display = '';
+}
+
+// ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
 (function init() {
@@ -1226,13 +1740,25 @@ function gotoPage(idx) {
       const protoMap = {biobizz:0, remo:1, go:2, supersoil:3, generic:4};
       const idx = protoMap[state.proto] ?? 0;
       document.querySelectorAll('.proto-pill')[idx]?.classList.add('selected');
+
+      // Recalculate current week on restore
+      const d0 = new Date(state.date + 'T12:00:00');
+      const now = new Date(); now.setHours(12,0,0,0);
+      const daysPassed = Math.floor((now - d0) / 86400000);
+      const totalDays  = (state.weeks.clone + state.weeks.vega + state.weeks.flora + state.weeks.flush) * 7;
+      if (daysPassed >= 0 && daysPassed < totalDays) {
+        state.currentWeek = Math.floor(daysPassed / 7) + 1;
+      }
+
       buildCronograma();
       buildAdubacao();
       buildMIP();
+      restoreStrainPanel();
     }
   } catch(e) {}
 
   buildGuia();
+  buildManual();
   buildCronograma();
 })();
 </script>
