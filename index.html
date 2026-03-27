@@ -511,7 +511,8 @@ html, body {
         </div>
         <div class="field">
           <label>🌿 Strain / Cultivar</label>
-          <input type="text" id="cfg-strain" placeholder="Ex: OG Kush, Blue Dream...">
+          <input type="text" id="cfg-strain" list="strain-list" placeholder="Ex: OG Kush, Blue Dream...">
+          <datalist id="strain-list"></datalist>
         </div>
       </div>
 
@@ -1589,8 +1590,151 @@ function toggleManual(header) {
 }
 
 // ═══════════════════════════════════════════════
-// STRAIN INFO (via Claude API)
+// STRAIN DATABASE (LOCAL)
 // ═══════════════════════════════════════════════
+const STRAIN_DB = {
+  "og kush": {
+    name: "OG Kush", type: "hybrid", thc: "19-26%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Relaxante, Eufórico, Fome", aromas: "Pinho, Terra, Cítrico",
+    description: "Uma das strains mais famosas do mundo. Conhecida pelo seu aroma terroso e efeitos potentes.",
+    growTip: "Gosta de climas secos e responde muito bem a técnicas de LST.",
+    medicalNote: "Eficaz contra estresse e insônia."
+  },
+  "haze": {
+    name: "Original Haze", type: "sativa", thc: "16-20%", cbd: "< 1%", flowerWeeks: "12-14 semanas",
+    effects: "Criativo, Energético, Foco", aromas: "Cítrico, Picante, Doce",
+    description: "A base de muitas sativas modernas. Ciclo longo mas recompensa com efeitos cerebrais puros.",
+    growTip: "Cresce muito em altura. Reserve espaço vertical ou use SCROG.",
+    medicalNote: "Ajuda na depressão e fadiga crônica."
+  },
+  "amnesia haze": {
+    name: "Amnesia Haze", type: "sativa", thc: "20-25%", cbd: "< 1%", flowerWeeks: "10-12 semanas",
+    effects: "Eufórico, Energético, Feliz", aromas: "Cítrico, Limão, Terroso",
+    description: "Ganhadora de várias Cannabis Cups. Sativa potente com sabor cítrico marcante.",
+    growTip: "Sensível a pragas. Mantenha o MIP em dia e reforce a ventilação.",
+    medicalNote: "Excelente para foco e criatividade."
+  },
+  "blue dream": {
+    name: "Blue Dream", type: "sativa-dominant", thc: "17-24%", cbd: "1-2%", flowerWeeks: "9-10 semanas",
+    effects: "Criativo, Energético, Relaxante", aromas: "Mirtilo, Doce, Baga",
+    description: "Híbrida clássica da Califórnia. Equilíbrio perfeito entre relaxamento físico e estímulo mental.",
+    growTip: "Fácil de cultivar, mas pode ser alvo de oídio se a umidade subir muito no final.",
+    medicalNote: "Alivia dores crônicas sem causar sedação excessiva."
+  },
+  "northern lights": {
+    name: "Northern Lights", type: "indica", thc: "16-21%", cbd: "< 1%", flowerWeeks: "7-8 semanas",
+    effects: "Relaxado, Feliz, Sonolento", aromas: "Pinho, Picante, Doce",
+    description: "Uma das indica mais puras existentes. Buds densos e muita resina.",
+    growTip: "Muito resistente e discreta no cheiro durante o cultivo. Ótima para iniciantes.",
+    medicalNote: "Ideal para insônia severa e relaxamento muscular."
+  },
+  "white widow": {
+    name: "White Widow", type: "hybrid", thc: "18-25%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Energético, Eufórico, Conversador", aromas: "Madeira, Pinho, Terroso",
+    description: "Famosa pela sua cobertura branca de resina. Resistente e muito produtiva.",
+    growTip: "Suporta bem variações de temperatura. Responde bem a podas apicais.",
+    medicalNote: "Ajuda no controle da ansiedade e estresse pós-traumático."
+  },
+  "girl scout cookies": {
+    name: "Girl Scout Cookies (GSC)", type: "indica-dominant", thc: "25-28%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
+    effects: "Eufórico, Relaxado, Criativo", aromas: "Doce, Mentolado, Cereja",
+    description: "Conhecida pela sua potência extrema e sabor de sobremesa. Buds compactos.",
+    growTip: "Gosta de níveis mais altos de cálcio e magnésio. Evite estresse térmico.",
+    medicalNote: "Poderoso analgésico e estimulante de apetite."
+  },
+  "gorilla glue": {
+    name: "Gorilla Glue #4 (GG4)", type: "hybrid", thc: "25-30%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Sedativo, Pesado, Feliz", aromas: "Pungente, Pinheiro, Terra",
+    description: "Famosa pela resina que 'cola' nas tesouras. Efeito extremamente relaxante.",
+    growTip: "Crescimento explosivo. Prepare suportes para os galhos não dobrarem com o peso.",
+    medicalNote: "Muito usada para controle de dor intensa e espasmos."
+  },
+  "sour diesel": {
+    name: "Sour Diesel", type: "sativa", thc: "20-25%", cbd: "< 1%", flowerWeeks: "10-11 semanas",
+    effects: "Energético, Criativo, Foco", aromas: "Diesel, Cítrico, Pungente",
+    description: "Aroma inconfundível. Efeito cerebral rápido e duradouro.",
+    growTip: "Gosta de ser bem alimentada com nitrogênio na vega. Estica muito na flora.",
+    medicalNote: "Favorita para combater fadiga e depressão."
+  },
+  "jack herer": {
+    name: "Jack Herer", type: "sativa-dominant", thc: "18-24%", cbd: "< 1%", flowerWeeks: "8-10 semanas",
+    effects: "Alerta, Criativo, Feliz", aromas: "Pinho, Amadeirado, Especiarias",
+    description: "Homenagem ao ativista Jack Herer. Equilíbrio entre cerebral e corporal.",
+    growTip: "Mantenha o solo bem aerado. Responde bem a adubação orgânica.",
+    medicalNote: "Melhora o humor e alivia dores leves."
+  },
+  "gelato": {
+    name: "Gelato", type: "indica-dominant", thc: "20-25%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Relaxado, Eufórico, Relaxamento físico", aromas: "Doce, Frutado, Cítrico",
+    description: "Híbrida moderna com sabores complexos de sorvete e frutas.",
+    growTip: "Prefere temperaturas um pouco mais baixas no final da flora para realçar cores roxas.",
+    medicalNote: "Auxilia no relaxamento profundo e bem-estar."
+  },
+  "wedding cake": {
+    name: "Wedding Cake", type: "indica-dominant", thc: "23-27%", cbd: "< 1%", flowerWeeks: "9 semanas",
+    effects: "Relaxado, Feliz, Fome", aromas: "Baunilha, Doce, Terroso",
+    description: "Cruzamento potente com sabor adocicado e terroso. Buds muito densos.",
+    growTip: "Exige poda de folhas baixas (lollipopping) para focar energia nos buds superiores.",
+    medicalNote: "Eficaz no tratamento de doenças autoimunes e dores crônicas."
+  },
+  "pineapple express": {
+    name: "Pineapple Express", type: "hybrid", thc: "18-22%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Energético, Criativo, Feliz", aromas: "Abacaxi, Tropical, Doce",
+    description: "Famosa pelo filme. Aroma tropical delicioso e efeito equilibrado.",
+    growTip: "Resistente a fungos, ótima para quem está começando o primeiro cultivo.",
+    medicalNote: "Ajuda no alívio de estresse leve e ansiedade social."
+  },
+  "super lemon haze": {
+    name: "Super Lemon Haze", type: "sativa", thc: "19-25%", cbd: "< 1%", flowerWeeks: "10-12 semanas",
+    effects: "Alerta, Energético, Criativo", aromas: "Limão, Cítrico, Doce",
+    description: "Sabor de limão siciliano intenso. Ganhadora consecutiva de prêmios.",
+    growTip: "Gosta de bastante luz. Mantenha os níveis de P e K altos na floração média.",
+    medicalNote: "Estimulante mental e combate a letargia."
+  },
+  "purple haze": {
+    name: "Purple Haze", type: "sativa", thc: "16-20%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
+    effects: "Eufórico, Criativo, Psicodélico", aromas: "Baga, Doce, Terroso",
+    description: "Imortalizada por Jimi Hendrix. Visual roxo vibrante e efeito cerebral.",
+    growTip: "Queda de temperatura noturna (±10°C) favorece a coloração roxa no final.",
+    medicalNote: "Ótima para estímulo criativo e transtornos de humor."
+  },
+  "bubba kush": {
+    name: "Bubba Kush", type: "indica", thc: "15-22%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Relaxado, Sonolento, Fome", aromas: "Café, Chocolate, Doce",
+    description: "Indica pesada definitiva. Ideal para descansar após um dia longo.",
+    growTip: "Planta baixa e robusta. Não precisa de muito espaço vertical.",
+    medicalNote: "Poderoso aliado contra insônia crônica e dores musculares."
+  },
+  "red banger": {
+    name: "Red Banger", type: "hybrid", thc: "22-26%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Foco, Criativo, Relaxamento leve", aromas: "Frutas Vermelhas, Diesel, Doce",
+    description: "Strain moderna com visual avermelhado e perfil de terpenos marcante.",
+    growTip: "Responde bem a Mainlining para maximizar a produção de colas principais.",
+    medicalNote: "Auxilia no alívio de cefaleias e estresse agudo."
+  },
+  "lemon haze": {
+    name: "Lemon Haze", type: "sativa-dominant", thc: "17-22%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
+    effects: "Feliz, Energético, Comunicativo", aromas: "Limão, Frutado, Cítrico",
+    description: "Variação famosa com aroma cítrico doce e efeito social.",
+    growTip: "Evite excesso de umidade nas últimas 2 semanas para prevenir pragas.",
+    medicalNote: "Indicada para distimia e fadiga."
+  },
+  "ak-47": {
+    name: "AK-47", type: "sativa-dominant", thc: "17-23%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
+    effects: "Feliz, Relaxado, Criativo", aromas: "Terroso, Amargo, Especiarias",
+    description: "Diz-se que uma 'rajada' é o suficiente. Sativa de floração rápida.",
+    growTip: "O cheiro é muito forte no final. Use filtros de carvão novos.",
+    medicalNote: "Muito versátil para dor, depressão e náusea."
+  },
+  "white widow auto": {
+    name: "White Widow Auto", type: "hybrid", thc: "14-18%", cbd: "1%", flowerWeeks: "8 semanas (total)",
+    effects: "Relaxado, Alerta, Feliz", aromas: "Terroso, Madeira, Ervas",
+    description: "Versão automática da clássica viúva branca. Ciclo muito rápido.",
+    growTip: "Evite transplantar. Comece no vaso definitivo para não estressar a raiz.",
+    medicalNote: "Alívio suave de ansiedade e tensão física."
+  }
+};
+
 async function fetchStrainInfo(strainName) {
   if (!strainName || strainName === 'Meu cultivo') return;
 
@@ -1605,95 +1749,68 @@ async function fetchStrainInfo(strainName) {
   errorEl.style.display = 'none';
   document.getElementById('strain-loading-name').textContent = strainName;
 
-  const prompt = `You are a cannabis strain database. The user is asking about the strain: "${strainName}".
+  // 1. Check local DB first
+  const searchKey = strainName.toLowerCase().trim();
+  const foundLocal = STRAIN_DB[searchKey] || Object.values(STRAIN_DB).find(s => s.name.toLowerCase() === searchKey);
 
-Return ONLY a valid JSON object with exactly these fields (no markdown, no explanation):
-{
-  "found": true,
-  "name": "official strain name",
-  "type": "indica" | "sativa" | "hybrid" | "indica-dominant" | "sativa-dominant",
-  "thc": "THC range, e.g. 18-24%",
-  "cbd": "CBD range, e.g. < 1%",
-  "flowerWeeks": "flowering time in weeks, e.g. 8-9 semanas",
-  "effects": "top 2-3 effects in Portuguese, e.g. Relaxante, Eufórico, Criativo",
-  "aromas": "top 2-3 aromas in Portuguese, e.g. Terra, Pinho, Cítrico",
-  "description": "2 sentences about this strain in Portuguese",
-  "growTip": "1 specific indoor growing tip in Portuguese for this strain",
-  "medicalNote": "main medical use in Portuguese, or empty string if not notable"
+  if (foundLocal) {
+    setTimeout(() => { // Small delay to feel like a "search"
+      loading.style.display = 'none';
+      renderStrainData(foundLocal);
+      state.strainInfo = foundLocal;
+      localStorage.setItem('cultivoState', JSON.stringify(state));
+    }, 400);
+    return;
+  }
+
+  // 2. Fallback to (mock) API or show not found
+  // Since original Anthropic call was broken and insecure for client-side,
+  // we show error/not found for unknown strains for now.
+  loading.style.display = 'none';
+  errorEl.style.display = '';
 }
 
-If the strain is unknown or you have low confidence, return: {"found": false}`;
+function renderStrainData(info) {
+  const panel = document.getElementById('strain-panel');
+  const dataEl  = document.getElementById('strain-data');
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+  const typeEmoji = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
+  const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
+  const typeColor  = typeColors[info.type] || '#52b778';
+  const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
 
-    const data = await res.json();
-    const raw  = data.content?.map(b => b.text || '').join('') || '';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const info  = JSON.parse(clean);
+  document.getElementById('strain-type-badge').textContent = typeEmoji;
+  document.getElementById('strain-type-badge').style.background = typeColor + '22';
+  document.getElementById('strain-name-display').textContent = info.name;
+  document.getElementById('strain-type-label').textContent = typeLabel;
+  document.getElementById('strain-thc').textContent = info.thc;
+  document.getElementById('strain-desc').textContent = info.description;
+  document.getElementById('strain-flower').textContent = info.flowerWeeks;
+  document.getElementById('strain-cbd').textContent = info.cbd;
+  document.getElementById('strain-effect').textContent = info.effects;
+  document.getElementById('strain-aroma').textContent = info.aromas;
+  document.getElementById('strain-tip').textContent = info.growTip;
 
-    loading.style.display = 'none';
-
-    if (!info.found) {
-      errorEl.style.display = '';
-      return;
-    }
-
-    // Populate
-    const typeEmoji = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
-    const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
-    const typeColor  = typeColors[info.type] || '#52b778';
-    const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
-
-    document.getElementById('strain-type-badge').textContent = typeEmoji;
-    document.getElementById('strain-type-badge').style.background = typeColor + '22';
-    document.getElementById('strain-name-display').textContent = info.name;
-    document.getElementById('strain-type-label').textContent = typeLabel;
-    document.getElementById('strain-thc').textContent = info.thc;
-    document.getElementById('strain-desc').textContent = info.description;
-    document.getElementById('strain-flower').textContent = info.flowerWeeks;
-    document.getElementById('strain-cbd').textContent = info.cbd;
-    document.getElementById('strain-effect').textContent = info.effects;
-    document.getElementById('strain-aroma').textContent = info.aromas;
-    document.getElementById('strain-tip').textContent = info.growTip;
-
-    if (info.medicalNote) {
-      document.getElementById('strain-warn').style.display = '';
-      document.getElementById('strain-warn-text').textContent = '🏥 Uso medicinal: ' + info.medicalNote;
-    }
-
-    // Check if configured flowering weeks match the strain
-    const flowerMatch = info.flowerWeeks.match(/(\d+)/);
-    if (flowerMatch) {
-      const strainFlowerWeeks = parseInt(flowerMatch[1]);
-      const configuredWeeks   = state.weeks.flora;
-      if (Math.abs(strainFlowerWeeks - configuredWeeks) >= 2) {
-        const warnEl = document.getElementById('strain-warn');
-        warnEl.style.display = '';
-        const existing = document.getElementById('strain-warn-text').textContent;
-        document.getElementById('strain-warn-text').textContent =
-          (existing ? existing + ' · ' : '') +
-          `⏱️ Esta strain floresce em ~${info.flowerWeeks}, mas você configurou ${configuredWeeks} semanas. Considere ajustar.`;
-      }
-    }
-
-    dataEl.style.display = '';
-    // Cache
-    state.strainInfo = info;
-    localStorage.setItem('cultivoState', JSON.stringify(state));
-
-  } catch(e) {
-    loading.style.display = 'none';
-    errorEl.style.display = '';
+  if (info.medicalNote) {
+    document.getElementById('strain-warn').style.display = '';
+    document.getElementById('strain-warn-text').textContent = '🏥 Uso medicinal: ' + info.medicalNote;
   }
+
+  // Check if configured flowering weeks match the strain
+  const flowerMatch = info.flowerWeeks.match(/(\d+)/);
+  if (flowerMatch) {
+    const strainFlowerWeeks = parseInt(flowerMatch[1]);
+    const configuredWeeks   = state.weeks.flora;
+    if (Math.abs(strainFlowerWeeks - configuredWeeks) >= 2) {
+      const warnEl = document.getElementById('strain-warn');
+      warnEl.style.display = '';
+      const existing = document.getElementById('strain-warn-text').textContent;
+      document.getElementById('strain-warn-text').textContent =
+        (existing ? existing + ' · ' : '') +
+        `⏱️ Esta strain floresce em ~${info.flowerWeeks}, mas você configurou ${configuredWeeks} semanas. Considere ajustar.`;
+    }
+  }
+  dataEl.style.display = '';
 }
 
 function restoreStrainPanel() {
@@ -1740,6 +1857,16 @@ function restoreStrainPanel() {
   const mm   = String(today.getMonth()+1).padStart(2,'0');
   const dd   = String(today.getDate()).padStart(2,'0');
   document.getElementById('cfg-date').value = `${yyyy}-${mm}-${dd}`;
+
+  // Populate strain list
+  const datalist = document.getElementById('strain-list');
+  if (datalist) {
+    Object.values(STRAIN_DB).sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      datalist.appendChild(opt);
+    });
+  }
 
   // Restore state
   try {
