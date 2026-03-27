@@ -24,6 +24,7 @@
 <meta property="twitter:description" content="Planejador de cultivo automático para cannabis medicinal. Controle fases, adubação e MIP direto no celular.">
 <meta property="twitter:image" content="https://flordeminas.github.io/AppCultivo/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="strains.js"></script>
 <style>
 :root {
   --bg:        #0d1f14;
@@ -671,6 +672,16 @@ html, body {
                   </div>
                 </div>
                 <p id="strain-desc" style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6"></p>
+                <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div>
+                    <div style="font-size:10px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em">Linhagem</div>
+                    <div style="font-size:13px;color:var(--text);font-weight:500" id="strain-lineage"></div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em">Terpenos</div>
+                    <div style="font-size:13px;color:var(--text);font-weight:500" id="strain-terpenes"></div>
+                  </div>
+                </div>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
                 <div style="background:var(--surface);padding:12px 14px">
@@ -1513,111 +1524,8 @@ function buildManual() {
         {
           q: 'Como analisar os tricomas?',
           a: 'Você precisa de uma lupa com pelo menos 30x de aumento (ou um microscópio digital pequeno). Corte uma pequena amostra de bud e observe a cor dos tricomas:',
-          example: `🔍 <strong>Transparentes/cristalinos:</strong> ainda estão amadurecendo. Aguarde.\n\n🥛 <strong>Leitosos/opacos (brancos):</strong> THC no pico. Efeito mais cerebral, eufórico, energético.\n\n🟡 <strong>Âmbar (10–20%):</strong> início da degradação. Efeito mais equilibrado — ótimo para uso medicinal.\n\n🟠 <strong>Âmbar (30–50%):</strong> THC degradando em CBN. Efeito mais sedativo e corporal.\n\n⚠️ <strong>Mais de 50% âmbar:</strong> esperou demais — THC degradado.`,
-          tip: '💡 Para uso medicinal ansiolítico/relaxante: 20–30% âmbar é ideal. Para efeito mais energizante: colha quando ainda maioria leitoso.',
-        },
-        {
-          q: 'Qual é a diferença entre colher cedo e colher tarde?',
-          a: '',
-          example: `<strong>Colheita precoce</strong> (maioria leitoso):\n→ Efeito mais "alto", eufórico, cerebral, pode causar ansiedade\n\n<strong>Colheita no ponto</strong> (20% âmbar):\n→ Efeito equilibrado, relaxante sem sedação excessiva — ideal medicinal\n\n<strong>Colheita tardia</strong> (50%+ âmbar):\n→ Efeito sedativo forte, "couch-lock", ótimo para dor e insônia`,
-        },
-      ]
-    },
-    {
-      icon: '❓', title: 'Dúvidas frequentes de iniciantes', color: '#a8c4ac',
-      items: [
-        {
-          q: 'Preciso usar TODOS os produtos da semana?',
-          a: 'Não necessariamente. O protocolo é uma recomendação completa. Se você não tem algum produto, pode pular — especialmente suplementos e estimulantes. Os produtos base (Grow/Bloom ou BioThrive) são os mais importantes. Nunca improvise substituições sem pesquisar antes.',
-        },
-        {
-          q: 'O que acontece se eu errar o pH?',
-          a: 'pH fora da faixa ideal "trava" a absorção de nutrientes mesmo que eles estejam presentes no solo. A planta vai mostrar sinais de deficiência (folhas amareladas, manchas) mesmo com boa adubação. Corrigir o pH resolve na maioria dos casos.',
-          warn: '⚠️ pH muito baixo (< 5.5) ou muito alto (> 7.0) causa lockout severo de nutrientes.',
-        },
-        {
-          q: 'A planta está com as folhas amarelando — o que fazer?',
-          a: 'Amarelamento pode ter várias causas. Verifique nesta ordem:',
-          example: `1. <strong>pH da água:</strong> está na faixa correta?\n2. <strong>EC:</strong> está muito alto (excesso) ou muito baixo (falta)?\n3. <strong>Overwatering:</strong> o solo está sempre encharcado?\n4. <strong>Fase natural:</strong> na floração avançada, folhas velhas amarelam normalmente`,
-        },
-        {
-          q: 'Posso mudar a duração das fases no meio do cultivo?',
-          a: 'Sim! É só voltar na aba Configurar, ajustar as semanas e gerar novamente. O cronograma inteiro se recalcula. Por exemplo, se sua planta demorou mais para florir, aumente as semanas de floração.',
-        },
-        {
-          q: 'O que significa "flush" e por que fazer?',
-          a: 'Flush é a última fase antes da colheita: você rega só com água pura (sem nutrientes) por 1–2 semanas. O objetivo é "lavar" o excesso de sais e nutrientes do substrato e da planta para ter um produto final mais limpo, com melhor sabor e combustão.',
-          tip: '💡 Após o flush, observe as folhas: elas vão começar a amarelar — isso é sinal que a planta está consumindo suas reservas. Bom sinal!',
-        },
-      ]
-    },
-  ];
-
-  function renderManual(sections) {
-    return sections.map((sec, si) => {
-      const itemsHtml = sec.items.map((item, ii) => `
-        <div class="manual-item">
-          <div class="manual-item-q">❔ ${item.q}</div>
-          ${item.a ? `<div class="manual-item-a">${item.a}</div>` : ''}
-          ${item.example ? `<div class="manual-example">${item.example.replace(/\n/g,'<br>')}</div>` : ''}
-          ${item.tip  ? `<div class="manual-tip">${item.tip}</div>` : ''}
-          ${item.warn ? `<div class="manual-warn">${item.warn}</div>` : ''}
-        </div>`).join('');
-
-      return `<div class="manual-section">
-        <div class="manual-section-header" style="background:${sec.color}18;border:1px solid ${sec.color}33" onclick="toggleManual(this)">
-          <span class="manual-section-icon">${sec.icon}</span>
-          <span class="manual-section-title" style="color:${sec.color}">${sec.title}</span>
-          <span class="manual-section-chevron">⌄</span>
-        </div>
-        <div class="manual-body">${itemsHtml}</div>
-      </div>`;
-    }).join('');
-  }
-
-  document.getElementById('manual-content').innerHTML = renderManual(sections);
-
-  // Auto-open first section
-  const firstHeader = document.querySelector('.manual-section-header');
-  if (firstHeader) toggleManual(firstHeader);
-}
-
-function toggleManual(header) {
-  const body    = header.nextElementSibling;
-  const chevron = header.querySelector('.manual-section-chevron');
-  const isOpen  = body.classList.toggle('open');
-  chevron.classList.toggle('open', isOpen);
-}
-
-// ═══════════════════════════════════════════════
-// STRAIN DATABASE (LOCAL)
-// ═══════════════════════════════════════════════
-const STRAIN_DB = {
-  "og kush": {
-    name: "OG Kush", type: "hybrid", thc: "19-26%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Relaxante, Eufórico, Fome", aromas: "Pinho, Terra, Cítrico",
-    description: "Uma das strains mais famosas do mundo. Conhecida pelo seu aroma terroso e efeitos potentes.",
-    growTip: "Gosta de climas secos e responde muito bem a técnicas de LST.",
-    medicalNote: "Eficaz contra estresse e insônia."
-  },
-  "haze": {
-    name: "Original Haze", type: "sativa", thc: "16-20%", cbd: "< 1%", flowerWeeks: "12-14 semanas",
-    effects: "Criativo, Energético, Foco", aromas: "Cítrico, Picante, Doce",
-    description: "A base de muitas sativas modernas. Ciclo longo mas recompensa com efeitos cerebrais puros.",
-    growTip: "Cresce muito em altura. Reserve espaço vertical ou use SCROG.",
-    medicalNote: "Ajuda na depressão e fadiga crônica."
-  },
-  "amnesia haze": {
-    name: "Amnesia Haze", type: "sativa", thc: "20-25%", cbd: "< 1%", flowerWeeks: "10-12 semanas",
-    effects: "Eufórico, Energético, Feliz", aromas: "Cítrico, Limão, Terroso",
-    description: "Ganhadora de várias Cannabis Cups. Sativa potente com sabor cítrico marcante.",
-    growTip: "Sensível a pragas. Mantenha o MIP em dia e reforce a ventilação.",
-    medicalNote: "Excelente para foco e criatividade."
-  },
-  "blue dream": {
-    name: "Blue Dream", type: "sativa-dominant", thc: "17-24%", cbd: "1-2%", flowerWeeks: "9-10 semanas",
-    effects: "Criativo, Energético, Relaxante", aromas: "Mirtilo, Doce, Baga",
-    description: "Híbrida clássica da Califórnia. Equilíbrio perfeito entre relaxamento físico e estímulo mental.",
+          example: `�// STRAIN_DB moveu para strains.js.
+stímulo mental.",
     growTip: "Fácil de cultivar, mas pode ser alvo de oídio se a umidade subir muito no final.",
     medicalNote: "Alivia dores crônicas sem causar sedação excessiva."
   },
@@ -1834,6 +1742,8 @@ function renderStrainData(info) {
   document.getElementById('strain-type-label').textContent = typeLabel;
   document.getElementById('strain-thc').textContent = info.thc;
   document.getElementById('strain-desc').textContent = info.description;
+  document.getElementById('strain-lineage').textContent = info.lineage || '---';
+  document.getElementById('strain-terpenes').textContent = info.terpenes || '---';
   document.getElementById('strain-flower').textContent = info.flowerWeeks;
   document.getElementById('strain-cbd').textContent = info.cbd;
   document.getElementById('strain-effect').textContent = info.effects;
@@ -1883,6 +1793,8 @@ function restoreStrainPanel() {
   document.getElementById('strain-type-label').textContent = typeLabel;
   document.getElementById('strain-thc').textContent = info.thc;
   document.getElementById('strain-desc').textContent = info.description;
+  document.getElementById('strain-lineage').textContent = info.lineage || '---';
+  document.getElementById('strain-terpenes').textContent = info.terpenes || '---';
   document.getElementById('strain-flower').textContent = info.flowerWeeks;
   document.getElementById('strain-cbd').textContent = info.cbd;
   document.getElementById('strain-effect').textContent = info.effects;
