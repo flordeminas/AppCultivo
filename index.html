@@ -6,26 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0d1f14">
-<title>CultivoApp — Planejador</title>
+<title>CultivoApp — Jardim</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="og-image.png">
-
-<!-- Open Graph / Social Sharing -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://flordeminas.github.io/AppCultivo/">
-<meta property="og:title" content="CultivoApp — Flor de Minas">
-<meta property="og:description" content="Planejador de cultivo automático para cannabis medicinal. Controle fases, adubação e MIP direto no celular.">
-<meta property="og:image" content="https://flordeminas.github.io/AppCultivo/og-image.png">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://flordeminas.github.io/AppCultivo/">
-<meta property="twitter:title" content="CultivoApp — Flor de Minas">
-<meta property="twitter:description" content="Planejador de cultivo automático para cannabis medicinal. Controle fases, adubação e MIP direto no celular.">
-<meta property="twitter:image" content="https://flordeminas.github.io/AppCultivo/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="strains.js"></script>
 <style>
+
 :root {
   --bg:        #0d1f14;
   --bg2:       #132b1c;
@@ -459,322 +444,512 @@ html, body {
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+
+/* ── Jardim / Multi-cultivo ─────────────────── */
+#jardim-screen {
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  background:var(--bg);
+  z-index:10;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
+}
+#jardim-screen.hidden {
+  transform:translateY(-100%);opacity:0;pointer-events:none;
+}
+#jardim-header {
+  padding:16px 20px 12px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  display:flex;align-items:center;gap:12px;
+}
+#jardim-body {
+  flex:1;overflow-y:auto;padding:20px 16px 100px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.jardim-hero {
+  margin-bottom:24px;
+}
+.jardim-hero h2 {
+  font-family:var(--serif);font-size:26px;font-weight:400;
+  color:var(--text);line-height:1.15;margin-bottom:6px;
+}
+.jardim-hero p {font-size:13px;color:var(--text3);line-height:1.6;}
+.jardim-grid {display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.cultivo-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  cursor:pointer;
+  transition:border-color .2s,background .2s;
+  position:relative;
+  overflow:hidden;
+}
+.cultivo-card::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--card-accent,var(--green));
+  border-radius:4px 0 0 4px;
+}
+.cultivo-card:active {background:var(--surface2);}
+.cultivo-card.active-card {border-color:var(--green);background:var(--green-dim);}
+.cc-top {display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.cc-icon {
+  width:40px;height:40px;border-radius:10px;
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+}
+.cc-info {flex:1;min-width:0;}
+.cc-name {
+  font-family:var(--serif);font-size:17px;color:var(--text);
+  line-height:1.1;margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cc-strain {font-size:12px;color:var(--text3);}
+.cc-actions {display:flex;gap:6px;flex-shrink:0;}
+.cc-btn {
+  width:32px;height:32px;border-radius:8px;border:none;
+  background:rgba(255,255,255,0.06);color:var(--text3);
+  font-size:15px;cursor:pointer;display:grid;place-items:center;
+  transition:background .15s,color .15s;
+}
+.cc-btn:active{background:rgba(255,255,255,.15);color:var(--text);}
+.cc-bar {height:6px;border-radius:4px;display:flex;gap:2px;margin-bottom:8px;overflow:hidden;}
+.cc-bar-seg {height:100%;border-radius:2px;}
+.cc-meta {display:flex;gap:12px;flex-wrap:wrap;}
+.cc-chip {
+  font-size:10px;font-weight:600;padding:2px 8px;
+  border-radius:10px;letter-spacing:.03em;
+}
+.cc-phase-now {
+  font-size:11px;color:var(--text2);font-weight:500;
+}
+.btn-add-jardim {
+  width:100%;padding:14px;
+  background:var(--green-dim);
+  border:1.5px dashed var(--border2);
+  border-radius:var(--radius);
+  color:var(--green);font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:pointer;transition:background .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-add-jardim:active{background:rgba(82,183,120,.2);}
+.jardim-overview {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:16px;
+}
+.jardim-overview h3 {
+  font-size:12px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;
+}
+.overview-row {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.overview-row:last-child{border-bottom:none;}
+.ov-label{color:var(--text3);}
+.ov-val{color:var(--text);font-weight:500;}
+.ov-phase{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;}
+
+/* Modal de novo cultivo */
+.modal-backdrop {
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.7);
+  z-index:50;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.modal-backdrop.hidden{display:none;}
+.modal-sheet {
+  background:var(--bg2);
+  border-radius:20px 20px 0 0;
+  padding:20px 20px 40px;
+  max-height:90vh;overflow-y:auto;
+}
+.modal-handle {
+  width:36px;height:4px;background:var(--border2);
+  border-radius:2px;margin:0 auto 20px;
+}
+.modal-title {
+  font-family:var(--serif);font-size:20px;color:var(--text);
+  margin-bottom:4px;
+}
+.modal-sub {font-size:12px;color:var(--text3);margin-bottom:20px;}
+
+/* Pill color selector */
+.color-picker {display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.color-dot {
+  width:28px;height:28px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:transform .15s,border-color .15s;
+}
+.color-dot.selected{border-color:var(--text);transform:scale(1.15);}
+
+/* Back button in header */
+.btn-back {
+  width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);
+  background:var(--surface);color:var(--text2);font-size:18px;
+  cursor:pointer;display:grid;place-items:center;flex-shrink:0;
+}
+.jardim-tag {
+  font-size:10px;font-weight:600;padding:3px 8px;
+  border-radius:12px;background:rgba(82,183,120,.15);
+  color:var(--green);border:1px solid var(--border2);
+  letter-spacing:.04em;flex-shrink:0;
+}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- HEADER -->
-  <div id="header">
-    <div class="logo-mark">🌿</div>
-    <div class="logo-text">
-      <h1>CultivoApp</h1>
-      <span>Planejador de Cultivo</span>
+  <!-- ══ JARDIM SCREEN (home) ══ -->
+  <div id="jardim-screen">
+    <div id="jardim-header">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-text">
+        <h1>CultivoApp</h1>
+        <span id="jardim-subtitle">Meu Jardim</span>
+      </div>
+      <span class="jardim-tag" id="jardim-count">0 cultivos</span>
     </div>
-    <div class="header-badge" id="status-badge">Novo cultivo</div>
+
+    <div id="jardim-body">
+      <div class="jardim-hero">
+        <h2>Seu jardim completo<br>em um só lugar.</h2>
+        <p>Cada planta com seu próprio cronograma, adubação e protocolo. Alterne entre cultivos com um toque.</p>
+      </div>
+
+      <div class="jardim-overview" id="jardim-today-panel" style="display:none">
+        <h3>📋 Ações de hoje</h3>
+        <div id="jardim-today-rows"></div>
+      </div>
+
+      <div class="jardim-grid" id="jardim-grid"></div>
+
+      <button class="btn-add-jardim" onclick="openNewModal()">
+        <span style="font-size:20px">＋</span>
+        Adicionar cultivo ao jardim
+      </button>
+    </div>
+
+    <!-- Modal de novo/editar cultivo -->
+    <div class="modal-backdrop hidden" id="modal-backdrop" onclick="closeModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="modal-title">Novo cultivo</div>
+        <div class="modal-sub" id="modal-sub">Configure as informações básicas</div>
+
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-label"><span class="dot"></span>Identificação</div>
+          <div class="field">
+            <label>🏷️ Nome do cultivo</label>
+            <input type="text" id="m-name" placeholder="Ex: Tent A, Bancada 2...">
+          </div>
+          <div class="field">
+            <label>🌿 Strain / Cultivar</label>
+            <input type="text" id="m-strain" placeholder="Ex: OG Kush, Blue Dream...">
+          </div>
+          <div class="field">
+            <label>🎨 Cor de identificação</label>
+            <div class="color-picker" id="color-picker">
+              <div class="color-dot selected" style="background:#52b778" data-color="#52b778" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#2196F3" data-color="#2196F3" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#9b72cf" data-color="#9b72cf" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#e8a43a" data-color="#e8a43a" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#e05c5c" data-color="#e05c5c" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#F06292" data-color="#F06292" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#4DB6AC" data-color="#4DB6AC" onclick="selectColor(this)"></div>
+              <div class="color-dot" style="background:#a8c4ac" data-color="#a8c4ac" onclick="selectColor(this)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-label"><span class="dot"></span>Datas e fases</div>
+          <div class="field">
+            <label>📅 Data do Dia 1 (clone)</label>
+            <input type="date" id="m-date">
+          </div>
+          <div class="field">
+            <label>🌱 Semanas de Clone</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="mStep('clone',-1)">−</button>
+              <div class="stepper-val" id="m-val-clone">2 <span class="stepper-unit">sem</span></div>
+              <button class="stepper-btn" onclick="mStep('clone',1)">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>🌿 Semanas de Vegetativo</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="mStep('vega',-1)">−</button>
+              <div class="stepper-val" id="m-val-vega">6 <span class="stepper-unit">sem</span></div>
+              <button class="stepper-btn" onclick="mStep('vega',1)">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>🌸 Semanas de Floração</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="mStep('flora',-1)">−</button>
+              <div class="stepper-val" id="m-val-flora">9 <span class="stepper-unit">sem</span></div>
+              <button class="stepper-btn" onclick="mStep('flora',1)">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>🚿 Semanas de Flush</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="mStep('flush',-1)">−</button>
+              <div class="stepper-val" id="m-val-flush">1 <span class="stepper-unit">sem</span></div>
+              <button class="stepper-btn" onclick="mStep('flush',1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-label"><span class="dot"></span>Protocolo de nutrição</div>
+          <div class="proto-grid" id="m-proto-grid">
+            <div class="proto-pill selected" onclick="mSelectProto('biobizz',this)">
+              <div class="proto-icon">🌿</div>
+              <div class="proto-name">BioBizz</div>
+              <div class="proto-sub">Orgânico · Solo</div>
+            </div>
+            <div class="proto-pill" onclick="mSelectProto('remo',this)">
+              <div class="proto-icon">⚗️</div>
+              <div class="proto-name">Remo Nutrients</div>
+              <div class="proto-sub">Mineral/Org · Multi</div>
+            </div>
+            <div class="proto-pill" onclick="mSelectProto('go',this)">
+              <div class="proto-icon">📦</div>
+              <div class="proto-name">General Organics</div>
+              <div class="proto-sub">GO Box · Solo</div>
+            </div>
+            <div class="proto-pill" onclick="mSelectProto('supersoil',this)">
+              <div class="proto-icon">🌍</div>
+              <div class="proto-name">SuperSoil</div>
+              <div class="proto-sub">Solo vivo · Cobertura</div>
+            </div>
+            <div class="proto-pill" onclick="mSelectProto('generic',this)" style="grid-column:span 2">
+              <div class="proto-icon">✏️</div>
+              <div class="proto-name">Genérico / Personalizado</div>
+              <div class="proto-sub">Preencha seu protocolo</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="saveModal()" id="modal-save-btn">Salvar cultivo →</button>
+        <button class="btn-secondary" onclick="closeModal()" style="margin-top:8px">Cancelar</button>
+        <button class="btn-secondary" id="modal-delete-btn" onclick="deleteActiveCultivo()"
+          style="margin-top:8px;display:none;color:var(--red);border-color:rgba(224,92,92,.3)">
+          🗑️ Excluir este cultivo
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <button class="nav-tab active" onclick="gotoPage(0)" id="tab-0">
-      <span class="icon">⚙️</span>Configurar
-    </button>
-    <button class="nav-tab" onclick="gotoPage(1)" id="tab-1">
-      <span class="icon">📅</span>Cronograma
-    </button>
-    <button class="nav-tab" onclick="gotoPage(2)" id="tab-2">
-      <span class="icon">💊</span>Adubação
-    </button>
-    <button class="nav-tab" onclick="gotoPage(3)" id="tab-3">
-      <span class="icon">🐛</span>MIP
-    </button>
-    <button class="nav-tab" onclick="gotoPage(4)" id="tab-4">
-      <span class="icon">📖</span>Guia
-    </button>
-    <button class="nav-tab" onclick="gotoPage(5)" id="tab-5">
-      <span class="icon">📘</span>Manual
-    </button>
-  </nav>
+  <!-- ══ CULTIVO DETAIL SCREEN ══ -->
+  <div id="detail-screen" style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)">
 
-  <!-- PAGES -->
-  <div id="pages">
-
-    <!-- PAGE 0: CONFIGURAÇÃO -->
-    <div class="page active" id="page-0">
-      <p class="section-title">Configure seu cultivo</p>
-      <p class="section-sub">Preencha uma vez e toda a planilha se ajusta automaticamente.</p>
-
-      <div class="card">
-        <div class="card-label"><span class="dot"></span>Informações básicas</div>
-        <div class="field">
-          <label>📅 Data do Dia 1 (clone)</label>
-          <input type="date" id="cfg-date">
-        </div>
-        <div class="field">
-          <label>🌿 Strain / Cultivar</label>
-          <input type="text" id="cfg-strain" list="strain-list" placeholder="Ex: OG Kush, Blue Dream...">
-          <datalist id="strain-list"></datalist>
-        </div>
+    <!-- Header do detalhe -->
+    <div id="header" style="padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px">
+      <button class="btn-back" onclick="backToJardim()">‹</button>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:var(--serif);font-size:16px;color:var(--text);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="detail-title">—</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px" id="detail-strain">—</div>
       </div>
-
-      <div class="card">
-        <div class="card-label"><span class="dot"></span>Duração das fases (semanas)</div>
-
-        <div class="field">
-          <label>🌱 Clone</label>
-          <div class="stepper">
-            <button class="stepper-btn" onclick="stepChange('clone',-1)">−</button>
-            <div class="stepper-val" id="val-clone">2 <span class="stepper-unit">sem</span></div>
-            <button class="stepper-btn" onclick="stepChange('clone',1)">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>🌿 Vegetativo</label>
-          <div class="stepper">
-            <button class="stepper-btn" onclick="stepChange('vega',-1)">−</button>
-            <div class="stepper-val" id="val-vega">6 <span class="stepper-unit">sem</span></div>
-            <button class="stepper-btn" onclick="stepChange('vega',1)">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>🌸 Floração</label>
-          <div class="stepper">
-            <button class="stepper-btn" onclick="stepChange('flora',-1)">−</button>
-            <div class="stepper-val" id="val-flora">9 <span class="stepper-unit">sem</span></div>
-            <button class="stepper-btn" onclick="stepChange('flora',1)">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>🚿 Flush</label>
-          <div class="stepper">
-            <button class="stepper-btn" onclick="stepChange('flush',-1)">−</button>
-            <div class="stepper-val" id="val-flush">1 <span class="stepper-unit">sem</span></div>
-            <button class="stepper-btn" onclick="stepChange('flush',1)">+</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-label"><span class="dot"></span>Protocolo de nutrição</div>
-        <div class="proto-grid" id="proto-grid">
-          <div class="proto-pill selected" onclick="selectProto('biobizz')">
-            <div class="proto-icon">🌿</div>
-            <div class="proto-name">BioBizz</div>
-            <div class="proto-sub">Orgânico · Solo</div>
-          </div>
-          <div class="proto-pill" onclick="selectProto('remo')">
-            <div class="proto-icon">⚗️</div>
-            <div class="proto-name">Remo Nutrients</div>
-            <div class="proto-sub">Mineral/Org · Multi</div>
-          </div>
-          <div class="proto-pill" onclick="selectProto('go')">
-            <div class="proto-icon">📦</div>
-            <div class="proto-name">General Organics</div>
-            <div class="proto-sub">GO Box · Solo</div>
-          </div>
-          <div class="proto-pill" onclick="selectProto('supersoil')">
-            <div class="proto-icon">🌍</div>
-            <div class="proto-name">SuperSoil</div>
-            <div class="proto-sub">Solo vivo · Cobertura</div>
-          </div>
-          <div class="proto-pill" onclick="selectProto('generic')" style="grid-column:span 2">
-            <div class="proto-icon">✏️</div>
-            <div class="proto-name">Genérico / Personalizado</div>
-            <div class="proto-sub">Preencha seu próprio protocolo</div>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn-primary" onclick="saveCfg()">Gerar planejamento completo →</button>
-      <button class="btn-secondary" onclick="resetCfg()">Limpar e recomeçar</button>
+      <button class="cc-btn" onclick="openEditModal()" title="Editar">✏️</button>
+      <div class="header-badge" id="status-badge">—</div>
     </div>
 
-    <!-- PAGE 1: CRONOGRAMA -->
-    <div class="page" id="page-1">
-      <div id="crono-empty" class="empty-state" style="display:none">
-        <div class="empty-icon">📅</div>
-        <h3>Nenhum cultivo configurado</h3>
-        <p>Configure as datas e semanas na aba ⚙️ Configurar para ver o cronograma completo.</p>
-      </div>
-      <div id="crono-content">
-        <div class="progress-ring-wrap">
-          <svg class="progress-ring" width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(82,183,120,0.15)" stroke-width="6"/>
-            <circle id="prog-circle" cx="36" cy="36" r="30" fill="none" stroke="#52b778" stroke-width="6"
-              stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
-          </svg>
-          <div class="progress-info">
-            <div class="progress-pct" id="prog-pct">0%</div>
-            <div class="progress-label" id="prog-label">Configure seu cultivo para começar</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px" id="prog-day">—</div>
-          </div>
-        </div>
+    <!-- Nav do detalhe -->
+    <nav id="nav" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none">
+      <button class="nav-tab active" onclick="gotoPage(0)" id="tab-0"><span class="icon">📅</span>Cronograma</button>
+      <button class="nav-tab" onclick="gotoPage(1)" id="tab-1"><span class="icon">💊</span>Adubação</button>
+      <button class="nav-tab" onclick="gotoPage(2)" id="tab-2"><span class="icon">🐛</span>MIP</button>
+      <button class="nav-tab" onclick="gotoPage(3)" id="tab-3"><span class="icon">📖</span>Guia</button>
+      <button class="nav-tab" onclick="gotoPage(4)" id="tab-4"><span class="icon">📘</span>Manual</button>
+    </nav>
 
-        <!-- Phase bar -->
-        <div class="phase-bar" id="phase-bar">
-          <div class="phase-seg" style="background:#52b778;flex:2"></div>
-          <div class="phase-seg" style="background:#2196F3;flex:6"></div>
-          <div class="phase-seg" style="background:#9b72cf;flex:9"></div>
-          <div class="phase-seg" style="background:#e05c5c;flex:1"></div>
-        </div>
+    <!-- Pages do detalhe -->
+    <div id="pages" style="flex:1;overflow:hidden;position:relative">
 
-        <div class="stats-grid" id="stats-grid">
-          <div class="stat-card">
-            <div class="stat-val" id="stat-total">—</div>
-            <div class="stat-unit">dias totais</div>
-            <div class="stat-label">Duração do cultivo</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val" id="stat-harvest">—</div>
-            <div class="stat-unit"></div>
-            <div class="stat-label">Data da colheita</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val" id="stat-phase">—</div>
-            <div class="stat-unit"></div>
-            <div class="stat-label">Fase atual</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val" id="stat-daysleft">—</div>
-            <div class="stat-unit">dias</div>
-            <div class="stat-label">Até a colheita</div>
-          </div>
+      <!-- PAGE 0: CRONOGRAMA -->
+      <div class="page active" id="page-0">
+        <div id="crono-empty" class="empty-state" style="display:none">
+          <div class="empty-icon">📅</div>
+          <h3>Configure o cultivo</h3>
+          <p>Volte ao Jardim e edite este cultivo para ver o cronograma.</p>
         </div>
-
-        <!-- Strain info card -->
-        <div class="strain-card" id="strain-card" style="display:none">
-          <div id="strain-inner">
-            <div class="strain-loading">
-              <div class="strain-dot"></div>
-              <span>Buscando informações da strain...</span>
+        <div id="crono-content">
+          <div class="progress-ring-wrap">
+            <svg class="progress-ring" width="72" height="72" viewBox="0 0 72 72">
+              <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(82,183,120,0.15)" stroke-width="6"/>
+              <circle id="prog-circle" cx="36" cy="36" r="30" fill="none" stroke="#52b778" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+            </svg>
+            <div class="progress-info">
+              <div class="progress-pct" id="prog-pct">0%</div>
+              <div class="progress-label" id="prog-label">—</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px" id="prog-day">—</div>
             </div>
           </div>
-        </div>
-
-        <!-- Strain info panel -->
-        <div id="strain-panel" style="display:none;margin-bottom:16px">
-          <div id="strain-card" class="card" style="padding:0;overflow:hidden">
-            <div id="strain-loading" style="padding:18px;text-align:center;color:var(--text3);font-size:13px">
-              <div style="font-size:24px;margin-bottom:6px">🔍</div>
-              Buscando informações sobre <strong id="strain-loading-name" style="color:var(--text2)"></strong>...
-            </div>
-            <div id="strain-data" style="display:none">
-              <div id="strain-header" style="padding:16px 18px 12px;border-bottom:1px solid var(--border)">
-                <div style="display:flex;align-items:flex-start;gap:12px">
-                  <div id="strain-type-badge" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0"></div>
-                  <div style="flex:1;min-width:0">
-                    <div style="font-family:var(--serif);font-size:18px;color:var(--text)" id="strain-name-display"></div>
-                    <div style="font-size:12px;color:var(--text3);margin-top:2px" id="strain-type-label"></div>
-                  </div>
-                  <div style="text-align:right;flex-shrink:0">
-                    <div style="font-family:var(--serif);font-size:20px;color:var(--amber)" id="strain-thc"></div>
-                    <div style="font-size:10px;color:var(--text3)">THC</div>
-                  </div>
-                </div>
-                <p id="strain-desc" style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6"></p>
-                <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                  <div>
-                    <div style="font-size:10px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em">Linhagem</div>
-                    <div style="font-size:13px;color:var(--text);font-weight:500" id="strain-lineage"></div>
-                  </div>
-                  <div>
-                    <div style="font-size:10px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em">Terpenos</div>
-                    <div style="font-size:13px;color:var(--text);font-weight:500" id="strain-terpenes"></div>
-                  </div>
-                </div>
+          <div class="phase-bar" id="phase-bar"></div>
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card"><div class="stat-val" id="stat-total">—</div><div class="stat-unit">dias totais</div><div class="stat-label">Duração</div></div>
+            <div class="stat-card"><div class="stat-val" id="stat-harvest">—</div><div class="stat-unit"></div><div class="stat-label">Colheita</div></div>
+            <div class="stat-card"><div class="stat-val" id="stat-phase">—</div><div class="stat-unit"></div><div class="stat-label">Fase atual</div></div>
+            <div class="stat-card"><div class="stat-val" id="stat-daysleft">—</div><div class="stat-unit">dias</div><div class="stat-label">Até colheita</div></div>
+          </div>
+          <!-- Strain panel -->
+          <div id="strain-panel" style="display:none;margin-bottom:16px">
+            <div id="strain-card" class="card" style="padding:0;overflow:hidden">
+              <div id="strain-loading" style="padding:18px;text-align:center;color:var(--text3);font-size:13px">
+                <div style="font-size:24px;margin-bottom:6px">🔍</div>
+                Buscando <strong id="strain-loading-name" style="color:var(--text2)"></strong>...
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
-                <div style="background:var(--surface);padding:12px 14px">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Floração</div>
-                  <div style="font-size:15px;font-weight:600;color:var(--purple)" id="strain-flower"></div>
+              <div id="strain-data" style="display:none">
+                <div id="strain-header" style="padding:16px 18px 12px;border-bottom:1px solid var(--border)">
+                  <div style="display:flex;align-items:flex-start;gap:12px">
+                    <div id="strain-type-badge" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0"></div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-family:var(--serif);font-size:18px;color:var(--text)" id="strain-name-display"></div>
+                      <div style="font-size:12px;color:var(--text3);margin-top:2px" id="strain-type-label"></div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0">
+                      <div style="font-family:var(--serif);font-size:20px;color:var(--amber)" id="strain-thc"></div>
+                      <div style="font-size:10px;color:var(--text3)">THC</div>
+                    </div>
+                  </div>
+                  <p id="strain-desc" style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6"></p>
                 </div>
-                <div style="background:var(--surface);padding:12px 14px">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">CBD</div>
-                  <div style="font-size:15px;font-weight:600;color:var(--green)" id="strain-cbd"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+                  <div style="background:var(--surface);padding:12px 14px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Floração</div><div style="font-size:15px;font-weight:600;color:var(--purple)" id="strain-flower"></div></div>
+                  <div style="background:var(--surface);padding:12px 14px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">CBD</div><div style="font-size:15px;font-weight:600;color:var(--green)" id="strain-cbd"></div></div>
+                  <div style="background:var(--surface);padding:12px 14px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Efeito</div><div style="font-size:13px;color:var(--text2)" id="strain-effect"></div></div>
+                  <div style="background:var(--surface);padding:12px 14px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Aromas</div><div style="font-size:13px;color:var(--text2)" id="strain-aroma"></div></div>
                 </div>
-                <div style="background:var(--surface);padding:12px 14px">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Efeito principal</div>
-                  <div style="font-size:13px;color:var(--text2)" id="strain-effect"></div>
-                </div>
-                <div style="background:var(--surface);padding:12px 14px">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Aromas</div>
-                  <div style="font-size:13px;color:var(--text2)" id="strain-aroma"></div>
-                </div>
+                <div style="padding:12px 14px;background:var(--surface)"><div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Dica de cultivo</div><div style="font-size:12px;color:var(--text2);line-height:1.6" id="strain-tip"></div></div>
+                <div id="strain-warn" style="display:none;padding:10px 14px;background:var(--amber-dim);border-top:1px solid rgba(232,164,58,.2)"><div style="font-size:11px;color:var(--amber);line-height:1.5" id="strain-warn-text"></div></div>
               </div>
-              <div style="padding:12px 14px;background:var(--surface)">
-                <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Dica de cultivo</div>
-                <div style="font-size:12px;color:var(--text2);line-height:1.6" id="strain-tip"></div>
-              </div>
-              <div id="strain-warn" style="display:none;padding:10px 14px;background:var(--amber-dim);border-top:1px solid rgba(232,164,58,.2)">
-                <div style="font-size:11px;color:var(--amber);line-height:1.5" id="strain-warn-text"></div>
-              </div>
-            </div>
-            <div id="strain-error" style="display:none;padding:14px 18px;font-size:12px;color:var(--text3)">
-              ⚠️ Não foi possível encontrar informações sobre esta strain. Verifique o nome e tente novamente.
+              <div id="strain-error" style="display:none;padding:14px 18px;font-size:12px;color:var(--text3)">⚠️ Strain não encontrada. Verifique o nome.</div>
             </div>
           </div>
-        </div>
-
-        <!-- Week navigator -->
-        <div class="week-nav">
-          <button onclick="changeWeek(-1)">‹</button>
-          <div>
-            <div class="week-label" id="week-label">Semana 1</div>
-            <div class="week-sub" id="week-sub">—</div>
+          <!-- Week nav -->
+          <div class="week-nav">
+            <button onclick="changeWeek(-1)">‹</button>
+            <div><div class="week-label" id="week-label">Semana 1</div><div class="week-sub" id="week-sub">—</div></div>
+            <button onclick="changeWeek(1)">›</button>
           </div>
-          <button onclick="changeWeek(1)">›</button>
+          <div class="timeline" id="week-days"></div>
         </div>
-
-        <div class="timeline" id="week-days"></div>
       </div>
-    </div>
 
-    <!-- PAGE 2: ADUBAÇÃO -->
-    <div class="page" id="page-2">
-      <p class="section-title">Protocolo de Adubação</p>
-      <div id="adub-proto-badge" style="margin-bottom:16px"></div>
-      <div id="adub-content"></div>
-    </div>
+      <!-- PAGE 1: ADUBAÇÃO -->
+      <div class="page" id="page-1">
+        <p class="section-title">Protocolo de Adubação</p>
+        <div id="adub-proto-badge" style="margin-bottom:16px"></div>
+        <div id="adub-content"></div>
+      </div>
 
-    <!-- PAGE 3: MIP -->
-    <div class="page" id="page-3">
-      <p class="section-title">Controle de Pragas</p>
-      <p class="section-sub">Protocolo preventivo. Nunca usar foliar após Flora S3.</p>
-      <div class="warning-banner">⚠️ Nunca misturar Calda Sulfocálcica + Nim. Intervalo mínimo de 7 dias entre foliares.</div>
-      <div id="mip-content"></div>
-    </div>
+      <!-- PAGE 2: MIP -->
+      <div class="page" id="page-2">
+        <p class="section-title">Controle de Pragas</p>
+        <p class="section-sub">Protocolo preventivo. Sem foliar após Flora S3.</p>
+        <div class="warning-banner">⚠️ Nunca misturar Calda Sulfocálcica + Nim. Intervalo mínimo de 7 dias entre foliares.</div>
+        <div id="mip-content"></div>
+      </div>
 
-    <!-- PAGE 4: GUIA RÁPIDO -->
-    <div class="page" id="page-4">
-      <p class="section-title">Guia Rápido</p>
-      <p class="section-sub">Referência de parâmetros ideais para cannabis medicinal indoor.</p>
-      <div id="guia-content"></div>
-    </div>
+      <!-- PAGE 3: GUIA -->
+      <div class="page" id="page-3">
+        <p class="section-title">Guia Rápido</p>
+        <p class="section-sub">Parâmetros ideais para cannabis medicinal indoor.</p>
+        <div id="guia-content"></div>
+      </div>
 
-    <!-- PAGE 5: MANUAL DE INSTRUÇÕES -->
-    <div class="page" id="page-5">
-      <p class="section-title">Manual de Instruções</p>
-      <p class="section-sub">Como ler e usar cada aba do app. Ideal para iniciantes.</p>
-      <div id="manual-content"></div>
-    </div>
+      <!-- PAGE 4: MANUAL -->
+      <div class="page" id="page-4">
+        <p class="section-title">Manual de Instruções</p>
+        <p class="section-sub">Como ler cada aba e o que cada informação significa.</p>
+        <div id="manual-content"></div>
+      </div>
 
-  </div><!-- /pages -->
+    </div><!-- /pages -->
+  </div><!-- /detail-screen -->
+
 </div><!-- /app -->
 
 <script>
 // ═══════════════════════════════════════════════
-// STATE
+// MULTI-CULTIVO STATE
 // ═══════════════════════════════════════════════
-const state = {
-  date: null, strain: '', proto: 'biobizz',
-  weeks: { clone: 2, vega: 6, flora: 9, flush: 1 },
-  currentWeek: 1
-};
-
 const LIMITS = { clone:[1,4], vega:[4,12], flora:[8,16], flush:[1,2] };
 
+// jardimState: { cultivos: [...], activeId: null }
+let jardimState = { cultivos: [], activeId: null };
+
+// Cultivo em edição no modal
+let modalState = {
+  id: null, // null = novo
+  name: '', strain: '', color: '#52b778', proto: 'biobizz',
+  date: '', weeks: {clone:2, vega:6, flora:9, flush:1}, currentWeek: 1,
+  strainInfo: null
+};
+
+// Estado do cultivo ATIVO (para as funções de cronograma/adub/mip)
+// É um ponteiro para jardimState.cultivos[activeIdx]
+function getActiveCultivo() {
+  return jardimState.cultivos.find(c => c.id === jardimState.activeId) || null;
+}
+// Compat shim: state.xxx usado pelas funções de detalhe
+const state = new Proxy({}, {
+  get(_, k) {
+    const c = getActiveCultivo();
+    if (!c) return undefined;
+    if (k === 'weeks') return c.weeks;
+    if (k === 'proto')  return c.proto;
+    if (k === 'date')   return c.date;
+    if (k === 'strain') return c.strain;
+    if (k === 'currentWeek') return c.currentWeek;
+    if (k === 'strainInfo')  return c.strainInfo;
+    return c[k];
+  },
+  set(_, k, v) {
+    const c = getActiveCultivo();
+    if (c) c[k] = v;
+    return true;
+  }
+});
+
 // ═══════════════════════════════════════════════
-// NUTRITION DATA
+// PERSISTENCE
+// ═══════════════════════════════════════════════
+function saveJardim() {
+  localStorage.setItem('jardimState', JSON.stringify(jardimState));
+}
+function loadJardim() {
+  try {
+    const s = JSON.parse(localStorage.getItem('jardimState') || 'null');
+    if (s && Array.isArray(s.cultivos)) {
+      jardimState = s;
+    }
+    // Migrar estado antigo (single cultivo)
+    const old = JSON.parse(localStorage.getItem('cultivoState') || 'null');
+    if (old && old.date && jardimState.cultivos.length === 0) {
+      const migrated = {
+        id: genId(), name: old.strain || 'Cultivo 1',
+        strain: old.strain || '', color: '#52b778',
+        proto: old.proto || 'biobizz', date: old.date,
+        weeks: old.weeks || {clone:2,vega:6,flora:9,flush:1},
+        currentWeek: old.currentWeek || 1,
+        strainInfo: old.strainInfo || null
+      };
+      jardimState.cultivos.push(migrated);
+      saveJardim();
+      localStorage.removeItem('cultivoState');
+    }
+  } catch(e) {}
+}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ═══════════════════════════════════════════════
+// PROTOCOLS + MIP DATA
 // ═══════════════════════════════════════════════
 const PROTOCOLS = {
   biobizz: {
@@ -939,6 +1114,7 @@ const PROTOCOLS = {
   }
 };
 
+
 const MIP_SCHEDULE = [
   {fase:'Clone', sem:1, prod:'Nim (2 mL/L)', via:'Foliar leve', obs:'Preventivo geral'},
   {fase:'Clone', sem:2, prod:'Beauveria bassiana (5 g/L)', via:'Foliar + solo', obs:'Fungo entomopatogênico'},
@@ -956,367 +1132,594 @@ const MIP_SCHEDULE = [
   {fase:'Flush', sem:1, prod:'Inspeção final', via:'Visual', obs:'Analisar tricomas diariamente'},
 ];
 
+
+
 // ═══════════════════════════════════════════════
-// HELPERS
+// HELPERS (compartilhados)
 // ═══════════════════════════════════════════════
-function addDays(date, n) {
-  const d = new Date(date); d.setDate(d.getDate() + n); return d;
-}
+function addDays(date, n) { const d=new Date(date); d.setDate(d.getDate()+n); return d; }
 function fmtDate(d, short=false) {
   if (!d) return '—';
   return d.toLocaleDateString('pt-BR', short
-    ? {day:'2-digit', month:'2-digit'}
-    : {day:'2-digit', month:'short'});
+    ? {day:'2-digit',month:'2-digit'}
+    : {day:'2-digit',month:'short'});
 }
-function fmtDateFull(d) {
-  if (!d) return '—';
-  return d.toLocaleDateString('pt-BR', {day:'2-digit', month:'short', year:'numeric'});
-}
-function getDates() {
-  if (!state.date) return null;
-  const d0 = new Date(state.date + 'T12:00:00');
-  const w = state.weeks;
-  const dClone = w.clone * 7;
-  const dVega  = w.vega  * 7;
-  const dFlora = w.flora * 7;
-  const dFlush = w.flush * 7;
+function getDates(cultivo) {
+  const c = cultivo || getActiveCultivo();
+  if (!c || !c.date) return null;
+  const d0 = new Date(c.date + 'T12:00:00');
+  const w = c.weeks;
+  const dC=w.clone*7, dV=w.vega*7, dF=w.flora*7, dFl=w.flush*7;
   return {
-    d0,
-    iniVega:  addDays(d0, dClone),
-    iniFlora: addDays(d0, dClone + dVega),
-    iniFlush: addDays(d0, dClone + dVega + dFlora),
-    harvest:  addDays(d0, dClone + dVega + dFlora + dFlush),
-    totalDays: dClone + dVega + dFlora + dFlush,
+    d0, iniVega:addDays(d0,dC), iniFlora:addDays(d0,dC+dV),
+    iniFlush:addDays(d0,dC+dV+dF), harvest:addDays(d0,dC+dV+dF+dFl),
+    totalDays:dC+dV+dF+dFl
   };
 }
 function getPhaseForDate(date, dates) {
   if (!dates) return null;
-  const {d0, iniVega, iniFlora, iniFlush, harvest} = dates;
-  if (date < iniVega)  return {name:'Clone', color:'#52b778', short:'C'};
+  const {d0,iniVega,iniFlora,iniFlush,harvest} = dates;
+  if (date < iniVega)  return {name:'Clone',     color:'#52b778', short:'C'};
   if (date < iniFlora) return {name:'Vegetativo', color:'#2196F3', short:'V'};
-  if (date < iniFlush) return {name:'Floração', color:'#9b72cf', short:'F'};
-  if (date <= harvest) return {name:'Flush', color:'#e05c5c', short:'Fl'};
+  if (date < iniFlush) return {name:'Floração',   color:'#9b72cf', short:'F'};
+  if (date <= harvest) return {name:'Flush',      color:'#e05c5c', short:'Fl'};
   return null;
 }
 function getRelWeek(date, phaseStart) {
-  const diff = Math.floor((date - phaseStart) / (7*86400000));
-  return diff + 1;
+  return Math.floor((date - phaseStart)/(7*86400000)) + 1;
 }
 function getAdubForWeek(fase, sem) {
   const p = PROTOCOLS[state.proto];
   if (!p) return null;
   const key = {Clone:'clone',Vegetativo:'vega',Floração:'flora',Flush:'flush'}[fase];
-  return p[key]?.find(r => r.s === sem) || null;
+  return p[key]?.find(r => r.s===sem) || null;
 }
 function getMipForWeek(fase, sem) {
-  return MIP_SCHEDULE.find(m => m.fase === fase && m.sem === sem);
+  return MIP_SCHEDULE.find(m => m.fase===fase && m.sem===sem);
 }
-
-// ═══════════════════════════════════════════════
-// CONFIG PAGE
-// ═══════════════════════════════════════════════
-function stepChange(key, delta) {
-  const [min, max] = LIMITS[key];
-  state.weeks[key] = Math.max(min, Math.min(max, state.weeks[key] + delta));
-  document.getElementById('val-' + key).innerHTML =
-    `${state.weeks[key]} <span class="stepper-unit">sem</span>`;
+function calcCurrentWeek(cultivo) {
+  const c = cultivo || getActiveCultivo();
+  if (!c || !c.date) return 1;
+  const d0 = new Date(c.date + 'T12:00:00');
+  const now = new Date(); now.setHours(12,0,0,0);
+  const passed = Math.floor((now - d0) / 86400000);
+  const total  = (c.weeks.clone+c.weeks.vega+c.weeks.flora+c.weeks.flush)*7;
+  if (passed >= 0 && passed < total) return Math.floor(passed/7)+1;
+  return 1;
 }
-
-function selectProto(key) {
-  state.proto = key;
-  document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-}
-
-function saveCfg() {
-  const dateVal = document.getElementById('cfg-date').value;
-  const strain  = document.getElementById('cfg-strain').value;
-  if (!dateVal) { alert('Preencha a data do Dia 1 antes de continuar.'); return; }
-  state.date   = dateVal;
-  state.strain = strain || 'Meu cultivo';
-
-  // Calcular semana atual com base na data de hoje
-  const d0    = new Date(dateVal + 'T12:00:00');
+function getPhaseBadge(cultivo) {
+  const d = getDates(cultivo);
+  if (!d) return {label:'Sem data', color:'#888'};
   const today = new Date(); today.setHours(12,0,0,0);
-  const daysPassed = Math.floor((today - d0) / 86400000);
-  const totalDays  = (state.weeks.clone + state.weeks.vega + state.weeks.flora + state.weeks.flush) * 7;
-  if (daysPassed >= 0 && daysPassed < totalDays) {
-    state.currentWeek = Math.floor(daysPassed / 7) + 1;
+  if (today > d.harvest) return {label:'Colhido ✂️', color:'#888'};
+  if (today < d.d0)      return {label:'Aguardando', color:'#e8a43a'};
+  const p = getPhaseForDate(today, d);
+  return p ? {label:p.name, color:p.color} : {label:'—', color:'#888'};
+}
+
+// ═══════════════════════════════════════════════
+// JARDIM SCREEN
+// ═══════════════════════════════════════════════
+function renderJardim() {
+  const grid = document.getElementById('jardim-grid');
+  const count = document.getElementById('jardim-count');
+  count.textContent = jardimState.cultivos.length + ' cultivo' + (jardimState.cultivos.length!==1?'s':'');
+
+  // Today panel
+  const today = new Date(); today.setHours(12,0,0,0);
+  const todayRows = [];
+  for (const c of jardimState.cultivos) {
+    const d = getDates(c);
+    if (!d || today < d.d0 || today > d.harvest) continue;
+    const dayNum = Math.floor((today - d.d0)/86400000)+1;
+    const phase  = getPhaseForDate(today, d);
+    const cw     = calcCurrentWeek(c);
+    const pStart = phase?.name==='Clone'?d.d0:phase?.name==='Vegetativo'?d.iniVega:phase?.name==='Floração'?d.iniFlora:d.iniFlush;
+    const relW   = pStart ? getRelWeek(today, pStart) : 1;
+    const isFirst= pStart ? Math.floor((today-pStart)/86400000)%7===0 : false;
+    const adub   = isFirst ? (()=>{const p=PROTOCOLS[c.proto];const k={Clone:'clone',Vegetativo:'vega',Floração:'flora',Flush:'flush'}[phase?.name];return p?.[k]?.find(r=>r.s===relW)||null})() : null;
+    const mip    = isFirst ? MIP_SCHEDULE.find(m=>m.fase===(phase?.name==='Floração'?'Flora':phase?.name==='Vegetativo'?'Vega':phase?.name) && m.sem===relW) : null;
+
+    let actions = [];
+    if (adub && adub.p1!=='—') actions.push(`💊 ${adub.p1}`);
+    if (mip) actions.push(`🐛 ${mip.prod.split('(')[0].trim()}`);
+    if (!actions.length) actions.push('Dia normal');
+
+    todayRows.push(`<div class="overview-row">
+      <div>
+        <div style="font-weight:600;color:var(--text);font-size:13px">${c.name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">Dia ${dayNum} · ${actions.join(' · ')}</div>
+      </div>
+      <span class="ov-phase" style="background:${phase?.color||'#888'}22;color:${phase?.color||'#888'}">${phase?.name||'—'}</span>
+    </div>`);
+  }
+  const todayPanel = document.getElementById('jardim-today-panel');
+  if (todayRows.length) {
+    todayPanel.style.display='';
+    document.getElementById('jardim-today-rows').innerHTML = todayRows.join('');
   } else {
-    state.currentWeek = 1;
+    todayPanel.style.display='none';
   }
 
-  localStorage.setItem('cultivoState', JSON.stringify(state));
+  // Cards
+  if (!jardimState.cultivos.length) {
+    grid.innerHTML = `<div class="empty-state" style="padding:32px 24px">
+      <div class="empty-icon">🌱</div>
+      <h3>Jardim vazio</h3>
+      <p>Adicione seu primeiro cultivo para começar a planejar.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = jardimState.cultivos.map(c => {
+    const d = getDates(c);
+    const w = c.weeks;
+    const badge = getPhaseBadge(c);
+    const harvest = d ? fmtDate(d.harvest) : '—';
+    const totalDays = d ? d.totalDays : 0;
+    const proto = PROTOCOLS[c.proto];
+    const protoIcon = proto?.icon || '🌿';
+
+    return `<div class="cultivo-card" style="--card-accent:${c.color}" onclick="openCultivo('${c.id}')">
+      <div class="cc-top">
+        <div class="cc-icon" style="background:${c.color}22">${protoIcon}</div>
+        <div class="cc-info">
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-strain">${c.strain || 'Sem strain definida'}</div>
+        </div>
+        <div class="cc-actions" onclick="event.stopPropagation()">
+          <button class="cc-btn" onclick="openEditModal('${c.id}')" title="Editar">✏️</button>
+        </div>
+      </div>
+      <div class="cc-bar">
+        <div class="cc-bar-seg" style="background:#52b778;flex:${w.clone}"></div>
+        <div class="cc-bar-seg" style="background:#2196F3;flex:${w.vega}"></div>
+        <div class="cc-bar-seg" style="background:#9b72cf;flex:${w.flora}"></div>
+        <div class="cc-bar-seg" style="background:#e05c5c;flex:${w.flush}"></div>
+      </div>
+      <div class="cc-meta">
+        <span class="cc-chip" style="background:${badge.color}22;color:${badge.color}">${badge.label}</span>
+        <span class="cc-chip" style="background:rgba(255,255,255,.06);color:var(--text3)">${totalDays} dias</span>
+        ${harvest !== '—' ? `<span class="cc-chip" style="background:rgba(255,255,255,.06);color:var(--text3)">✂️ ${harvest}</span>` : ''}
+        <span class="cc-chip" style="background:rgba(255,255,255,.06);color:var(--text3)">${proto?.name||'—'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// MODAL (novo / editar)
+// ═══════════════════════════════════════════════
+let _modalEditId = null;
+let _modalWeeks  = {clone:2,vega:6,flora:9,flush:1};
+let _modalColor  = '#52b778';
+let _modalProto  = 'biobizz';
+
+function openNewModal() {
+  _modalEditId = null;
+  _modalWeeks  = {clone:2, vega:6, flora:9, flush:1};
+  _modalColor  = '#52b778';
+  _modalProto  = 'biobizz';
+  const today  = new Date();
+  document.getElementById('m-date').value =
+    `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  document.getElementById('m-name').value   = '';
+  document.getElementById('m-strain').value = '';
+  document.getElementById('modal-title').textContent = 'Novo cultivo';
+  document.getElementById('modal-sub').textContent   = 'Configure as informações básicas';
+  document.getElementById('modal-delete-btn').style.display = 'none';
+  document.getElementById('modal-save-btn').textContent = 'Salvar cultivo →';
+  refreshModalSteppers();
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('selected', d.dataset.color===_modalColor));
+  document.querySelectorAll('#m-proto-grid .proto-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelectorAll('#m-proto-grid .proto-pill')[0].classList.add('selected');
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+  const cid = id || jardimState.activeId;
+  const c   = jardimState.cultivos.find(x => x.id===cid);
+  if (!c) return;
+  _modalEditId = cid;
+  _modalWeeks  = {...c.weeks};
+  _modalColor  = c.color;
+  _modalProto  = c.proto;
+  document.getElementById('m-name').value   = c.name;
+  document.getElementById('m-strain').value = c.strain || '';
+  document.getElementById('m-date').value   = c.date;
+  document.getElementById('modal-title').textContent = 'Editar cultivo';
+  document.getElementById('modal-sub').textContent   = c.name;
+  document.getElementById('modal-delete-btn').style.display = '';
+  document.getElementById('modal-save-btn').textContent = 'Salvar alterações →';
+  refreshModalSteppers();
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('selected', d.dataset.color===_modalColor));
+  const protoMap = {biobizz:0,remo:1,go:2,supersoil:3,generic:4};
+  document.querySelectorAll('#m-proto-grid .proto-pill').forEach((p,i) => p.classList.toggle('selected', i===protoMap[_modalProto]));
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-backdrop')) return;
+  document.getElementById('modal-backdrop').classList.add('hidden');
+}
+
+function selectColor(el) {
+  _modalColor = el.dataset.color;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('selected', d===el));
+}
+
+function mSelectProto(key, el) {
+  _modalProto = key;
+  document.querySelectorAll('#m-proto-grid .proto-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function mStep(key, delta) {
+  const [min,max] = LIMITS[key];
+  _modalWeeks[key] = Math.max(min, Math.min(max, _modalWeeks[key]+delta));
+  refreshModalSteppers();
+}
+
+function refreshModalSteppers() {
+  ['clone','vega','flora','flush'].forEach(k => {
+    document.getElementById('m-val-'+k).innerHTML =
+      `${_modalWeeks[k]} <span class="stepper-unit">sem</span>`;
+  });
+}
+
+function saveModal() {
+  const name   = document.getElementById('m-name').value.trim() || 'Cultivo';
+  const strain = document.getElementById('m-strain').value.trim();
+  const date   = document.getElementById('m-date').value;
+  if (!date) { alert('Preencha a data do Dia 1.'); return; }
+
+  if (_modalEditId) {
+    const c = jardimState.cultivos.find(x => x.id===_modalEditId);
+    if (c) {
+      c.name=name; c.strain=strain; c.color=_modalColor;
+      c.proto=_modalProto; c.date=date; c.weeks={..._modalWeeks};
+      c.currentWeek = calcCurrentWeek(c);
+      // Limpar strainInfo se strain mudou
+      if (c.strain !== strain) c.strainInfo = null;
+    }
+  } else {
+    const c = {
+      id:genId(), name, strain, color:_modalColor,
+      proto:_modalProto, date, weeks:{..._modalWeeks},
+      currentWeek:1, strainInfo:null
+    };
+    c.currentWeek = calcCurrentWeek(c);
+    jardimState.cultivos.push(c);
+  }
+
+  saveJardim();
+  document.getElementById('modal-backdrop').classList.add('hidden');
+  renderJardim();
+
+  // Se estamos editando o cultivo ativo, recarregar detail
+  if (_modalEditId && _modalEditId === jardimState.activeId) {
+    loadDetailScreen();
+  }
+}
+
+function deleteActiveCultivo() {
+  if (!confirm('Excluir este cultivo permanentemente?')) return;
+  jardimState.cultivos = jardimState.cultivos.filter(c => c.id !== _modalEditId);
+  if (jardimState.activeId === _modalEditId) jardimState.activeId = null;
+  saveJardim();
+  document.getElementById('modal-backdrop').classList.add('hidden');
+  // Se estamos na tela de detalhe, voltar
+  backToJardim();
+  renderJardim();
+}
+
+// ═══════════════════════════════════════════════
+// NAVEGAÇÃO JARDIM ↔ DETALHE
+// ═══════════════════════════════════════════════
+function openCultivo(id) {
+  const c = jardimState.cultivos.find(x => x.id===id);
+  if (!c) return;
+  jardimState.activeId = id;
+  c.currentWeek = calcCurrentWeek(c);
+  saveJardim();
+  loadDetailScreen();
+  // Slide in
+  document.getElementById('jardim-screen').classList.add('hidden');
+  document.getElementById('detail-screen').style.transform = 'translateX(0)';
+}
+
+function backToJardim() {
+  document.getElementById('detail-screen').style.transform = 'translateX(100%)';
+  document.getElementById('jardim-screen').classList.remove('hidden');
+  jardimState.activeId = null;
+  renderJardim();
+}
+
+function loadDetailScreen() {
+  const c = getActiveCultivo();
+  if (!c) return;
+  document.getElementById('detail-title').textContent  = c.name;
+  document.getElementById('detail-strain').textContent = c.strain || 'Sem strain';
+  document.getElementById('status-badge').textContent  = getPhaseBadge(c).label;
+  // Reset to crono tab
+  gotoPage(0);
   buildCronograma();
   buildAdubacao();
   buildMIP();
-  fetchStrainInfo(state.strain);
-  gotoPage(1);
-}
-
-function resetCfg() {
-  if (!confirm('Limpar configuração atual?')) return;
-  state.date = null; state.strain = '';
-  state.weeks = {clone:2, vega:6, flora:9, flush:1};
-  state.proto = 'biobizz'; state.currentWeek = 1;
-  localStorage.removeItem('cultivoState');
-  document.getElementById('cfg-date').value = '';
-  document.getElementById('cfg-strain').value = '';
-  ['clone','vega','flora','flush'].forEach(k => {
-    document.getElementById('val-'+k).innerHTML = `${state.weeks[k]} <span class="stepper-unit">sem</span>`;
-  });
-  document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
-  document.querySelector('.proto-pill').classList.add('selected');
-  buildCronograma();
+  buildGuia();
+  buildManual();
+  if (c.strain && !c.strainInfo) fetchStrainInfo(c.strain);
+  else if (c.strainInfo) restoreStrainPanel();
+  else document.getElementById('strain-panel').style.display='none';
 }
 
 // ═══════════════════════════════════════════════
-// CRONOGRAMA PAGE
+// NAVIGATION (detail tabs)
+// ═══════════════════════════════════════════════
+function gotoPage(idx) {
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+}
+
+// ═══════════════════════════════════════════════
+// CRONOGRAMA (ativo)
 // ═══════════════════════════════════════════════
 function buildCronograma() {
   const dates = getDates();
-  if (!dates) {
-    document.getElementById('crono-content').style.display = 'none';
-    return;
-  }
-  document.getElementById('crono-content').style.display = '';
-
+  if (!dates) { document.getElementById('crono-content').style.display='none'; return; }
+  document.getElementById('crono-content').style.display='';
+  const c = getActiveCultivo();
   const today = new Date(); today.setHours(12,0,0,0);
-  const {d0, iniVega, iniFlora, iniFlush, harvest, totalDays} = dates;
-
-  // Badge
-  document.getElementById('status-badge').textContent = state.strain || 'Cultivo ativo';
-
-  // Progress
-  const daysPassed = Math.max(0, Math.floor((today - d0) / 86400000));
-  const pct = Math.min(100, Math.round((daysPassed / totalDays) * 100));
-  const circumference = 2 * Math.PI * 30;
-  const offset = circumference - (pct / 100) * circumference;
-  document.getElementById('prog-circle').style.strokeDashoffset = offset;
-  document.getElementById('prog-pct').textContent = pct + '%';
-  document.getElementById('prog-label').textContent = pct === 0 ? 'Cultivo configurado' : pct >= 100 ? '🎉 Colheita!' : 'Progresso do cultivo';
-  document.getElementById('prog-day').textContent = `Dia ${Math.max(0,daysPassed+1)} de ${totalDays}`;
-
-  // Phase bar
-  const w = state.weeks;
+  const {d0,iniVega,iniFlora,iniFlush,harvest,totalDays} = dates;
+  const daysPassed = Math.max(0,Math.floor((today-d0)/86400000));
+  const pct = Math.min(100,Math.round((daysPassed/totalDays)*100));
+  const circumference = 2*Math.PI*30;
+  document.getElementById('prog-circle').style.strokeDashoffset = circumference-(pct/100)*circumference;
+  document.getElementById('prog-pct').textContent    = pct+'%';
+  document.getElementById('prog-label').textContent  = pct===0?'Cultivo configurado':pct>=100?'🎉 Colheita!':'Progresso';
+  document.getElementById('prog-day').textContent    = `Dia ${Math.max(0,daysPassed+1)} de ${totalDays}`;
+  const w = c.weeks;
   document.getElementById('phase-bar').innerHTML =
     `<div class="phase-seg" style="background:#52b778;flex:${w.clone}"></div>
      <div class="phase-seg" style="background:#2196F3;flex:${w.vega}"></div>
      <div class="phase-seg" style="background:#9b72cf;flex:${w.flora}"></div>
      <div class="phase-seg" style="background:#e05c5c;flex:${w.flush}"></div>`;
-
-  // Stats
-  const daysLeft = Math.max(0, Math.ceil((harvest - today) / 86400000));
-  const phase = getPhaseForDate(today, dates);
-  document.getElementById('stat-total').textContent = totalDays;
-  document.getElementById('stat-harvest').textContent = fmtDate(harvest);
-  document.getElementById('stat-phase').textContent = phase ? phase.name : (today > harvest ? 'Colhido' : 'Antes do início');
-  document.getElementById('stat-daysleft').textContent = today > harvest ? '—' : daysLeft;
-
+  const daysLeft = Math.max(0,Math.ceil((harvest-today)/86400000));
+  const phase = getPhaseForDate(today,dates);
+  document.getElementById('stat-total').textContent    = totalDays;
+  document.getElementById('stat-harvest').textContent  = fmtDate(harvest);
+  document.getElementById('stat-phase').textContent    = phase?phase.name:(today>harvest?'Colhido':'Antes início');
+  document.getElementById('stat-daysleft').textContent = today>harvest?'—':daysLeft;
   renderWeek();
 }
 
 function changeWeek(delta) {
   const dates = getDates();
   if (!dates) return;
-  const totalWeeks = Math.ceil(dates.totalDays / 7);
-  state.currentWeek = Math.max(1, Math.min(totalWeeks, state.currentWeek + delta));
+  const c = getActiveCultivo();
+  const totalWeeks = Math.ceil(dates.totalDays/7);
+  c.currentWeek = Math.max(1,Math.min(totalWeeks,(c.currentWeek||1)+delta));
+  saveJardim();
   renderWeek();
 }
 
 function renderWeek() {
   const dates = getDates();
   if (!dates) return;
-  const {d0, iniVega, iniFlora, iniFlush, harvest, totalDays} = dates;
-  const totalWeeks = Math.ceil(totalDays / 7);
-  const wk = state.currentWeek;
-
-  const weekStart = addDays(d0, (wk-1)*7);
-  const weekEnd   = addDays(d0, wk*7 - 1);
+  const c = getActiveCultivo();
+  const {d0,iniVega,iniFlora,iniFlush,harvest,totalDays} = dates;
+  const totalWeeks = Math.ceil(totalDays/7);
+  const wk = c.currentWeek || 1;
+  const weekStart = addDays(d0,(wk-1)*7);
+  const weekEnd   = addDays(d0,wk*7-1);
   document.getElementById('week-label').textContent = `Semana ${wk} de ${totalWeeks}`;
   document.getElementById('week-sub').textContent   = `${fmtDate(weekStart)} – ${fmtDate(weekEnd)}`;
-
   const today = new Date(); today.setHours(12,0,0,0);
   const container = document.getElementById('week-days');
   container.innerHTML = '';
-
-  for (let d = 0; d < 7; d++) {
-    const date = addDays(d0, (wk-1)*7 + d);
-    if (date > harvest) break;
-    const phase = getPhaseForDate(date, dates);
+  for (let d=0;d<7;d++) {
+    const date = addDays(d0,(wk-1)*7+d);
+    if (date>harvest) break;
+    const phase = getPhaseForDate(date,dates);
     if (!phase) break;
-
-    const isToday = date.toDateString() === today.toDateString();
-    const dayNum  = Math.floor((date - d0) / 86400000) + 1;
-
-    // Relative week in phase
+    const isToday = date.toDateString()===today.toDateString();
+    const dayNum  = Math.floor((date-d0)/86400000)+1;
     let phaseStart, phaseLabel;
-    if (phase.name === 'Clone')      { phaseStart = d0;       phaseLabel = 'Clone'; }
-    else if (phase.name === 'Vegetativo') { phaseStart = iniVega;  phaseLabel = 'Vega'; }
-    else if (phase.name === 'Floração')   { phaseStart = iniFlora; phaseLabel = 'Flora'; }
-    else                              { phaseStart = iniFlush; phaseLabel = 'Flush'; }
-
-    const relWeek = getRelWeek(date, phaseStart);
-    const isFirstDayOfWeek = (Math.floor((date - phaseStart) / 86400000)) % 7 === 0;
-
-    // Get adub + mip for this week (only show on first day of phase week)
-    const adub = isFirstDayOfWeek ? getAdubForWeek(phase.name, relWeek) : null;
-    const mip  = isFirstDayOfWeek ? getMipForWeek(phase.name === 'Floração' ? 'Flora' : phaseLabel, relWeek) : null;
-
-    const dayName = date.toLocaleDateString('pt-BR', {weekday:'short'});
-    const dayFmt  = fmtDate(date, true);
-
-    // Task summary
-    const tasks = [];
+    if (phase.name==='Clone')      {phaseStart=d0;      phaseLabel='Clone';}
+    else if (phase.name==='Vegetativo'){phaseStart=iniVega; phaseLabel='Vega';}
+    else if (phase.name==='Floração')  {phaseStart=iniFlora;phaseLabel='Flora';}
+    else                               {phaseStart=iniFlush;phaseLabel='Flush';}
+    const relWeek = getRelWeek(date,phaseStart);
+    const isFirstDayOfWeek = Math.floor((date-phaseStart)/86400000)%7===0;
+    const adub = isFirstDayOfWeek?getAdubForWeek(phase.name,relWeek):null;
+    const mip  = isFirstDayOfWeek?getMipForWeek(phase.name==='Floração'?'Flora':phaseLabel,relWeek):null;
+    const dayName = date.toLocaleDateString('pt-BR',{weekday:'short'});
+    const dayFmt  = fmtDate(date,true);
+    const tasks=[];
     if (isFirstDayOfWeek) tasks.push(`${phaseLabel} S${relWeek}`);
-    if (adub && adub.p1 !== '—') tasks.push(adub.p1);
+    if (adub&&adub.p1!=='—') tasks.push(adub.p1);
     if (mip) tasks.push('MIP');
-    if (date.toDateString() === iniVega.toDateString())  tasks.push('🌿 INÍCIO VEGA');
-    if (date.toDateString() === iniFlora.toDateString()) tasks.push('🌸 INÍCIO FLORA');
-    if (date.toDateString() === iniFlush.toDateString()) tasks.push('🚿 INÍCIO FLUSH');
-    if (date.toDateString() === harvest.toDateString())  tasks.push('✂️ COLHEITA');
-
-    const isSpecial = date.toDateString() === iniVega.toDateString() ||
-                      date.toDateString() === iniFlora.toDateString() ||
-                      date.toDateString() === iniFlush.toDateString() ||
-                      date.toDateString() === harvest.toDateString();
-
-    const el = document.createElement('div');
-    el.className = 'day-row' + (isSpecial ? '' : '');
-    el.innerHTML = `
-      <div class="day-row-header" onclick="toggleDay(this)">
-        <div class="day-num ${isToday ? 'today' : ''}">${date.getDate()}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:11px;color:var(--text3)">${dayName} ${dayFmt} · Dia ${dayNum}</div>
-          <div style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tasks.join(' · ') || 'Dia normal'}</div>
-        </div>
-        <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.short}</span>
-        <span class="day-expand">${(adub||mip||isSpecial) ? '⌄' : ''}</span>
+    if (date.toDateString()===iniVega.toDateString())  tasks.push('🌿 INÍCIO VEGA');
+    if (date.toDateString()===iniFlora.toDateString()) tasks.push('🌸 INÍCIO FLORA');
+    if (date.toDateString()===iniFlush.toDateString()) tasks.push('🚿 INÍCIO FLUSH');
+    if (date.toDateString()===harvest.toDateString())  tasks.push('✂️ COLHEITA');
+    const isSpecial = [iniVega,iniFlora,iniFlush,harvest].some(x=>x.toDateString()===date.toDateString());
+    const el=document.createElement('div');
+    el.className='day-row';
+    el.innerHTML=`<div class="day-row-header" onclick="toggleDay(this)">
+      <div class="day-num ${isToday?'today':''}">${date.getDate()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;color:var(--text3)">${dayName} ${dayFmt} · Dia ${dayNum}</div>
+        <div style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tasks.join(' · ')||'Dia normal'}</div>
       </div>
-      <div class="day-detail">
-        ${isSpecial ? `<div class="day-detail-row"><span class="day-detail-label">Marco</span><span class="day-detail-val" style="color:var(--amber);font-weight:600">${tasks.filter(t=>t.includes('INÍCIO')||t.includes('COLHEITA')).join(', ')}</span></div>` : ''}
-        ${adub ? `
-          <div class="day-detail-row"><span class="day-detail-label">💊 Adubação</span><span class="day-detail-val">${adub.p1 !== '—' ? adub.p1+' '+adub.d1 : ''}${adub.p2 !== '—' ? ' + '+adub.p2+' '+adub.d2 : ''}</span></div>
-          ${adub.supl !== '—' ? `<div class="day-detail-row"><span class="day-detail-label">Suplemento</span><span class="day-detail-val">${adub.supl}</span></div>` : ''}
-          <div class="day-detail-row"><span class="day-detail-label">pH / EC</span><span class="day-detail-val">${adub.ph} / EC ${adub.ec}</span></div>
-          <div class="day-detail-row"><span class="day-detail-label">Obs.</span><span class="day-detail-val">${adub.obs}</span></div>
-        ` : ''}
-        ${mip ? `
-          <div class="day-detail-row"><span class="day-detail-label">🐛 MIP</span><span class="day-detail-val" style="color:var(--red)">${mip.prod} — ${mip.via}</span></div>
-          ${mip.obs ? `<div class="day-detail-row"><span class="day-detail-label"></span><span class="day-detail-val">${mip.obs}</span></div>` : ''}
-        ` : ''}
-        ${!adub && !mip && !isSpecial ? `<div class="day-detail-row"><span class="day-detail-val" style="color:var(--text3)">Nenhuma ação programada para hoje.</span></div>` : ''}
-      </div>
-    `;
+      <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.short}</span>
+      <span class="day-expand">${(adub||mip||isSpecial)?'⌄':''}</span>
+    </div>
+    <div class="day-detail">
+      ${isSpecial?`<div class="day-detail-row"><span class="day-detail-label">Marco</span><span class="day-detail-val" style="color:var(--amber);font-weight:600">${tasks.filter(t=>t.includes('INÍCIO')||t.includes('COLHEITA')).join(', ')}</span></div>`:''}
+      ${adub?`<div class="day-detail-row"><span class="day-detail-label">💊 Adubo</span><span class="day-detail-val">${adub.p1!=='—'?adub.p1+' '+adub.d1:''}${adub.p2!=='—'?' + '+adub.p2+' '+adub.d2:''}</span></div>
+      ${adub.supl!=='—'?`<div class="day-detail-row"><span class="day-detail-label">Supl.</span><span class="day-detail-val">${adub.supl}</span></div>`:''}
+      <div class="day-detail-row"><span class="day-detail-label">pH/EC</span><span class="day-detail-val">${adub.ph} / EC ${adub.ec}</span></div>
+      <div class="day-detail-row"><span class="day-detail-label">Obs.</span><span class="day-detail-val">${adub.obs}</span></div>`:''}
+      ${mip?`<div class="day-detail-row"><span class="day-detail-label">🐛 MIP</span><span class="day-detail-val" style="color:var(--red)">${mip.prod} — ${mip.via}</span></div>${mip.obs?`<div class="day-detail-row"><span class="day-detail-label"></span><span class="day-detail-val">${mip.obs}</span></div>`:''}`:''}
+      ${!adub&&!mip&&!isSpecial?`<div class="day-detail-row"><span class="day-detail-val" style="color:var(--text3)">Nenhuma ação programada.</span></div>`:''}
+    </div>`;
     container.appendChild(el);
   }
 }
-
 function toggleDay(header) {
-  const detail = header.nextElementSibling;
-  const arrow  = header.querySelector('.day-expand');
+  const detail=header.nextElementSibling;
+  const arrow=header.querySelector('.day-expand');
   if (!arrow.textContent) return;
-  const open = detail.classList.toggle('open');
-  arrow.classList.toggle('open', open);
+  const open=detail.classList.toggle('open');
+  arrow.classList.toggle('open',open);
 }
 
 // ═══════════════════════════════════════════════
-// ADUBAÇÃO PAGE
+// ADUBAÇÃO
 // ═══════════════════════════════════════════════
 function buildAdubacao() {
-  const p = PROTOCOLS[state.proto];
+  const c = getActiveCultivo();
+  if (!c) return;
+  const p = PROTOCOLS[c.proto];
   if (!p) return;
-
   document.getElementById('adub-proto-badge').innerHTML =
     `<div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px">
       <span style="font-size:22px">${p.icon}</span>
-      <div>
-        <div style="font-size:14px;font-weight:600;color:var(--text)">${p.name}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${p.obs}</div>
-      </div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--text)">${p.name}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${p.obs}</div></div>
     </div>`;
-
-  const dates = getDates();
-  const fases = [
-    {key:'clone', label:'🌱 Clone', color:'#52b778', iniRef: dates?.d0},
-    {key:'vega',  label:'🌿 Vegetativo', color:'#2196F3', iniRef: dates?.iniVega},
-    {key:'flora', label:'🌸 Floração', color:'#9b72cf', iniRef: dates?.iniFlora},
-    {key:'flush', label:'🚿 Flush', color:'#e05c5c', iniRef: dates?.iniFlush},
+  const dates = getDates(c);
+  const fases=[
+    {key:'clone',label:'🌱 Clone',     color:'#52b778',iniRef:dates?.d0},
+    {key:'vega', label:'🌿 Vegetativo',color:'#2196F3',iniRef:dates?.iniVega},
+    {key:'flora',label:'🌸 Floração',  color:'#9b72cf',iniRef:dates?.iniFlora},
+    {key:'flush',label:'🚿 Flush',     color:'#e05c5c',iniRef:dates?.iniFlush},
   ];
-
-  let html = '';
-  for (const {key, label, color, iniRef} of fases) {
-    const maxSem = state.weeks[key === 'vega' ? 'vega' : key] || 99;
-    const rows = (p[key] || []).filter(r => r.s <= maxSem);
+  let html='';
+  for (const {key,label,color,iniRef} of fases) {
+    const maxSem = c.weeks[key==='vega'?'vega':key]||99;
+    const rows=(p[key]||[]).filter(r=>r.s<=maxSem);
     if (!rows.length) continue;
-
-    html += `<div style="margin-bottom:20px">
-      <div style="font-family:var(--serif);font-size:17px;color:${color};margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${label}</div>`;
-
+    html+=`<div style="margin-bottom:20px"><div style="font-family:var(--serif);font-size:17px;color:${color};margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${label}</div>`;
     for (const r of rows) {
-      const dateStr = iniRef ? fmtDate(addDays(iniRef, (r.s-1)*7)) : '—';
-      html += `<div class="mip-card">
-        <div class="mip-card-header">
-          <div style="width:32px;height:32px;border-radius:8px;background:${color}22;display:grid;place-items:center;font-size:13px;font-weight:700;color:${color}">S${r.s}</div>
-          <div>
-            <div class="mip-name">${r.p1 !== '—' ? r.p1 : r.p2}</div>
-            <div class="mip-phase">${dateStr}</div>
-          </div>
-        </div>
-        ${r.p1 !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Produto 1</span><span class="mip-detail-val">${r.p1} — <strong>${r.d1}</strong></span></div>` : ''}
-        ${r.p2 !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Produto 2</span><span class="mip-detail-val">${r.p2} — <strong>${r.d2}</strong></span></div>` : ''}
-        ${r.supl !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Suplemento</span><span class="mip-detail-val">${r.supl}</span></div>` : ''}
-        <div class="mip-detail-row"><span class="mip-detail-label">pH / EC</span><span class="mip-detail-val" style="color:var(--green)">${r.ph} / ${r.ec}</span></div>
-        <div class="mip-detail-row"><span class="mip-detail-label">Obs.</span><span class="mip-detail-val">${r.obs}</span></div>
-      </div>`;
+      const dateStr=iniRef?fmtDate(addDays(iniRef,(r.s-1)*7)):'—';
+      html+=`<div class="mip-card"><div class="mip-card-header">
+        <div style="width:32px;height:32px;border-radius:8px;background:${color}22;display:grid;place-items:center;font-size:13px;font-weight:700;color:${color}">S${r.s}</div>
+        <div><div class="mip-name">${r.p1!=='—'?r.p1:r.p2}</div><div class="mip-phase">${dateStr}</div></div>
+      </div>
+      ${r.p1!=='—'?`<div class="mip-detail-row"><span class="mip-detail-label">Produto 1</span><span class="mip-detail-val">${r.p1} — <strong>${r.d1}</strong></span></div>`:''}
+      ${r.p2!=='—'?`<div class="mip-detail-row"><span class="mip-detail-label">Produto 2</span><span class="mip-detail-val">${r.p2} — <strong>${r.d2}</strong></span></div>`:''}
+      ${r.supl!=='—'?`<div class="mip-detail-row"><span class="mip-detail-label">Suplemento</span><span class="mip-detail-val">${r.supl}</span></div>`:''}
+      <div class="mip-detail-row"><span class="mip-detail-label">pH/EC</span><span class="mip-detail-val" style="color:var(--green)">${r.ph} / ${r.ec}</span></div>
+      <div class="mip-detail-row"><span class="mip-detail-label">Obs.</span><span class="mip-detail-val">${r.obs}</span></div></div>`;
     }
-    html += '</div>';
+    html+='</div>';
   }
-  document.getElementById('adub-content').innerHTML = html;
+  document.getElementById('adub-content').innerHTML=html;
 }
 
 // ═══════════════════════════════════════════════
-// MIP PAGE
+// MIP
 // ═══════════════════════════════════════════════
 function buildMIP() {
-  const dates = getDates();
-  const phaseColors = {Clone:'#52b778', Vega:'#2196F3', Flora:'#9b72cf', Flush:'#e05c5c'};
-  const phaseInis   = {
-    Clone: dates?.d0,
-    Vega:  dates?.iniVega,
-    Flora: dates?.iniFlora,
-    Flush: dates?.iniFlush,
-  };
-
-  let html = '';
-  let curFase = '';
+  const c = getActiveCultivo();
+  const dates = getDates(c);
+  const cols={Clone:'#52b778',Vega:'#2196F3',Flora:'#9b72cf',Flush:'#e05c5c'};
+  const inis={Clone:dates?.d0,Vega:dates?.iniVega,Flora:dates?.iniFlora,Flush:dates?.iniFlush};
+  let html='';let cur='';
   for (const m of MIP_SCHEDULE) {
-    const col = phaseColors[m.fase] || '#52b778';
-    if (m.fase !== curFase) {
-      const faseLabels = {Clone:'🌱 Clone', Vega:'🌿 Vegetativo', Flora:'🌸 Floração', Flush:'🚿 Flush'};
-      html += `<div style="font-family:var(--serif);font-size:17px;color:${col};margin:${curFase?'20px':'0'} 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${faseLabels[m.fase]}</div>`;
-      curFase = m.fase;
+    const col=cols[m.fase]||'#52b778';
+    if (m.fase!==cur) {
+      const lbl={Clone:'🌱 Clone',Vega:'🌿 Vegetativo',Flora:'🌸 Floração',Flush:'🚿 Flush'}[m.fase];
+      html+=`<div style="font-family:var(--serif);font-size:17px;color:${col};margin:${cur?'20px':'0'} 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${lbl}</div>`;
+      cur=m.fase;
     }
-    const ini = phaseInis[m.fase];
-    const dateStr = ini ? fmtDate(addDays(ini, (m.sem-1)*7)) : '—';
-    html += `<div class="mip-card">
-      <div class="mip-card-header">
-        <span class="mip-icon">🐛</span>
-        <div>
-          <div class="mip-name">${m.prod}</div>
-          <div class="mip-phase">${m.fase} S${m.sem} · ${dateStr}</div>
-        </div>
-        <span class="tl-badge" style="background:${col}22;color:${col}">S${m.sem}</span>
-      </div>
-      <div class="mip-detail-row"><span class="mip-detail-label">Via</span><span class="mip-detail-val">${m.via}</span></div>
-      ${m.obs ? `<div class="mip-detail-row"><span class="mip-detail-label">Atenção</span><span class="mip-detail-val" style="${m.obs.includes('⚠️')?'color:var(--amber)':''}">${m.obs}</span></div>` : ''}
+    const ini=inis[m.fase];
+    const dateStr=ini?fmtDate(addDays(ini,(m.sem-1)*7)):'—';
+    html+=`<div class="mip-card"><div class="mip-card-header">
+      <span class="mip-icon">🐛</span>
+      <div><div class="mip-name">${m.prod}</div><div class="mip-phase">${m.fase} S${m.sem} · ${dateStr}</div></div>
+      <span class="tl-badge" style="background:${col}22;color:${col}">S${m.sem}</span>
+    </div>
+    <div class="mip-detail-row"><span class="mip-detail-label">Via</span><span class="mip-detail-val">${m.via}</span></div>
+    ${m.obs?`<div class="mip-detail-row"><span class="mip-detail-label">Atenção</span><span class="mip-detail-val" style="${m.obs.includes('⚠️')?'color:var(--amber)':''}">${m.obs}</span></div>`:''}
     </div>`;
   }
-  document.getElementById('mip-content').innerHTML = html;
+  document.getElementById('mip-content').innerHTML=html;
 }
 
 // ═══════════════════════════════════════════════
-// GUIA PAGE
+// STRAIN INFO
+// ═══════════════════════════════════════════════
+
+async function fetchStrainInfo(strainName) {
+  if (!strainName) return;
+  const panel=document.getElementById('strain-panel');
+  const loading=document.getElementById('strain-loading');
+  const dataEl=document.getElementById('strain-data');
+  const errorEl=document.getElementById('strain-error');
+  panel.style.display='';loading.style.display='';dataEl.style.display='none';errorEl.style.display='none';
+  document.getElementById('strain-loading-name').textContent=strainName;
+  const prompt=`You are a cannabis strain database. The user is asking about the strain: "${strainName}".
+Return ONLY a valid JSON object with exactly these fields (no markdown, no explanation):
+{"found":true,"name":"official strain name","type":"indica"|"sativa"|"hybrid"|"indica-dominant"|"sativa-dominant","thc":"THC range","cbd":"CBD range","flowerWeeks":"flowering in weeks","effects":"top 2-3 effects in Portuguese","aromas":"top 2-3 aromas in Portuguese","description":"2 sentences in Portuguese","growTip":"1 indoor growing tip in Portuguese","medicalNote":"main medical use in Portuguese or empty string"}
+If the strain is unknown, return: {"found":false}`;
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const raw=data.content?.map(b=>b.text||'').join('')||'';
+    const info=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    loading.style.display='none';
+    if (!info.found){errorEl.style.display='';return;}
+    const typeEmoji={indica:'🍁',sativa:'☀️',hybrid:'🌿','indica-dominant':'🍁','sativa-dominant':'☀️'}[info.type]||'🌿';
+    const typeColors={indica:'#9b72cf',sativa:'#e8a43a',hybrid:'#52b778','indica-dominant':'#9b72cf','sativa-dominant':'#e8a43a'};
+    const typeLabel={indica:'Índica',sativa:'Sativa',hybrid:'Híbrida','indica-dominant':'Índica-dominante','sativa-dominant':'Sativa-dominante'}[info.type]||info.type;
+    document.getElementById('strain-type-badge').textContent=typeEmoji;
+    document.getElementById('strain-type-badge').style.background=typeColors[info.type]+'22';
+    document.getElementById('strain-name-display').textContent=info.name;
+    document.getElementById('strain-type-label').textContent=typeLabel;
+    document.getElementById('strain-thc').textContent=info.thc;
+    document.getElementById('strain-desc').textContent=info.description;
+    document.getElementById('strain-flower').textContent=info.flowerWeeks;
+    document.getElementById('strain-cbd').textContent=info.cbd;
+    document.getElementById('strain-effect').textContent=info.effects;
+    document.getElementById('strain-aroma').textContent=info.aromas;
+    document.getElementById('strain-tip').textContent=info.growTip;
+    if (info.medicalNote){document.getElementById('strain-warn').style.display='';document.getElementById('strain-warn-text').textContent='🏥 '+info.medicalNote;}
+    const c=getActiveCultivo();
+    if (c){c.strainInfo=info;saveJardim();}
+    dataEl.style.display='';
+  } catch(e){loading.style.display='none';errorEl.style.display='';}
+}
+
+
+function restoreStrainPanel() {
+  const c = getActiveCultivo();
+  if (!c?.strainInfo || !c.date) return;
+  const info=c.strainInfo;
+  document.getElementById('strain-panel').style.display='';
+  document.getElementById('strain-loading').style.display='none';
+  const typeEmoji={indica:'🍁',sativa:'☀️',hybrid:'🌿','indica-dominant':'🍁','sativa-dominant':'☀️'}[info.type]||'🌿';
+  const typeColors={indica:'#9b72cf',sativa:'#e8a43a',hybrid:'#52b778','indica-dominant':'#9b72cf','sativa-dominant':'#e8a43a'};
+  const typeLabel={indica:'Índica',sativa:'Sativa',hybrid:'Híbrida','indica-dominant':'Índica-dominante','sativa-dominant':'Sativa-dominante'}[info.type]||info.type;
+  document.getElementById('strain-type-badge').textContent=typeEmoji;
+  document.getElementById('strain-type-badge').style.background=typeColors[info.type]+'22';
+  document.getElementById('strain-name-display').textContent=info.name;
+  document.getElementById('strain-type-label').textContent=typeLabel;
+  document.getElementById('strain-thc').textContent=info.thc;
+  document.getElementById('strain-desc').textContent=info.description;
+  document.getElementById('strain-flower').textContent=info.flowerWeeks;
+  document.getElementById('strain-cbd').textContent=info.cbd;
+  document.getElementById('strain-effect').textContent=info.effects;
+  document.getElementById('strain-aroma').textContent=info.aromas;
+  document.getElementById('strain-tip').textContent=info.growTip;
+  if (info.medicalNote){document.getElementById('strain-warn').style.display='';document.getElementById('strain-warn-text').textContent='🏥 '+info.medicalNote;}
+  document.getElementById('strain-data').style.display='';
+}
+
+// ═══════════════════════════════════════════════
+// GUIA + MANUAL (reaproveitados)
 // ═══════════════════════════════════════════════
 function buildGuia() {
   const guia = [
@@ -1372,6 +1775,7 @@ function gotoPage(idx) {
 // ═══════════════════════════════════════════════
 // MANUAL DE INSTRUÇÕES
 // ═══════════════════════════════════════════════
+
 function buildManual() {
   const sections = [
     {
@@ -1524,21 +1928,85 @@ function buildManual() {
         {
           q: 'Como analisar os tricomas?',
           a: 'Você precisa de uma lupa com pelo menos 30x de aumento (ou um microscópio digital pequeno). Corte uma pequena amostra de bud e observe a cor dos tricomas:',
-          example: `⚪ <strong>Transparentes:</strong> Imaturos, pouco efeito.\n⚪ <strong>Leitosos:</strong> Ápice do THC, efeito cerebral.\n🟤 <strong>Âmbar:</strong> Efeito mais físico/relaxante.`,
+          example: `🔍 <strong>Transparentes/cristalinos:</strong> ainda estão amadurecendo. Aguarde.\n\n🥛 <strong>Leitosos/opacos (brancos):</strong> THC no pico. Efeito mais cerebral, eufórico, energético.\n\n🟡 <strong>Âmbar (10–20%):</strong> início da degradação. Efeito mais equilibrado — ótimo para uso medicinal.\n\n🟠 <strong>Âmbar (30–50%):</strong> THC degradando em CBN. Efeito mais sedativo e corporal.\n\n⚠️ <strong>Mais de 50% âmbar:</strong> esperou demais — THC degradado.`,
+          tip: '💡 Para uso medicinal ansiolítico/relaxante: 20–30% âmbar é ideal. Para efeito mais energizante: colha quando ainda maioria leitoso.',
+        },
+        {
+          q: 'Qual é a diferença entre colher cedo e colher tarde?',
+          a: '',
+          example: `<strong>Colheita precoce</strong> (maioria leitoso):\n→ Efeito mais "alto", eufórico, cerebral, pode causar ansiedade\n\n<strong>Colheita no ponto</strong> (20% âmbar):\n→ Efeito equilibrado, relaxante sem sedação excessiva — ideal medicinal\n\n<strong>Colheita tardia</strong> (50%+ âmbar):\n→ Efeito sedativo forte, "couch-lock", ótimo para dor e insônia`,
         },
       ]
     },
     {
-      icon: '🌍', title: 'Protocolo SuperSoil — como funciona', color: '#e8a43a',
+      icon: '❓', title: 'Dúvidas frequentes de iniciantes', color: '#a8c4ac',
       items: [
         {
-          q: 'O que é SuperSoil?',
-          a: 'SuperSoil é um substrato vivo e pré-enriquecido com matéria orgânica suficiente para nutrir a planta por todo o ciclo. O solo tem um ecossistema de microorganismos que digerem a matéria orgânica e liberam os nutrientes lentamente para a planta.',
+          q: 'Preciso usar TODOS os produtos da semana?',
+          a: 'Não necessariamente. O protocolo é uma recomendação completa. Se você não tem algum produto, pode pular — especialmente suplementos e estimulantes. Os produtos base (Grow/Bloom ou BioThrive) são os mais importantes. Nunca improvise substituições sem pesquisar antes.',
+        },
+        {
+          q: 'O que acontece se eu errar o pH?',
+          a: 'pH fora da faixa ideal "trava" a absorção de nutrientes mesmo que eles estejam presentes no solo. A planta vai mostrar sinais de deficiência (folhas amareladas, manchas) mesmo com boa adubação. Corrigir o pH resolve na maioria dos casos.',
+          warn: '⚠️ pH muito baixo (< 5.5) ou muito alto (> 7.0) causa lockout severo de nutrientes.',
+        },
+        {
+          q: 'A planta está com as folhas amarelando — o que fazer?',
+          a: 'Amarelamento pode ter várias causas. Verifique nesta ordem:',
+          example: `1. <strong>pH da água:</strong> está na faixa correta?\n2. <strong>EC:</strong> está muito alto (excesso) ou muito baixo (falta)?\n3. <strong>Overwatering:</strong> o solo está sempre encharcado?\n4. <strong>Fase natural:</strong> na floração avançada, folhas velhas amarelam normalmente`,
+        },
+        {
+          q: 'Posso mudar a duração das fases no meio do cultivo?',
+          a: 'Sim! É só voltar na aba Configurar, ajustar as semanas e gerar novamente. O cronograma inteiro se recalcula. Por exemplo, se sua planta demorou mais para florir, aumente as semanas de floração.',
+        },
+        {
+          q: 'O que significa "flush" e por que fazer?',
+          a: 'Flush é a última fase antes da colheita: você rega só com água pura (sem nutrientes) por 1–2 semanas. O objetivo é "lavar" o excesso de sais e nutrientes do substrato e da planta para ter um produto final mais limpo, com melhor sabor e combustão.',
+          tip: '💡 Após o flush, observe as folhas: elas vão começar a amarelar — isso é sinal que a planta está consumindo suas reservas. Bom sinal!',
         },
       ]
-    }
+    },
   ];
 
+  function renderManual(sections) {
+    return sections.map((sec, si) => {
+      const itemsHtml = sec.items.map((item, ii) => `
+        <div class="manual-item">
+          <div class="manual-item-q">❔ ${item.q}</div>
+          ${item.a ? `<div class="manual-item-a">${item.a}</div>` : ''}
+          ${item.example ? `<div class="manual-example">${item.example.replace(/\n/g,'<br>')}</div>` : ''}
+          ${item.tip  ? `<div class="manual-tip">${item.tip}</div>` : ''}
+          ${item.warn ? `<div class="manual-warn">${item.warn}</div>` : ''}
+        </div>`).join('');
+
+      return `<div class="manual-section">
+        <div class="manual-section-header" style="background:${sec.color}18;border:1px solid ${sec.color}33" onclick="toggleManual(this)">
+          <span class="manual-section-icon">${sec.icon}</span>
+          <span class="manual-section-title" style="color:${sec.color}">${sec.title}</span>
+          <span class="manual-section-chevron">⌄</span>
+        </div>
+        <div class="manual-body">${itemsHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('manual-content').innerHTML = renderManual(sections);
+
+  // Auto-open first section
+  const firstHeader = document.querySelector('.manual-section-header');
+  if (firstHeader) toggleManual(firstHeader);
+}
+
+function toggleManual(header) {
+  const body    = header.nextElementSibling;
+  const chevron = header.querySelector('.manual-section-chevron');
+  const isOpen  = body.classList.toggle('open');
+  chevron.classList.toggle('open', isOpen);
+}
+
+// ═══════════════════════════════════════════════
+// STRAIN INFO (via Claude API)
+// ═══════════════════════════════════════════════
 async function fetchStrainInfo(strainName) {
   if (!strainName || strainName === 'Meu cultivo') return;
 
@@ -1553,70 +2021,95 @@ async function fetchStrainInfo(strainName) {
   errorEl.style.display = 'none';
   document.getElementById('strain-loading-name').textContent = strainName;
 
-  // 1. Check local DB first
-  const searchKey = strainName.toLowerCase().trim();
-  const foundLocal = STRAIN_DB[searchKey] || Object.values(STRAIN_DB).find(s => s.name.toLowerCase() === searchKey);
+  const prompt = `You are a cannabis strain database. The user is asking about the strain: "${strainName}".
 
-  if (foundLocal) {
-    setTimeout(() => { // Small delay to feel like a "search"
-      loading.style.display = 'none';
-      renderStrainData(foundLocal);
-      state.strainInfo = foundLocal;
-      localStorage.setItem('cultivoState', JSON.stringify(state));
-    }, 400);
-    return;
-  }
-
-  // 2. Fallback to (mock) API or show not found
-  // Since original Anthropic call was broken and insecure for client-side,
-  // we show error/not found for unknown strains for now.
-  loading.style.display = 'none';
-  errorEl.style.display = '';
+Return ONLY a valid JSON object with exactly these fields (no markdown, no explanation):
+{
+  "found": true,
+  "name": "official strain name",
+  "type": "indica" | "sativa" | "hybrid" | "indica-dominant" | "sativa-dominant",
+  "thc": "THC range, e.g. 18-24%",
+  "cbd": "CBD range, e.g. < 1%",
+  "flowerWeeks": "flowering time in weeks, e.g. 8-9 semanas",
+  "effects": "top 2-3 effects in Portuguese, e.g. Relaxante, Eufórico, Criativo",
+  "aromas": "top 2-3 aromas in Portuguese, e.g. Terra, Pinho, Cítrico",
+  "description": "2 sentences about this strain in Portuguese",
+  "growTip": "1 specific indoor growing tip in Portuguese for this strain",
+  "medicalNote": "main medical use in Portuguese, or empty string if not notable"
 }
 
-function renderStrainData(info) {
-  const panel = document.getElementById('strain-panel');
-  const dataEl  = document.getElementById('strain-data');
+If the strain is unknown or you have low confidence, return: {"found": false}`;
 
-  const typeEmoji = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
-  const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
-  const typeColor  = typeColors[info.type] || '#52b778';
-  const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
 
-  document.getElementById('strain-type-badge').textContent = typeEmoji;
-  document.getElementById('strain-type-badge').style.background = typeColor + '22';
-  document.getElementById('strain-name-display').textContent = info.name;
-  document.getElementById('strain-type-label').textContent = typeLabel;
-  document.getElementById('strain-thc').textContent = info.thc;
-  document.getElementById('strain-desc').textContent = info.description;
-  document.getElementById('strain-lineage').textContent = info.lineage || '---';
-  document.getElementById('strain-terpenes').textContent = info.terpenes || '---';
-  document.getElementById('strain-flower').textContent = info.flowerWeeks;
-  document.getElementById('strain-cbd').textContent = info.cbd;
-  document.getElementById('strain-effect').textContent = info.effects;
-  document.getElementById('strain-aroma').textContent = info.aromas;
-  document.getElementById('strain-tip').textContent = info.growTip;
+    const data = await res.json();
+    const raw  = data.content?.map(b => b.text || '').join('') || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const info  = JSON.parse(clean);
 
-  if (info.medicalNote) {
-    document.getElementById('strain-warn').style.display = '';
-    document.getElementById('strain-warn-text').textContent = '🏥 Uso medicinal: ' + info.medicalNote;
-  }
+    loading.style.display = 'none';
 
-  // Check if configured flowering weeks match the strain
-  const flowerMatch = info.flowerWeeks.match(/(\d+)/);
-  if (flowerMatch) {
-    const strainFlowerWeeks = parseInt(flowerMatch[1]);
-    const configuredWeeks   = state.weeks.flora;
-    if (Math.abs(strainFlowerWeeks - configuredWeeks) >= 2) {
-      const warnEl = document.getElementById('strain-warn');
-      warnEl.style.display = '';
-      const existing = document.getElementById('strain-warn-text').textContent;
-      document.getElementById('strain-warn-text').textContent =
-        (existing ? existing + ' · ' : '') +
-        `⏱️ Esta strain floresce em ~${info.flowerWeeks}, mas você configurou ${configuredWeeks} semanas. Considere ajustar.`;
+    if (!info.found) {
+      errorEl.style.display = '';
+      return;
     }
+
+    // Populate
+    const typeEmoji = {indica:'🍁', sativa:'☀️', hybrid:'🌿', 'indica-dominant':'🍁', 'sativa-dominant':'☀️'}[info.type] || '🌿';
+    const typeColors = {indica:'#9b72cf', sativa:'#e8a43a', hybrid:'#52b778', 'indica-dominant':'#9b72cf', 'sativa-dominant':'#e8a43a'};
+    const typeColor  = typeColors[info.type] || '#52b778';
+    const typeLabel  = {indica:'Índica', sativa:'Sativa', hybrid:'Híbrida', 'indica-dominant':'Índica-dominante', 'sativa-dominant':'Sativa-dominante'}[info.type] || info.type;
+
+    document.getElementById('strain-type-badge').textContent = typeEmoji;
+    document.getElementById('strain-type-badge').style.background = typeColor + '22';
+    document.getElementById('strain-name-display').textContent = info.name;
+    document.getElementById('strain-type-label').textContent = typeLabel;
+    document.getElementById('strain-thc').textContent = info.thc;
+    document.getElementById('strain-desc').textContent = info.description;
+    document.getElementById('strain-flower').textContent = info.flowerWeeks;
+    document.getElementById('strain-cbd').textContent = info.cbd;
+    document.getElementById('strain-effect').textContent = info.effects;
+    document.getElementById('strain-aroma').textContent = info.aromas;
+    document.getElementById('strain-tip').textContent = info.growTip;
+
+    if (info.medicalNote) {
+      document.getElementById('strain-warn').style.display = '';
+      document.getElementById('strain-warn-text').textContent = '🏥 Uso medicinal: ' + info.medicalNote;
+    }
+
+    // Check if configured flowering weeks match the strain
+    const flowerMatch = info.flowerWeeks.match(/(\d+)/);
+    if (flowerMatch) {
+      const strainFlowerWeeks = parseInt(flowerMatch[1]);
+      const configuredWeeks   = state.weeks.flora;
+      if (Math.abs(strainFlowerWeeks - configuredWeeks) >= 2) {
+        const warnEl = document.getElementById('strain-warn');
+        warnEl.style.display = '';
+        const existing = document.getElementById('strain-warn-text').textContent;
+        document.getElementById('strain-warn-text').textContent =
+          (existing ? existing + ' · ' : '') +
+          `⏱️ Esta strain floresce em ~${info.flowerWeeks}, mas você configurou ${configuredWeeks} semanas. Considere ajustar.`;
+      }
+    }
+
+    dataEl.style.display = '';
+    // Cache
+    state.strainInfo = info;
+    localStorage.setItem('cultivoState', JSON.stringify(state));
+
+  } catch(e) {
+    loading.style.display = 'none';
+    errorEl.style.display = '';
   }
-  dataEl.style.display = '';
 }
 
 function restoreStrainPanel() {
@@ -1640,8 +2133,6 @@ function restoreStrainPanel() {
   document.getElementById('strain-type-label').textContent = typeLabel;
   document.getElementById('strain-thc').textContent = info.thc;
   document.getElementById('strain-desc').textContent = info.description;
-  document.getElementById('strain-lineage').textContent = info.lineage || '---';
-  document.getElementById('strain-terpenes').textContent = info.terpenes || '---';
   document.getElementById('strain-flower').textContent = info.flowerWeeks;
   document.getElementById('strain-cbd').textContent = info.cbd;
   document.getElementById('strain-effect').textContent = info.effects;
@@ -1655,61 +2146,16 @@ function restoreStrainPanel() {
   dataEl.style.display = '';
 }
 
+
+
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
 (function init() {
-  // Set today as default date
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm   = String(today.getMonth()+1).padStart(2,'0');
-  const dd   = String(today.getDate()).padStart(2,'0');
-  document.getElementById('cfg-date').value = `${yyyy}-${mm}-${dd}`;
-
-  // Populate strain list
-  const datalist = document.getElementById('strain-list');
-  if (datalist) {
-    Object.values(STRAIN_DB).sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.name;
-      datalist.appendChild(opt);
-    });
-  }
-
-  // Restore state
-  try {
-    const saved = JSON.parse(localStorage.getItem('cultivoState') || 'null');
-    if (saved && saved.date) {
-      Object.assign(state, saved);
-      document.getElementById('cfg-date').value = state.date;
-      document.getElementById('cfg-strain').value = state.strain || '';
-      ['clone','vega','flora','flush'].forEach(k => {
-        document.getElementById('val-'+k).innerHTML = `${state.weeks[k]} <span class="stepper-unit">sem</span>`;
-      });
-      document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
-      const protoMap = {biobizz:0, remo:1, go:2, supersoil:3, generic:4};
-      const idx = protoMap[state.proto] ?? 0;
-      document.querySelectorAll('.proto-pill')[idx]?.classList.add('selected');
-
-      // Recalculate current week on restore
-      const d0 = new Date(state.date + 'T12:00:00');
-      const now = new Date(); now.setHours(12,0,0,0);
-      const daysPassed = Math.floor((now - d0) / 86400000);
-      const totalDays  = (state.weeks.clone + state.weeks.vega + state.weeks.flora + state.weeks.flush) * 7;
-      if (daysPassed >= 0 && daysPassed < totalDays) {
-        state.currentWeek = Math.floor(daysPassed / 7) + 1;
-      }
-
-      buildCronograma();
-      buildAdubacao();
-      buildMIP();
-      restoreStrainPanel();
-    }
-  } catch(e) {}
-
+  loadJardim();
+  renderJardim();
   buildGuia();
   buildManual();
-  buildCronograma();
 })();
 </script>
 </body>
