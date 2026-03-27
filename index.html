@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1f14">
+<title>CultivoApp — Planejador</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0d1f14;
+  --bg2:       #132b1c;
+  --bg3:       #1a3824;
+  --surface:   #1e3d28;
+  --surface2:  #243f2d;
+  --border:    rgba(82,183,120,0.18);
+  --border2:   rgba(82,183,120,0.32);
+  --green:     #52b778;
+  --green2:    #3d9a60;
+  --green-dim: rgba(82,183,120,0.12);
+  --amber:     #e8a43a;
+  --amber-dim: rgba(232,164,58,0.15);
+  --purple:    #9b72cf;
+  --purple-dim:rgba(155,114,207,0.15);
+  --red:       #e05c5c;
+  --red-dim:   rgba(224,92,92,0.13);
+  --text:      #e8f0e9;
+  --text2:     #a8c4ac;
+  --text3:     #6a9370;
+  --radius:    16px;
+  --radius-sm: 10px;
+  --serif:     'DM Serif Display', Georgia, serif;
+  --sans:      'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%; overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+}
+
+/* ── App shell ────────────────────────────────── */
+#app {
+  height: 100vh; height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────── */
+#header {
+  padding: 16px 20px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--green);
+  border-radius: 10px;
+  display: grid; place-items: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.logo-text { flex: 1; }
+.logo-text h1 { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 400; line-height: 1; }
+.logo-text span { font-size: 11px; color: var(--text3); letter-spacing: .04em; }
+.header-badge {
+  font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 20px;
+  background: var(--green-dim); color: var(--green);
+  border: 1px solid var(--border2); letter-spacing: .04em;
+}
+
+/* ── Nav tabs ──────────────────────────────────── */
+#nav {
+  display: flex;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; overflow-x: auto;
+  scrollbar-width: none;
+}
+#nav::-webkit-scrollbar { display: none; }
+.nav-tab {
+  flex: 1; min-width: 72px;
+  padding: 10px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 500; color: var(--text3);
+  cursor: pointer; border: none; background: none;
+  transition: color .2s; position: relative; letter-spacing: .02em;
+}
+.nav-tab .icon { font-size: 17px; }
+.nav-tab.active { color: var(--green); }
+.nav-tab.active::after {
+  content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
+  height: 2px; background: var(--green); border-radius: 2px 2px 0 0;
+}
+
+/* ── Pages ─────────────────────────────────────── */
+#pages { flex: 1; overflow: hidden; position: relative; }
+.page {
+  position: absolute; inset: 0;
+  overflow-y: auto; padding: 20px 16px 100px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity .25s, transform .25s;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.page.active {
+  opacity: 1; pointer-events: all; transform: none;
+}
+
+/* ── Section title ─────────────────────────────── */
+.section-title {
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+  color: var(--text); margin-bottom: 4px; line-height: 1.2;
+}
+.section-sub { font-size: 12px; color: var(--text3); margin-bottom: 20px; line-height: 1.5; }
+
+/* ── Cards ─────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+}
+.card-label {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-label .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+}
+
+/* ── Form fields ───────────────────────────────── */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--text2); margin-bottom: 6px;
+}
+.field input, .field select {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--sans); font-size: 15px;
+  appearance: none; -webkit-appearance: none;
+  outline: none; transition: border-color .2s;
+}
+.field input:focus, .field select:focus { border-color: var(--green); }
+.field input[type="date"] { color-scheme: dark; }
+
+/* ── Stepper (semanas) ─────────────────────────── */
+.stepper {
+  display: flex; align-items: center;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); overflow: hidden;
+}
+.stepper-btn {
+  width: 48px; height: 48px; border: none; background: none;
+  color: var(--green); font-size: 22px; cursor: pointer;
+  display: grid; place-items: center;
+  transition: background .15s;
+}
+.stepper-btn:active { background: var(--green-dim); }
+.stepper-val {
+  flex: 1; text-align: center;
+  font-size: 22px; font-weight: 600; color: var(--text);
+  font-family: var(--serif);
+}
+.stepper-unit { font-size: 12px; color: var(--text3); font-family: var(--sans); font-weight: 400; }
+
+/* ── Protocol pills ────────────────────────────── */
+.proto-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.proto-pill {
+  padding: 12px 10px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg3); cursor: pointer;
+  transition: all .2s; text-align: center;
+}
+.proto-pill .proto-icon { font-size: 20px; margin-bottom: 4px; }
+.proto-pill .proto-name { font-size: 12px; font-weight: 600; color: var(--text2); line-height: 1.2; }
+.proto-pill .proto-sub  { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.proto-pill.selected {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.proto-pill.selected .proto-name { color: var(--green); }
+
+/* ── CTA Button ────────────────────────────────── */
+.btn-primary {
+  width: 100%; padding: 16px;
+  background: var(--green); color: var(--bg);
+  font-family: var(--serif); font-size: 17px;
+  border: none; border-radius: var(--radius);
+  cursor: pointer; font-weight: 400;
+  transition: opacity .15s, transform .1s;
+  letter-spacing: .01em;
+}
+.btn-primary:active { opacity: .85; transform: scale(.98); }
+.btn-secondary {
+  width: 100%; padding: 13px;
+  background: transparent; color: var(--green);
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  border: 1.5px solid var(--border2); border-radius: var(--radius);
+  cursor: pointer; transition: background .15s;
+  margin-top: 8px;
+}
+.btn-secondary:active { background: var(--green-dim); }
+
+/* ── Phase bar ─────────────────────────────────── */
+.phase-bar {
+  display: flex; border-radius: var(--radius-sm);
+  overflow: hidden; height: 8px; margin: 8px 0 16px; gap: 2px;
+}
+.phase-seg {
+  height: 100%; border-radius: 2px;
+  transition: flex .3s ease;
+}
+
+/* ── Timeline cards ────────────────────────────── */
+.timeline { display: flex; flex-direction: column; gap: 8px; }
+.tl-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.tl-item.highlight { border-color: var(--amber); background: var(--amber-dim); }
+.tl-item.highlight-green { border-color: var(--green); background: var(--green-dim); }
+.tl-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 4px;
+}
+.tl-content { flex: 1; }
+.tl-date { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+.tl-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.tl-sub { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.tl-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 10px; flex-shrink: 0; align-self: flex-start;
+}
+
+/* ── Week view ─────────────────────────────────── */
+.week-nav {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.week-nav button {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border2); background: var(--surface);
+  color: var(--text2); font-size: 16px; cursor: pointer;
+  display: grid; place-items: center;
+}
+.week-nav .week-label {
+  flex: 1; text-align: center;
+  font-size: 14px; font-weight: 600; color: var(--text);
+}
+.week-nav .week-sub { font-size: 11px; color: var(--text3); }
+
+.day-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px; overflow: hidden;
+}
+.day-row-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; cursor: pointer;
+}
+.day-num {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--bg3); display: grid; place-items: center;
+  font-size: 13px; font-weight: 600; color: var(--text2); flex-shrink: 0;
+}
+.day-num.today { background: var(--green); color: var(--bg); }
+.day-phase-tag {
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 8px; flex-shrink: 0;
+}
+.day-tasks { font-size: 12px; color: var(--text3); flex: 1; }
+.day-expand { color: var(--text3); font-size: 14px; transition: transform .2s; }
+.day-expand.open { transform: rotate(180deg); }
+.day-detail {
+  padding: 0 14px; max-height: 0; overflow: hidden;
+  transition: max-height .3s ease, padding .3s;
+}
+.day-detail.open { max-height: 300px; padding: 0 14px 12px; }
+.day-detail-row {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 6px 0; border-top: 1px solid var(--border);
+  font-size: 12px;
+}
+.day-detail-label { color: var(--text3); min-width: 56px; font-size: 11px; padding-top: 1px; }
+.day-detail-val { color: var(--text); flex: 1; line-height: 1.5; }
+
+/* ── Stats cards ────────────────────────────────── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+.stat-val { font-family: var(--serif); font-size: 28px; color: var(--text); line-height: 1; }
+.stat-unit { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.stat-label { font-size: 11px; color: var(--text2); margin-top: 6px; font-weight: 500; }
+
+/* ── Guia ────────────────────────────────────────── */
+.guia-section { margin-bottom: 20px; }
+.guia-section h3 {
+  font-family: var(--serif); font-size: 17px; color: var(--text);
+  margin-bottom: 10px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.guia-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.guia-row:last-child { border-bottom: none; }
+.guia-key { color: var(--text2); }
+.guia-val { color: var(--green); font-weight: 600; text-align: right; max-width: 55%; }
+
+/* ── MIP Tab ─────────────────────────────────────── */
+.mip-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 8px;
+}
+.mip-card-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.mip-icon { font-size: 20px; }
+.mip-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.mip-phase { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.mip-detail-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+.mip-detail-label { color: var(--text3); }
+.mip-detail-val { color: var(--text2); text-align: right; }
+.warning-banner {
+  background: var(--red-dim); border: 1px solid rgba(224,92,92,.3);
+  border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px;
+  font-size: 12px; color: var(--red); line-height: 1.5;
+}
+
+/* ── Empty state ────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state h3 { font-family: var(--serif); font-size: 20px; color: var(--text2); margin-bottom: 8px; }
+.empty-state p { font-size: 13px; color: var(--text3); line-height: 1.6; }
+
+/* ── Progress ring ──────────────────────────────── */
+.progress-ring-wrap {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+}
+.progress-ring { transform: rotate(-90deg); }
+.progress-ring circle { transition: stroke-dashoffset .5s ease; }
+.progress-info { flex: 1; }
+.progress-pct { font-family: var(--serif); font-size: 36px; color: var(--text); line-height: 1; }
+.progress-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* ── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div class="logo-mark">🌿</div>
+    <div class="logo-text">
+      <h1>CultivoApp</h1>
+      <span>Planejador de Cultivo</span>
+    </div>
+    <div class="header-badge" id="status-badge">Novo cultivo</div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <button class="nav-tab active" onclick="gotoPage(0)" id="tab-0">
+      <span class="icon">⚙️</span>Configurar
+    </button>
+    <button class="nav-tab" onclick="gotoPage(1)" id="tab-1">
+      <span class="icon">📅</span>Cronograma
+    </button>
+    <button class="nav-tab" onclick="gotoPage(2)" id="tab-2">
+      <span class="icon">💊</span>Adubação
+    </button>
+    <button class="nav-tab" onclick="gotoPage(3)" id="tab-3">
+      <span class="icon">🐛</span>MIP
+    </button>
+    <button class="nav-tab" onclick="gotoPage(4)" id="tab-4">
+      <span class="icon">📖</span>Guia
+    </button>
+  </nav>
+
+  <!-- PAGES -->
+  <div id="pages">
+
+    <!-- PAGE 0: CONFIGURAÇÃO -->
+    <div class="page active" id="page-0">
+      <p class="section-title">Configure seu cultivo</p>
+      <p class="section-sub">Preencha uma vez e toda a planilha se ajusta automaticamente.</p>
+
+      <div class="card">
+        <div class="card-label"><span class="dot"></span>Informações básicas</div>
+        <div class="field">
+          <label>📅 Data do Dia 1 (clone)</label>
+          <input type="date" id="cfg-date">
+        </div>
+        <div class="field">
+          <label>🌿 Strain / Cultivar</label>
+          <input type="text" id="cfg-strain" placeholder="Ex: OG Kush, Blue Dream...">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span class="dot"></span>Duração das fases (semanas)</div>
+
+        <div class="field">
+          <label>🌱 Clone</label>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="stepChange('clone',-1)">−</button>
+            <div class="stepper-val" id="val-clone">2 <span class="stepper-unit">sem</span></div>
+            <button class="stepper-btn" onclick="stepChange('clone',1)">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>🌿 Vegetativo</label>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="stepChange('vega',-1)">−</button>
+            <div class="stepper-val" id="val-vega">6 <span class="stepper-unit">sem</span></div>
+            <button class="stepper-btn" onclick="stepChange('vega',1)">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>🌸 Floração</label>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="stepChange('flora',-1)">−</button>
+            <div class="stepper-val" id="val-flora">9 <span class="stepper-unit">sem</span></div>
+            <button class="stepper-btn" onclick="stepChange('flora',1)">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>🚿 Flush</label>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="stepChange('flush',-1)">−</button>
+            <div class="stepper-val" id="val-flush">1 <span class="stepper-unit">sem</span></div>
+            <button class="stepper-btn" onclick="stepChange('flush',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span class="dot"></span>Protocolo de nutrição</div>
+        <div class="proto-grid" id="proto-grid">
+          <div class="proto-pill selected" onclick="selectProto('biobizz')">
+            <div class="proto-icon">🌿</div>
+            <div class="proto-name">BioBizz</div>
+            <div class="proto-sub">Orgânico · Solo</div>
+          </div>
+          <div class="proto-pill" onclick="selectProto('remo')">
+            <div class="proto-icon">⚗️</div>
+            <div class="proto-name">Remo Nutrients</div>
+            <div class="proto-sub">Mineral/Org · Multi</div>
+          </div>
+          <div class="proto-pill" onclick="selectProto('go')">
+            <div class="proto-icon">📦</div>
+            <div class="proto-name">General Organics</div>
+            <div class="proto-sub">GO Box · Solo</div>
+          </div>
+          <div class="proto-pill" onclick="selectProto('supersoil')">
+            <div class="proto-icon">🌍</div>
+            <div class="proto-name">SuperSoil</div>
+            <div class="proto-sub">Solo vivo · Cobertura</div>
+          </div>
+          <div class="proto-pill" onclick="selectProto('generic')" style="grid-column:span 2">
+            <div class="proto-icon">✏️</div>
+            <div class="proto-name">Genérico / Personalizado</div>
+            <div class="proto-sub">Preencha seu próprio protocolo</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveCfg()">Gerar planejamento completo →</button>
+      <button class="btn-secondary" onclick="resetCfg()">Limpar e recomeçar</button>
+    </div>
+
+    <!-- PAGE 1: CRONOGRAMA -->
+    <div class="page" id="page-1">
+      <div id="crono-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">📅</div>
+        <h3>Nenhum cultivo configurado</h3>
+        <p>Configure as datas e semanas na aba ⚙️ Configurar para ver o cronograma completo.</p>
+      </div>
+      <div id="crono-content">
+        <div class="progress-ring-wrap">
+          <svg class="progress-ring" width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(82,183,120,0.15)" stroke-width="6"/>
+            <circle id="prog-circle" cx="36" cy="36" r="30" fill="none" stroke="#52b778" stroke-width="6"
+              stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          </svg>
+          <div class="progress-info">
+            <div class="progress-pct" id="prog-pct">0%</div>
+            <div class="progress-label" id="prog-label">Configure seu cultivo para começar</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px" id="prog-day">—</div>
+          </div>
+        </div>
+
+        <!-- Phase bar -->
+        <div class="phase-bar" id="phase-bar">
+          <div class="phase-seg" style="background:#52b778;flex:2"></div>
+          <div class="phase-seg" style="background:#2196F3;flex:6"></div>
+          <div class="phase-seg" style="background:#9b72cf;flex:9"></div>
+          <div class="phase-seg" style="background:#e05c5c;flex:1"></div>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-val" id="stat-total">—</div>
+            <div class="stat-unit">dias totais</div>
+            <div class="stat-label">Duração do cultivo</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="stat-harvest">—</div>
+            <div class="stat-unit"></div>
+            <div class="stat-label">Data da colheita</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="stat-phase">—</div>
+            <div class="stat-unit"></div>
+            <div class="stat-label">Fase atual</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="stat-daysleft">—</div>
+            <div class="stat-unit">dias</div>
+            <div class="stat-label">Até a colheita</div>
+          </div>
+        </div>
+
+        <!-- Week navigator -->
+        <div class="week-nav">
+          <button onclick="changeWeek(-1)">‹</button>
+          <div>
+            <div class="week-label" id="week-label">Semana 1</div>
+            <div class="week-sub" id="week-sub">—</div>
+          </div>
+          <button onclick="changeWeek(1)">›</button>
+        </div>
+
+        <div class="timeline" id="week-days"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: ADUBAÇÃO -->
+    <div class="page" id="page-2">
+      <p class="section-title">Protocolo de Adubação</p>
+      <div id="adub-proto-badge" style="margin-bottom:16px"></div>
+      <div id="adub-content"></div>
+    </div>
+
+    <!-- PAGE 3: MIP -->
+    <div class="page" id="page-3">
+      <p class="section-title">Controle de Pragas</p>
+      <p class="section-sub">Protocolo preventivo. Nunca usar foliar após Flora S3.</p>
+      <div class="warning-banner">⚠️ Nunca misturar Calda Sulfocálcica + Nim. Intervalo mínimo de 7 dias entre foliares.</div>
+      <div id="mip-content"></div>
+    </div>
+
+    <!-- PAGE 4: GUIA RÁPIDO -->
+    <div class="page" id="page-4">
+      <p class="section-title">Guia Rápido</p>
+      <p class="section-sub">Referência de parâmetros ideais para cannabis medicinal indoor.</p>
+      <div id="guia-content"></div>
+    </div>
+
+  </div><!-- /pages -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  date: null, strain: '', proto: 'biobizz',
+  weeks: { clone: 2, vega: 6, flora: 9, flush: 1 },
+  currentWeek: 1
+};
+
+const LIMITS = { clone:[1,4], vega:[4,12], flora:[8,16], flush:[1,2] };
+
+// ═══════════════════════════════════════════════
+// NUTRITION DATA
+// ═══════════════════════════════════════════════
+const PROTOCOLS = {
+  biobizz: {
+    name: 'BioBizz', icon: '🌿', color: '#52b778',
+    obs: 'Orgânico certificado. pH ideal 6.2–6.5. Foliar com Fish·Mix + Alg·A·Mic até Flora S2.',
+    clone: [
+      {s:1, p1:'Root Juice', d1:'0.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–6.5', ec:'baixo', obs:'Solo úmido — estimular raízes'},
+      {s:2, p1:'Root Juice', d1:'0.3 mL/L', p2:'Alg·A·Mic', d2:'0.5 mL/L', supl:'—', ph:'6.2–6.5', ec:'baixo', obs:'Alg·A·Mic recupera e fortalece'},
+      {s:3, p1:'Root Juice', d1:'0.5 mL/L', p2:'Bio·Grow', d2:'0.5 mL/L', supl:'—', ph:'6.2–6.5', ec:'baixo', obs:'Início suave de N antes da vega'},
+      {s:4, p1:'Root Juice', d1:'0.5 mL/L', p2:'Bio·Grow', d2:'1 mL/L', supl:'—', ph:'6.2–6.5', ec:'baixo', obs:'Pronto para vegetativo'},
+    ],
+    vega: [
+      {s:1, p1:'Bio·Grow', d1:'1 mL/L', p2:'Fish·Mix', d2:'1 mL/L', supl:'Alg·A·Mic 1mL', ph:'6.2–6.5', ec:'0.8', obs:'Fish·Mix = mais N orgânico'},
+      {s:2, p1:'Bio·Grow', d1:'2 mL/L', p2:'Fish·Mix', d2:'2 mL/L', supl:'—', ph:'6.2–6.5', ec:'1.0', obs:'Aumentar progressivamente'},
+      {s:3, p1:'Bio·Grow', d1:'2 mL/L', p2:'Fish·Mix', d2:'2 mL/L', supl:'Alg·A·Mic 1mL', ph:'6.2–6.5', ec:'1.2', obs:'Foliar Fish·Mix + Alg·A·Mic 1mL/L'},
+      {s:4, p1:'Bio·Grow', d1:'3 mL/L', p2:'Fish·Mix', d2:'3 mL/L', supl:'—', ph:'6.2–6.5', ec:'1.4', obs:'LST / estrutura vegetativa'},
+      {s:5, p1:'Bio·Grow', d1:'4 mL/L', p2:'Fish·Mix', d2:'3 mL/L', supl:'Alg·A·Mic 1mL', ph:'6.2–6.5', ec:'1.5', obs:'Pré-floração'},
+      {s:6, p1:'Bio·Grow', d1:'4 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–6.5', ec:'1.4', obs:'Última semana de vega pura'},
+      {s:7, p1:'Bio·Grow', d1:'4 mL/L', p2:'Bio·Bloom', d2:'1 mL/L', supl:'—', ph:'6.2–6.5', ec:'1.4', obs:'Transição — introduzir Bloom'},
+      {s:8, p1:'Bio·Grow', d1:'4 mL/L', p2:'Bio·Bloom', d2:'2 mL/L', supl:'—', ph:'6.2–6.5', ec:'1.4', obs:'Semana extra de vega'},
+    ],
+    flora: [
+      {s:1, p1:'Bio·Grow', d1:'1 mL/L', p2:'Bio·Bloom', d2:'1 mL/L', supl:'Top·Max 1mL', ph:'6.2–6.5', ec:'1.6', obs:'Manter Grow S1–S3'},
+      {s:2, p1:'Bio·Grow', d1:'1 mL/L', p2:'Bio·Bloom', d2:'2 mL/L', supl:'Top·Max 1mL', ph:'6.2–6.5', ec:'1.7', obs:'Formação de pistils'},
+      {s:3, p1:'Bio·Grow', d1:'1 mL/L', p2:'Bio·Bloom', d2:'3 mL/L', supl:'Top·Max 2mL', ph:'6.2–6.5', ec:'1.8', obs:'Início do enchimento'},
+      {s:4, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'3 mL/L', supl:'Top·Max 2mL', ph:'6.2–6.5', ec:'1.9', obs:'Parar Grow — flora plena'},
+      {s:5, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 3mL', ph:'6.2–6.5', ec:'2.0', obs:'Pico de floração'},
+      {s:6, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 3mL', ph:'6.2–6.5', ec:'2.0', obs:'Enchimento máximo'},
+      {s:7, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.9', obs:'Amadurecimento'},
+      {s:8, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.8', obs:'Pré-flush — analisar tricomas'},
+      {s:9, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.6', obs:'Semana extra (sativa)'},
+      {s:10,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.6', obs:'Semana extra'},
+      {s:11,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.4', obs:'Reduzir — semana final'},
+      {s:12,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'2 mL/L', supl:'Top·Max 2mL', ph:'6.2–6.5', ec:'1.0', obs:'Último adubo antes flush'},
+    ],
+    flush: [
+      {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'Enzimas 1mL', ph:'6.2', ec:'< 0.3', obs:'Lavar substrato'},
+      {s:2, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2', ec:'< 0.2', obs:'Analisar tricomas — colheita?'},
+    ]
+  },
+  remo: {
+    name: 'Remo Nutrients', icon: '⚗️', color: '#2196F3',
+    obs: 'Mineral/orgânico. Sempre adicionar Micro primeiro. Magnifical = CalMag Remo. pH: 5.8–6.3.',
+    clone: [
+      {s:1, p1:'Remo Roots', d1:'0.5 mL/L', p2:'Magnifical', d2:'0.5 mL/L', supl:'—', ph:'5.8–6.0', ec:'baixo', obs:'Roots = enraizador Remo'},
+      {s:2, p1:'Remo Roots', d1:'1 mL/L', p2:'Magnifical', d2:'0.5 mL/L', supl:'—', ph:'5.8–6.0', ec:'baixo', obs:'Magnifical = CalMag Remo'},
+      {s:3, p1:'Remo Roots', d1:'1 mL/L', p2:'Micro', d2:'0.5 mL/L', supl:'Grow 0.5mL', ph:'5.8–6.2', ec:'0.4', obs:'Introduzir base antes da vega'},
+      {s:4, p1:'Remo Roots', d1:'1 mL/L', p2:'Micro', d2:'1 mL/L', supl:'Grow 1mL', ph:'5.8–6.2', ec:'0.6', obs:'Pronto para vega'},
+    ],
+    vega: [
+      {s:1, p1:'Micro', d1:'1.3 mL/L', p2:'Grow', d2:'1.3 mL/L', supl:'Magnifical 0.5', ph:'6.0–6.3', ec:'0.8', obs:'Base Remo para vega'},
+      {s:2, p1:'Micro', d1:'1.5 mL/L', p2:'Grow', d2:'1.5 mL/L', supl:'Magnifical 0.5', ph:'6.0–6.3', ec:'1.0', obs:'Tabela oficial S2'},
+      {s:3, p1:'Micro', d1:'1.8 mL/L', p2:'Grow', d2:'1.8 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.2', obs:'S3 — progressão'},
+      {s:4, p1:'Micro', d1:'2.1 mL/L', p2:'Grow', d2:'2.1 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.4', obs:'Pico vega — tabela oficial'},
+      {s:5, p1:'Micro', d1:'2.1 mL/L', p2:'Grow', d2:'2.1 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.5', obs:'Manter se continuar vega'},
+      {s:6, p1:'Micro', d1:'2.1 mL/L', p2:'Grow', d2:'2.1 mL/L', supl:'Bloom 1.0mL', ph:'6.0–6.3', ec:'1.5', obs:'Introduzir Bloom — transição'},
+      {s:7, p1:'Micro', d1:'2.1 mL/L', p2:'Grow', d2:'1.0 mL/L', supl:'Bloom 2.1mL', ph:'6.0–6.3', ec:'1.4', obs:'Reduzir Grow'},
+      {s:8, p1:'Micro', d1:'2.1 mL/L', p2:'Grow', d2:'0.5 mL/L', supl:'Bloom 2.1mL', ph:'6.0–6.3', ec:'1.4', obs:'Semana extra de vega'},
+    ],
+    flora: [
+      {s:1, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.6', obs:'Apenas Micro+Bloom na flora'},
+      {s:2, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.7', obs:'Sem Grow daqui pra frente'},
+      {s:3, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'Magnifical 1.0', ph:'6.0–6.3', ec:'1.8', obs:'Tabela oficial S1–S4: 2.1mL'},
+      {s:4, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'Astroflower 1.0', ph:'6.0–6.3', ec:'1.9', obs:'Astroflower = estimulante'},
+      {s:5, p1:'Micro', d1:'2.6 mL/L', p2:'Bloom', d2:'2.6 mL/L', supl:'Astro 2.0 + Kelp', ph:'6.0–6.3', ec:'2.0', obs:'S5–S7: 2.6mL — pico Remo'},
+      {s:6, p1:'Micro', d1:'2.6 mL/L', p2:'Bloom', d2:'2.6 mL/L', supl:'Astro 2.0 + Kelp', ph:'6.0–6.3', ec:'2.0', obs:'Pico de floração'},
+      {s:7, p1:'Micro', d1:'2.6 mL/L', p2:'Bloom', d2:'2.6 mL/L', supl:'Astroflower 1.0', ph:'6.0–6.3', ec:'1.8', obs:'Tabela oficial S7'},
+      {s:8, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.6', obs:'Reduzir — semana final'},
+      {s:9, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.4', obs:'Semana extra (sativa)'},
+      {s:10,p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.4', obs:'Semana extra'},
+      {s:11,p1:'Micro', d1:'1.5 mL/L', p2:'Bloom', d2:'1.5 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.0', obs:'Reduzir para flush'},
+      {s:12,p1:'Micro', d1:'1.0 mL/L', p2:'Bloom', d2:'1.0 mL/L', supl:'—', ph:'6.0–6.3', ec:'0.8', obs:'Último adubo'},
+    ],
+    flush: [
+      {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.3', obs:'Flush Remo — 1 semana padrão'},
+      {s:2, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.2', obs:'Analisar tricomas'},
+    ]
+  },
+  go: {
+    name: 'General Organics', icon: '📦', color: '#9b72cf',
+    obs: 'GO Box da GH. pH auto-regula em solo. Doses convertidas de mL/gal para mL/L.',
+    clone: [
+      {s:1, p1:'BioRoot', d1:'1.3 mL/L', p2:'CaMg+', d2:'1.3 mL/L', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'GO não precisa ajustar pH em solo'},
+      {s:2, p1:'BioRoot', d1:'1.3 mL/L', p2:'CaMg+', d2:'1.3 mL/L', supl:'BioWeed 0.7', ph:'6.2–7.0', ec:'N/A', obs:'BioWeed = extrato de algas'},
+      {s:3, p1:'BioRoot', d1:'2.6 mL/L', p2:'CaMg+', d2:'1.3 mL/L', supl:'BioThrive G 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Introduzir BioThrive Grow'},
+      {s:4, p1:'BioRoot', d1:'2.6 mL/L', p2:'CaMg+', d2:'1.3 mL/L', supl:'BioThrive G 2.6', ph:'6.2–7.0', ec:'N/A', obs:'Pronto para vega'},
+    ],
+    vega: [
+      {s:1, p1:'BioThrive G', d1:'1.3 mL/L', p2:'BioRoot', d2:'2.6 mL/L', supl:'BioWeed 0.7', ph:'6.2–7.0', ec:'N/A', obs:'GO não requer EC'},
+      {s:2, p1:'BioThrive G', d1:'2.6 mL/L', p2:'BioRoot', d2:'2.6 mL/L', supl:'BioWeed 0.7', ph:'6.2–7.0', ec:'N/A', obs:'Sem ajuste pH em solo'},
+      {s:3, p1:'BioThrive G', d1:'2.6 mL/L', p2:'BioRoot', d2:'2.6 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'S3 veg GO'},
+      {s:4, p1:'BioThrive G', d1:'2.6 mL/L', p2:'BioRoot', d2:'1.3 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Reduzir BioRoot'},
+      {s:5, p1:'BioThrive G', d1:'2.6 mL/L', p2:'CaMg+', d2:'1.3 mL/L', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Grow puro'},
+      {s:6, p1:'BioThrive G', d1:'2.6 mL/L', p2:'BioThrive B', d2:'1.3 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Introduzir Bloom'},
+      {s:7, p1:'BioThrive G', d1:'1.3 mL/L', p2:'BioThrive B', d2:'2.6 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Transição flora'},
+      {s:8, p1:'BioThrive G', d1:'1.3 mL/L', p2:'BioThrive B', d2:'2.6 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra GO'},
+    ],
+    flora: [
+      {s:1, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'BioWeed 0.7', ph:'6.2–7.0', ec:'N/A', obs:'BioBud = estimulante flores GO'},
+      {s:2, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Early Flower GO'},
+      {s:3, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'CaMg+ 1.3', ph:'6.2–7.0', ec:'N/A', obs:'Mid Flower GO'},
+      {s:4, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'BioMarine 0.7', ph:'6.2–7.0', ec:'N/A', obs:'BioMarine = peixe fermentado'},
+      {s:5, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'BioMarine 0.7', ph:'6.2–7.0', ec:'N/A', obs:'Pico floração GO'},
+      {s:6, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'CaMg+ 0.7', ph:'6.2–7.0', ec:'N/A', obs:'Late Flower GO'},
+      {s:7, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Reduzir CaMg+ final'},
+      {s:8, p1:'BioThrive B', d1:'2.6 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Pré-flush GO'},
+      {s:9, p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra'},
+      {s:10,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra GO'},
+      {s:11,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra'},
+      {s:12,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Último adubo GO'},
+    ],
+    flush: [
+      {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Ripen/Rinse — 1 semana GO'},
+      {s:2, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Analisar tricomas'},
+    ]
+  },
+  supersoil: {
+    name: 'SuperSoil', icon: '🌍', color: '#e8a43a',
+    obs: 'Solo vivo autoregula. Coberturas secas liberam nutrientes lentamente. EC/pH auto.',
+    clone: [
+      {s:1, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'Biorrizas', ph:'auto', ec:'auto', obs:'Solo vivo — sem adubação química'},
+      {s:2, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Manter solo úmido e vivo'},
+      {s:3, p1:'Farinha de alga', d1:'5g/L solo', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Alga = fósforo e K suave'},
+      {s:4, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Biorrizas', ph:'auto', ec:'auto', obs:'Mel de cana alimenta microbioma'},
+    ],
+    vega: [
+      {s:1, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'Vermicomposto', ph:'auto', ec:'auto', obs:'SuperSoil já contém todos os nutrientes'},
+      {s:2, p1:'Torta de mamona', d1:'10g/vaso', p2:'Farinha de osso', d2:'10g/vaso', supl:'—', ph:'auto', ec:'auto', obs:'Torta = N lento | Osso = P'},
+      {s:3, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Alimenta fungos e bactérias'},
+      {s:4, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Solo vivo trabalha'},
+      {s:5, p1:'Farinha de alga', d1:'5g/L solo', p2:'Cinzas de madeira', d2:'3g/L', supl:'—', ph:'auto', ec:'auto', obs:'Alga micro | Cinzas = K e Ca'},
+      {s:6, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Microrganismos', ph:'auto', ec:'auto', obs:'Pré-flora — ativar P e K'},
+      {s:7, p1:'Farinha de osso', d1:'10g/vaso', p2:'Guano de morcego', d2:'5g/L', supl:'—', ph:'auto', ec:'auto', obs:'Guano P alto = preparo para flora'},
+      {s:8, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Semana extra'},
+    ],
+    flora: [
+      {s:1, p1:'Guano de morcego', d1:'5g/L solo', p2:'Molasses', d2:'2 mL/L', supl:'Chá', ph:'auto', ec:'auto', obs:'Guano P alto = floração forte'},
+      {s:2, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Solo vivo em pico'},
+      {s:3, p1:'Farinha de alga', d1:'5g/L solo', p2:'—', d2:'—', supl:'Molasses 2mL', ph:'auto', ec:'auto', obs:'K e micronutrientes florais'},
+      {s:4, p1:'Guano de morcego', d1:'5g/L solo', p2:'Fosfato natural', d2:'5g/L', supl:'—', ph:'auto', ec:'auto', obs:'Fósforo natural = buds densos'},
+      {s:5, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Chá', ph:'auto', ec:'auto', obs:'Alimentar microbioma'},
+      {s:6, p1:'Farinha de alga', d1:'5g/L solo', p2:'Molasses', d2:'2 mL/L', supl:'—', ph:'auto', ec:'auto', obs:'Micro + K'},
+      {s:7, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Amadurecimento'},
+      {s:8, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Pré-flush SuperSoil'},
+      {s:9, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Parar coberturas'},
+      {s:10,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Semana extra'},
+      {s:11,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Semana extra'},
+      {s:12,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Última semana'},
+    ],
+    flush: [
+      {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'Enzimas 1mL', ph:'auto', ec:'auto', obs:'Flush curto — solo limpo'},
+      {s:2, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Analisar tricomas'},
+    ]
+  },
+  generic: {
+    name: 'Genérico', icon: '✏️', color: '#a8c4ac',
+    obs: 'Protocolo personalizado. Consulte as especificações do seu produto.',
+    clone: [{s:1,p1:'Seu produto',d1:'—',p2:'—',d2:'—',supl:'—',ph:'—',ec:'—',obs:'Preencha conforme seu protocolo'}],
+    vega:  [{s:1,p1:'Seu produto',d1:'—',p2:'—',d2:'—',supl:'—',ph:'—',ec:'—',obs:'Preencha conforme seu protocolo'}],
+    flora: [{s:1,p1:'Seu produto',d1:'—',p2:'—',d2:'—',supl:'—',ph:'—',ec:'—',obs:'Preencha conforme seu protocolo'}],
+    flush: [{s:1,p1:'Água pura',d1:'—',p2:'—',d2:'—',supl:'—',ph:'—',ec:'—',obs:'Flush padrão'}],
+  }
+};
+
+const MIP_SCHEDULE = [
+  {fase:'Clone', sem:1, prod:'Nim (2 mL/L)', via:'Foliar leve', obs:'Preventivo geral'},
+  {fase:'Clone', sem:2, prod:'Beauveria bassiana (5 g/L)', via:'Foliar + solo', obs:'Fungo entomopatogênico'},
+  {fase:'Vega', sem:1, prod:'Nim (2 mL/L)', via:'Foliar', obs:'Inspecionar face inferior das folhas'},
+  {fase:'Vega', sem:2, prod:'Beauveria bassiana (5 g/L)', via:'Foliar', obs:''},
+  {fase:'Vega', sem:3, prod:'Calda Sulfocálcica (1%)', via:'Foliar', obs:'⚠️ Intervalo 7 dias após Nim'},
+  {fase:'Vega', sem:4, prod:'Trichoderma (3 g/L)', via:'Solo (rega)', obs:'Solo saudável = planta forte'},
+  {fase:'Vega', sem:5, prod:'Calda Bordalesa (0.5%)', via:'Foliar', obs:'⚠️ Não combinar com Nim'},
+  {fase:'Vega', sem:6, prod:'Nim (2 mL/L)', via:'Foliar', obs:'⚠️ ÚLTIMA foliar antes da floração'},
+  {fase:'Flora', sem:1, prod:'Beauveria bassiana (5 g/L)', via:'Solo apenas', obs:'⚠️ SEM FOLIAR em floração'},
+  {fase:'Flora', sem:2, prod:'Trichoderma (3 g/L)', via:'Solo (rega)', obs:''},
+  {fase:'Flora', sem:3, prod:'Beauveria bassiana (5 g/L)', via:'Solo apenas', obs:'⚠️ Umidade < 45%'},
+  {fase:'Flora', sem:4, prod:'Trichoderma (3 g/L)', via:'Solo (rega)', obs:'Inspecionar buds'},
+  {fase:'Flora', sem:5, prod:'Inspeção + Trichoderma', via:'Solo', obs:'⚠️ Verificar Botrytis'},
+  {fase:'Flush', sem:1, prod:'Inspeção final', via:'Visual', obs:'Analisar tricomas diariamente'},
+];
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function addDays(date, n) {
+  const d = new Date(date); d.setDate(d.getDate() + n); return d;
+}
+function fmtDate(d, short=false) {
+  if (!d) return '—';
+  return d.toLocaleDateString('pt-BR', short
+    ? {day:'2-digit', month:'2-digit'}
+    : {day:'2-digit', month:'short'});
+}
+function fmtDateFull(d) {
+  if (!d) return '—';
+  return d.toLocaleDateString('pt-BR', {day:'2-digit', month:'short', year:'numeric'});
+}
+function getDates() {
+  if (!state.date) return null;
+  const d0 = new Date(state.date + 'T12:00:00');
+  const w = state.weeks;
+  const dClone = w.clone * 7;
+  const dVega  = w.vega  * 7;
+  const dFlora = w.flora * 7;
+  const dFlush = w.flush * 7;
+  return {
+    d0,
+    iniVega:  addDays(d0, dClone),
+    iniFlora: addDays(d0, dClone + dVega),
+    iniFlush: addDays(d0, dClone + dVega + dFlora),
+    harvest:  addDays(d0, dClone + dVega + dFlora + dFlush),
+    totalDays: dClone + dVega + dFlora + dFlush,
+  };
+}
+function getPhaseForDate(date, dates) {
+  if (!dates) return null;
+  const {d0, iniVega, iniFlora, iniFlush, harvest} = dates;
+  if (date < iniVega)  return {name:'Clone', color:'#52b778', short:'C'};
+  if (date < iniFlora) return {name:'Vegetativo', color:'#2196F3', short:'V'};
+  if (date < iniFlush) return {name:'Floração', color:'#9b72cf', short:'F'};
+  if (date <= harvest) return {name:'Flush', color:'#e05c5c', short:'Fl'};
+  return null;
+}
+function getRelWeek(date, phaseStart) {
+  const diff = Math.floor((date - phaseStart) / (7*86400000));
+  return diff + 1;
+}
+function getAdubForWeek(fase, sem) {
+  const p = PROTOCOLS[state.proto];
+  if (!p) return null;
+  const key = {Clone:'clone',Vegetativo:'vega',Floração:'flora',Flush:'flush'}[fase];
+  return p[key]?.find(r => r.s === sem) || null;
+}
+function getMipForWeek(fase, sem) {
+  return MIP_SCHEDULE.find(m => m.fase === fase && m.sem === sem);
+}
+
+// ═══════════════════════════════════════════════
+// CONFIG PAGE
+// ═══════════════════════════════════════════════
+function stepChange(key, delta) {
+  const [min, max] = LIMITS[key];
+  state.weeks[key] = Math.max(min, Math.min(max, state.weeks[key] + delta));
+  document.getElementById('val-' + key).innerHTML =
+    `${state.weeks[key]} <span class="stepper-unit">sem</span>`;
+}
+
+function selectProto(key) {
+  state.proto = key;
+  document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function saveCfg() {
+  const dateVal = document.getElementById('cfg-date').value;
+  const strain  = document.getElementById('cfg-strain').value;
+  if (!dateVal) { alert('Preencha a data do Dia 1 antes de continuar.'); return; }
+  state.date   = dateVal;
+  state.strain = strain || 'Meu cultivo';
+  state.currentWeek = 1;
+  localStorage.setItem('cultivoState', JSON.stringify(state));
+  buildCronograma();
+  buildAdubacao();
+  buildMIP();
+  gotoPage(1);
+}
+
+function resetCfg() {
+  if (!confirm('Limpar configuração atual?')) return;
+  state.date = null; state.strain = '';
+  state.weeks = {clone:2, vega:6, flora:9, flush:1};
+  state.proto = 'biobizz'; state.currentWeek = 1;
+  localStorage.removeItem('cultivoState');
+  document.getElementById('cfg-date').value = '';
+  document.getElementById('cfg-strain').value = '';
+  ['clone','vega','flora','flush'].forEach(k => {
+    document.getElementById('val-'+k).innerHTML = `${state.weeks[k]} <span class="stepper-unit">sem</span>`;
+  });
+  document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
+  document.querySelector('.proto-pill').classList.add('selected');
+  buildCronograma();
+}
+
+// ═══════════════════════════════════════════════
+// CRONOGRAMA PAGE
+// ═══════════════════════════════════════════════
+function buildCronograma() {
+  const dates = getDates();
+  if (!dates) {
+    document.getElementById('crono-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('crono-content').style.display = '';
+
+  const today = new Date(); today.setHours(12,0,0,0);
+  const {d0, iniVega, iniFlora, iniFlush, harvest, totalDays} = dates;
+
+  // Badge
+  document.getElementById('status-badge').textContent = state.strain || 'Cultivo ativo';
+
+  // Progress
+  const daysPassed = Math.max(0, Math.floor((today - d0) / 86400000));
+  const pct = Math.min(100, Math.round((daysPassed / totalDays) * 100));
+  const circumference = 2 * Math.PI * 30;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('prog-circle').style.strokeDashoffset = offset;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = pct === 0 ? 'Cultivo configurado' : pct >= 100 ? '🎉 Colheita!' : 'Progresso do cultivo';
+  document.getElementById('prog-day').textContent = `Dia ${Math.max(0,daysPassed+1)} de ${totalDays}`;
+
+  // Phase bar
+  const w = state.weeks;
+  document.getElementById('phase-bar').innerHTML =
+    `<div class="phase-seg" style="background:#52b778;flex:${w.clone}"></div>
+     <div class="phase-seg" style="background:#2196F3;flex:${w.vega}"></div>
+     <div class="phase-seg" style="background:#9b72cf;flex:${w.flora}"></div>
+     <div class="phase-seg" style="background:#e05c5c;flex:${w.flush}"></div>`;
+
+  // Stats
+  const daysLeft = Math.max(0, Math.ceil((harvest - today) / 86400000));
+  const phase = getPhaseForDate(today, dates);
+  document.getElementById('stat-total').textContent = totalDays;
+  document.getElementById('stat-harvest').textContent = fmtDate(harvest);
+  document.getElementById('stat-phase').textContent = phase ? phase.name : (today > harvest ? 'Colhido' : 'Antes do início');
+  document.getElementById('stat-daysleft').textContent = today > harvest ? '—' : daysLeft;
+
+  renderWeek();
+}
+
+function changeWeek(delta) {
+  const dates = getDates();
+  if (!dates) return;
+  const totalWeeks = Math.ceil(dates.totalDays / 7);
+  state.currentWeek = Math.max(1, Math.min(totalWeeks, state.currentWeek + delta));
+  renderWeek();
+}
+
+function renderWeek() {
+  const dates = getDates();
+  if (!dates) return;
+  const {d0, iniVega, iniFlora, iniFlush, harvest, totalDays} = dates;
+  const totalWeeks = Math.ceil(totalDays / 7);
+  const wk = state.currentWeek;
+
+  const weekStart = addDays(d0, (wk-1)*7);
+  const weekEnd   = addDays(d0, wk*7 - 1);
+  document.getElementById('week-label').textContent = `Semana ${wk} de ${totalWeeks}`;
+  document.getElementById('week-sub').textContent   = `${fmtDate(weekStart)} – ${fmtDate(weekEnd)}`;
+
+  const today = new Date(); today.setHours(12,0,0,0);
+  const container = document.getElementById('week-days');
+  container.innerHTML = '';
+
+  for (let d = 0; d < 7; d++) {
+    const date = addDays(d0, (wk-1)*7 + d);
+    if (date > harvest) break;
+    const phase = getPhaseForDate(date, dates);
+    if (!phase) break;
+
+    const isToday = date.toDateString() === today.toDateString();
+    const dayNum  = Math.floor((date - d0) / 86400000) + 1;
+
+    // Relative week in phase
+    let phaseStart, phaseLabel;
+    if (phase.name === 'Clone')      { phaseStart = d0;       phaseLabel = 'Clone'; }
+    else if (phase.name === 'Vegetativo') { phaseStart = iniVega;  phaseLabel = 'Vega'; }
+    else if (phase.name === 'Floração')   { phaseStart = iniFlora; phaseLabel = 'Flora'; }
+    else                              { phaseStart = iniFlush; phaseLabel = 'Flush'; }
+
+    const relWeek = getRelWeek(date, phaseStart);
+    const isFirstDayOfWeek = (Math.floor((date - phaseStart) / 86400000)) % 7 === 0;
+
+    // Get adub + mip for this week (only show on first day of phase week)
+    const adub = isFirstDayOfWeek ? getAdubForWeek(phase.name, relWeek) : null;
+    const mip  = isFirstDayOfWeek ? getMipForWeek(phase.name === 'Floração' ? 'Flora' : phaseLabel, relWeek) : null;
+
+    const dayName = date.toLocaleDateString('pt-BR', {weekday:'short'});
+    const dayFmt  = fmtDate(date, true);
+
+    // Task summary
+    const tasks = [];
+    if (isFirstDayOfWeek) tasks.push(`${phaseLabel} S${relWeek}`);
+    if (adub && adub.p1 !== '—') tasks.push(adub.p1);
+    if (mip) tasks.push('MIP');
+    if (date.toDateString() === iniVega.toDateString())  tasks.push('🌿 INÍCIO VEGA');
+    if (date.toDateString() === iniFlora.toDateString()) tasks.push('🌸 INÍCIO FLORA');
+    if (date.toDateString() === iniFlush.toDateString()) tasks.push('🚿 INÍCIO FLUSH');
+    if (date.toDateString() === harvest.toDateString())  tasks.push('✂️ COLHEITA');
+
+    const isSpecial = date.toDateString() === iniVega.toDateString() ||
+                      date.toDateString() === iniFlora.toDateString() ||
+                      date.toDateString() === iniFlush.toDateString() ||
+                      date.toDateString() === harvest.toDateString();
+
+    const el = document.createElement('div');
+    el.className = 'day-row' + (isSpecial ? '' : '');
+    el.innerHTML = `
+      <div class="day-row-header" onclick="toggleDay(this)">
+        <div class="day-num ${isToday ? 'today' : ''}">${date.getDate()}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;color:var(--text3)">${dayName} ${dayFmt} · Dia ${dayNum}</div>
+          <div style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tasks.join(' · ') || 'Dia normal'}</div>
+        </div>
+        <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.short}</span>
+        <span class="day-expand">${(adub||mip||isSpecial) ? '⌄' : ''}</span>
+      </div>
+      <div class="day-detail">
+        ${isSpecial ? `<div class="day-detail-row"><span class="day-detail-label">Marco</span><span class="day-detail-val" style="color:var(--amber);font-weight:600">${tasks.filter(t=>t.includes('INÍCIO')||t.includes('COLHEITA')).join(', ')}</span></div>` : ''}
+        ${adub ? `
+          <div class="day-detail-row"><span class="day-detail-label">💊 Adubação</span><span class="day-detail-val">${adub.p1 !== '—' ? adub.p1+' '+adub.d1 : ''}${adub.p2 !== '—' ? ' + '+adub.p2+' '+adub.d2 : ''}</span></div>
+          ${adub.supl !== '—' ? `<div class="day-detail-row"><span class="day-detail-label">Suplemento</span><span class="day-detail-val">${adub.supl}</span></div>` : ''}
+          <div class="day-detail-row"><span class="day-detail-label">pH / EC</span><span class="day-detail-val">${adub.ph} / EC ${adub.ec}</span></div>
+          <div class="day-detail-row"><span class="day-detail-label">Obs.</span><span class="day-detail-val">${adub.obs}</span></div>
+        ` : ''}
+        ${mip ? `
+          <div class="day-detail-row"><span class="day-detail-label">🐛 MIP</span><span class="day-detail-val" style="color:var(--red)">${mip.prod} — ${mip.via}</span></div>
+          ${mip.obs ? `<div class="day-detail-row"><span class="day-detail-label"></span><span class="day-detail-val">${mip.obs}</span></div>` : ''}
+        ` : ''}
+        ${!adub && !mip && !isSpecial ? `<div class="day-detail-row"><span class="day-detail-val" style="color:var(--text3)">Nenhuma ação programada para hoje.</span></div>` : ''}
+      </div>
+    `;
+    container.appendChild(el);
+  }
+}
+
+function toggleDay(header) {
+  const detail = header.nextElementSibling;
+  const arrow  = header.querySelector('.day-expand');
+  if (!arrow.textContent) return;
+  const open = detail.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+
+// ═══════════════════════════════════════════════
+// ADUBAÇÃO PAGE
+// ═══════════════════════════════════════════════
+function buildAdubacao() {
+  const p = PROTOCOLS[state.proto];
+  if (!p) return;
+
+  document.getElementById('adub-proto-badge').innerHTML =
+    `<div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px">
+      <span style="font-size:22px">${p.icon}</span>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">${p.name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${p.obs}</div>
+      </div>
+    </div>`;
+
+  const dates = getDates();
+  const fases = [
+    {key:'clone', label:'🌱 Clone', color:'#52b778', iniRef: dates?.d0},
+    {key:'vega',  label:'🌿 Vegetativo', color:'#2196F3', iniRef: dates?.iniVega},
+    {key:'flora', label:'🌸 Floração', color:'#9b72cf', iniRef: dates?.iniFlora},
+    {key:'flush', label:'🚿 Flush', color:'#e05c5c', iniRef: dates?.iniFlush},
+  ];
+
+  let html = '';
+  for (const {key, label, color, iniRef} of fases) {
+    const maxSem = state.weeks[key === 'vega' ? 'vega' : key] || 99;
+    const rows = (p[key] || []).filter(r => r.s <= maxSem);
+    if (!rows.length) continue;
+
+    html += `<div style="margin-bottom:20px">
+      <div style="font-family:var(--serif);font-size:17px;color:${color};margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${label}</div>`;
+
+    for (const r of rows) {
+      const dateStr = iniRef ? fmtDate(addDays(iniRef, (r.s-1)*7)) : '—';
+      html += `<div class="mip-card">
+        <div class="mip-card-header">
+          <div style="width:32px;height:32px;border-radius:8px;background:${color}22;display:grid;place-items:center;font-size:13px;font-weight:700;color:${color}">S${r.s}</div>
+          <div>
+            <div class="mip-name">${r.p1 !== '—' ? r.p1 : r.p2}</div>
+            <div class="mip-phase">${dateStr}</div>
+          </div>
+        </div>
+        ${r.p1 !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Produto 1</span><span class="mip-detail-val">${r.p1} — <strong>${r.d1}</strong></span></div>` : ''}
+        ${r.p2 !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Produto 2</span><span class="mip-detail-val">${r.p2} — <strong>${r.d2}</strong></span></div>` : ''}
+        ${r.supl !== '—' ? `<div class="mip-detail-row"><span class="mip-detail-label">Suplemento</span><span class="mip-detail-val">${r.supl}</span></div>` : ''}
+        <div class="mip-detail-row"><span class="mip-detail-label">pH / EC</span><span class="mip-detail-val" style="color:var(--green)">${r.ph} / ${r.ec}</span></div>
+        <div class="mip-detail-row"><span class="mip-detail-label">Obs.</span><span class="mip-detail-val">${r.obs}</span></div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  document.getElementById('adub-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// MIP PAGE
+// ═══════════════════════════════════════════════
+function buildMIP() {
+  const dates = getDates();
+  const phaseColors = {Clone:'#52b778', Vega:'#2196F3', Flora:'#9b72cf', Flush:'#e05c5c'};
+  const phaseInis   = {
+    Clone: dates?.d0,
+    Vega:  dates?.iniVega,
+    Flora: dates?.iniFlora,
+    Flush: dates?.iniFlush,
+  };
+
+  let html = '';
+  let curFase = '';
+  for (const m of MIP_SCHEDULE) {
+    const col = phaseColors[m.fase] || '#52b778';
+    if (m.fase !== curFase) {
+      const faseLabels = {Clone:'🌱 Clone', Vega:'🌿 Vegetativo', Flora:'🌸 Floração', Flush:'🚿 Flush'};
+      html += `<div style="font-family:var(--serif);font-size:17px;color:${col};margin:${curFase?'20px':'0'} 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${faseLabels[m.fase]}</div>`;
+      curFase = m.fase;
+    }
+    const ini = phaseInis[m.fase];
+    const dateStr = ini ? fmtDate(addDays(ini, (m.sem-1)*7)) : '—';
+    html += `<div class="mip-card">
+      <div class="mip-card-header">
+        <span class="mip-icon">🐛</span>
+        <div>
+          <div class="mip-name">${m.prod}</div>
+          <div class="mip-phase">${m.fase} S${m.sem} · ${dateStr}</div>
+        </div>
+        <span class="tl-badge" style="background:${col}22;color:${col}">S${m.sem}</span>
+      </div>
+      <div class="mip-detail-row"><span class="mip-detail-label">Via</span><span class="mip-detail-val">${m.via}</span></div>
+      ${m.obs ? `<div class="mip-detail-row"><span class="mip-detail-label">Atenção</span><span class="mip-detail-val" style="${m.obs.includes('⚠️')?'color:var(--amber)':''}">${m.obs}</span></div>` : ''}
+    </div>`;
+  }
+  document.getElementById('mip-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// GUIA PAGE
+// ═══════════════════════════════════════════════
+function buildGuia() {
+  const guia = [
+    {title:'🌡️ Temperatura', rows:[
+      ['Dia (luz acesa)','22–26°C (ideal 24°C)'],
+      ['Noite','18–22°C'],['Máximo','30°C'],['Clone','23–26°C'],
+    ]},
+    {title:'💧 Umidade', rows:[
+      ['Clone','70–80%'],['Vegetativo','55–70%'],['Flora S1–S4','45–55%'],
+      ['Flora S5+','35–45%'],['Flush','< 40%'],
+    ]},
+    {title:'⚗️ pH da água', rows:[
+      ['Terra orgânica','6.0–6.8'],['Coco coir','5.8–6.2'],
+      ['Hidroponia','5.5–6.1'],['Run-off','± 0.3 da entrada'],
+    ]},
+    {title:'📊 EC (mS/cm)', rows:[
+      ['Clone','0.0–0.4'],['Vega inicial','0.8–1.2'],['Vega pleno','1.2–1.6'],
+      ['Flora início','1.4–1.8'],['Flora pico','1.8–2.2'],['Flush','< 0.3'],
+    ]},
+    {title:'🔬 Tricomas — quando colher', rows:[
+      ['Transparentes','Imaturos — aguardar'],
+      ['Leitosos','Efeito cerebral / energético'],
+      ['Âmbar 10–20%','Equilibrado (ideal médico)'],
+      ['Âmbar 30–50%','Sedativo / corporal'],
+      ['Âmbar > 50%','THC degradando → CBN'],
+    ]},
+    {title:'💡 Fotoperíodo', rows:[
+      ['Clone / propagação','18–24h de luz'],['Vegetativo','18h / 6h'],
+      ['Floração','12h / 12h'],['Variação máxima','± 15 min/dia'],
+    ]},
+    {title:'🌱 Duração da flora por cepa', rows:[
+      ['Índica pura','8–9 semanas'],['Índica-dominante','9–10 semanas'],
+      ['Híbrido','9–11 semanas'],['Sativa-dominante','11–13 semanas'],
+      ['Sativa pura / Haze','13–16 semanas'],
+    ]},
+  ];
+
+  document.getElementById('guia-content').innerHTML = guia.map(g => `
+    <div class="guia-section">
+      <h3>${g.title}</h3>
+      ${g.rows.map(([k,v]) => `<div class="guia-row"><span class="guia-key">${k}</span><span class="guia-val">${v}</span></div>`).join('')}
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function gotoPage(idx) {
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+(function init() {
+  // Set today as default date
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm   = String(today.getMonth()+1).padStart(2,'0');
+  const dd   = String(today.getDate()).padStart(2,'0');
+  document.getElementById('cfg-date').value = `${yyyy}-${mm}-${dd}`;
+
+  // Restore state
+  try {
+    const saved = JSON.parse(localStorage.getItem('cultivoState') || 'null');
+    if (saved && saved.date) {
+      Object.assign(state, saved);
+      document.getElementById('cfg-date').value = state.date;
+      document.getElementById('cfg-strain').value = state.strain || '';
+      ['clone','vega','flora','flush'].forEach(k => {
+        document.getElementById('val-'+k).innerHTML = `${state.weeks[k]} <span class="stepper-unit">sem</span>`;
+      });
+      document.querySelectorAll('.proto-pill').forEach(el => el.classList.remove('selected'));
+      const protoMap = {biobizz:0, remo:1, go:2, supersoil:3, generic:4};
+      const idx = protoMap[state.proto] ?? 0;
+      document.querySelectorAll('.proto-pill')[idx]?.classList.add('selected');
+      buildCronograma();
+      buildAdubacao();
+      buildMIP();
+    }
+  } catch(e) {}
+
+  buildGuia();
+  buildCronograma();
+})();
+</script>
+</body>
+</html>
