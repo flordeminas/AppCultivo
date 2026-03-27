@@ -1524,173 +1524,20 @@ function buildManual() {
         {
           q: 'Como analisar os tricomas?',
           a: 'Você precisa de uma lupa com pelo menos 30x de aumento (ou um microscópio digital pequeno). Corte uma pequena amostra de bud e observe a cor dos tricomas:',
-          example: `�// STRAIN_DB moveu para strains.js.
-stímulo mental.",
-    growTip: "Fácil de cultivar, mas pode ser alvo de oídio se a umidade subir muito no final.",
-    medicalNote: "Alivia dores crônicas sem causar sedação excessiva."
-  },
-  "northern lights": {
-    name: "Northern Lights", type: "indica", thc: "16-21%", cbd: "< 1%", flowerWeeks: "7-8 semanas",
-    effects: "Relaxado, Feliz, Sonolento", aromas: "Pinho, Picante, Doce",
-    description: "Uma das indica mais puras existentes. Buds densos e muita resina.",
-    growTip: "Muito resistente e discreta no cheiro durante o cultivo. Ótima para iniciantes.",
-    medicalNote: "Ideal para insônia severa e relaxamento muscular."
-  },
-  "headbanger": {
-    name: "Headbanger", type: "sativa-dominant", thc: "20-28%", cbd: "< 1%", flowerWeeks: "10-11 semanas",
-    effects: "Eufórico, Foco, Energético", aromas: "Diesel, Cítrico, Pungente",
-    description: "Cruzamento premiado de Sour Diesel com Biker Kush. Aroma de combustível cítrico e efeito potente.",
-    growTip: "Estica bastante na floração. Recomendado o uso de redes (SCROG) para suporte.",
-    medicalNote: "Excelente para alívio de dor e estresse agudo."
-  },
-  "purple punch": {
-    name: "Purple Punch", type: "indica", thc: "18-20%", cbd: "< 1%", flowerWeeks: "7-8 semanas",
-    effects: "Relaxado, Sonolento, Feliz", aromas: "Uva, Doce, Baga",
-    description: "Sobremesa em forma de planta. Visual roxo vibrante e cheiro de doce de uva.",
-    growTip: "Planta baixa e larga. Gosta de defoliação leve para luz chegar nos buds internos.",
-    medicalNote: "Ótima para insônia e relaxamento pós-treino."
-  },
-  "forbidden fruit": {
-    name: "Forbidden Fruit", type: "indica-dominant", thc: "15-20%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Relaxado, Eufórico, Fome", aromas: "Frutado, Cítrico, Pungente",
-    description: "Visual impressionante com tons roxos escuros e pistilos laranjas. Aroma tropical.",
-    growTip: "Muito resistente a mofo. Desenvolve cores escuras mesmo em climas temperados.",
-    medicalNote: "Alívio de estresse físico e falta de apetite."
-  },
-  "zkittlez": {
-    name: "Zkittlez", type: "indica-dominant", thc: "19-23%", cbd: "< 1%", flowerWeeks: "8-10 semanas",
-    effects: "Feliz, Relaxado, Focado", aromas: "Doce, Tropical, Frutado",
-    description: "Famosa pelo sabor de bala de frutas. Efeito relaxante mas que permite manter o foco.",
-    growTip: "Responde bem a podas e técnicas de treinamento. Mantenha a umidade baixa na flora.",
-    medicalNote: "Auxilia na gestão do estresse e ansiedade."
-  },
-  "runtz": {
-    name: "Runtz", type: "hybrid", thc: "24-29%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Eufórico, Relaxado, Feliz", aromas: "Doce, Baga, Tropical",
-    description: "Uma das favoritas modernas. Cruzamento de Zkittlez com Gelato. Resina extrema.",
-    growTip: "Gosta de alimentação rica e equilibrada. Crescimento vigoroso.",
-    medicalNote: "Potente analgésico e elevador de humor."
-  },
-  "bruce banner": {
-    name: "Bruce Banner", type: "hybrid", thc: "24-29%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
-    effects: "Cerebral, Feliz, Energético", aromas: "Doce, Diesel, Morango",
-    description: "Incrível potência 'Hulk'. Efeito cerebral rápido seguido de relaxamento duradouro.",
-    growTip: "Precisa de bastante espaço para as raízes. Responde muito bem a hidroponia.",
-    medicalNote: "Indicada para dores intensas e fadiga."
-  },
-  "ghost train haze": {
-    name: "Ghost Train Haze", type: "sativa", thc: "25-28%", cbd: "< 1%", flowerWeeks: "11-13 semanas",
-    effects: "Eufórico, Energético, Criativo", aromas: "Cítrico, Floral, Terroso",
-    description: "Uma das sativas mais potentes do mercado. Ganhou inúmeros prêmios de potência.",
-    growTip: "Floração longa. Exige paciência e controle rigoroso de luz.",
-    medicalNote: "Foco mental e alívio de depressão."
-  },
-  "24k gold": {
-    name: "24k Gold", type: "indica-dominant", thc: "18-24%", cbd: "< 1%", flowerWeeks: "9 semanas",
-    effects: "Relaxado, Feliz, Eufórico", aromas: "Laranja, Cítrico, Terroso",
-    description: "Também conhecida como Kosher Tangie. Aroma de tangerina inesquecível.",
-    growTip: "Cresce rápido no vegetativo. Gosta de ser podada para aumentar ramificação lateral.",
-    medicalNote: "Alívio de ansiedade e tensão muscular."
-  },
-  "skunk #1": {
-    name: "Skunk #1", type: "hybrid", thc: "15-19%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Energético, Feliz, Fome", aromas: "Pungente, Terroso, Skunk",
-    description: "A clássica que mudou tudo. Estável e muito fácil de cultivar.",
-    growTip: "Indestrutível. Ótima para aprender novas técnicas de cultivo.",
-    medicalNote: "Estimulante de apetite e relaxamento mental leve."
-  },
-  "critical mass": {
-    name: "Critical Mass", type: "indica-dominant", thc: "18-22%", cbd: "1-2%", flowerWeeks: "7-8 semanas",
-    effects: "Relaxado, Sonolento, Feliz", aromas: "Doce, Terroso, Skunk",
-    description: "Famosa pelas colheitas massivas. Buds gigantes que podem precisar de suporte.",
-    growTip: "Cuidado extremo com umidade na flora; os buds são tão densos que podem mofar por dentro.",
-    medicalNote: "Ideal para dores crônicas e espasmos."
-  },
-  "sour diesel": {
-    name: "Sour Diesel", type: "sativa", thc: "20-25%", cbd: "< 1%", flowerWeeks: "10-11 semanas",
-    effects: "Energético, Criativo, Foco", aromas: "Diesel, Cítrico, Pungente",
-    description: "Aroma inconfundível. Efeito cerebral rápido e duradouro.",
-    growTip: "Gosta de ser bem alimentada com nitrogênio na vega. Estica muito na flora.",
-    medicalNote: "Favorita para combater fadiga e depressão."
-  },
-  "jack herer": {
-    name: "Jack Herer", type: "sativa-dominant", thc: "18-24%", cbd: "< 1%", flowerWeeks: "8-10 semanas",
-    effects: "Alerta, Criativo, Feliz", aromas: "Pinho, Amadeirado, Especiarias",
-    description: "Homenagem ao ativista Jack Herer. Equilíbrio entre cerebral e corporal.",
-    growTip: "Mantenha o solo bem aerado. Responde bem a adubação orgânica.",
-    medicalNote: "Melhora o humor e alivia dores leves."
-  },
-  "gelato": {
-    name: "Gelato", type: "indica-dominant", thc: "20-25%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Relaxado, Eufórico, Relaxamento físico", aromas: "Doce, Frutado, Cítrico",
-    description: "Híbrida moderna com sabores complexos de sorvete e frutas.",
-    growTip: "Prefere temperaturas um pouco mais baixas no final da flora para realçar cores roxas.",
-    medicalNote: "Auxilia no relaxamento profundo e bem-estar."
-  },
-  "wedding cake": {
-    name: "Wedding Cake", type: "indica-dominant", thc: "23-27%", cbd: "< 1%", flowerWeeks: "9 semanas",
-    effects: "Relaxado, Feliz, Fome", aromas: "Baunilha, Doce, Terroso",
-    description: "Cruzamento potente com sabor adocicado e terroso. Buds muito densos.",
-    growTip: "Exige poda de folhas baixas (lollipopping) para focar energia nos buds superiores.",
-    medicalNote: "Eficaz no tratamento de doenças autoimunes e dores crônicas."
-  },
-  "pineapple express": {
-    name: "Pineapple Express", type: "hybrid", thc: "18-22%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Energético, Criativo, Feliz", aromas: "Abacaxi, Tropical, Doce",
-    description: "Famosa pelo filme. Aroma tropical delicioso e efeito equilibrado.",
-    growTip: "Resistente a fungos, ótima para quem está começando o primeiro cultivo.",
-    medicalNote: "Ajuda no alívio de estresse leve e ansiedade social."
-  },
-  "super lemon haze": {
-    name: "Super Lemon Haze", type: "sativa", thc: "19-25%", cbd: "< 1%", flowerWeeks: "10-12 semanas",
-    effects: "Alerta, Energético, Criativo", aromas: "Limão, Cítrico, Doce",
-    description: "Sabor de limão siciliano intenso. Ganhadora consecutiva de prêmios.",
-    growTip: "Gosta de bastante luz. Mantenha os níveis de P e K altos na floração média.",
-    medicalNote: "Estimulante mental e combate a letargia."
-  },
-  "purple haze": {
-    name: "Purple Haze", type: "sativa", thc: "16-20%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
-    effects: "Eufórico, Criativo, Psicodélico", aromas: "Baga, Doce, Terroso",
-    description: "Imortalizada por Jimi Hendrix. Visual roxo vibrante e efeito cerebral.",
-    growTip: "Queda de temperatura noturna (±10°C) favorece a coloração roxa no final.",
-    medicalNote: "Ótima para estímulo criativo e transtornos de humor."
-  },
-  "bubba kush": {
-    name: "Bubba Kush", type: "indica", thc: "15-22%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Relaxado, Sonolento, Fome", aromas: "Café, Chocolate, Doce",
-    description: "Indica pesada definitiva. Ideal para descansar após um dia longo.",
-    growTip: "Planta baixa e robusta. Não precisa de muito espaço vertical.",
-    medicalNote: "Poderoso aliado contra insônia crônica e dores musculares."
-  },
-  "red banger": {
-    name: "Red Banger", type: "hybrid", thc: "22-26%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Foco, Criativo, Relaxamento leve", aromas: "Frutas Vermelhas, Diesel, Doce",
-    description: "Strain moderna com visual avermelhado e perfil de terpenos marcante.",
-    growTip: "Responde bem a Mainlining para maximizar a produção de colas principais.",
-    medicalNote: "Auxilia no alívio de cefaleias e estresse agudo."
-  },
-  "lemon haze": {
-    name: "Lemon Haze", type: "sativa-dominant", thc: "17-22%", cbd: "< 1%", flowerWeeks: "9-10 semanas",
-    effects: "Feliz, Energético, Comunicativo", aromas: "Limão, Frutado, Cítrico",
-    description: "Variação famosa com aroma cítrico doce e efeito social.",
-    growTip: "Evite excesso de umidade nas últimas 2 semanas para prevenir pragas.",
-    medicalNote: "Indicada para distimia e fadiga."
-  },
-  "ak-47": {
-    name: "AK-47", type: "sativa-dominant", thc: "17-23%", cbd: "< 1%", flowerWeeks: "8-9 semanas",
-    effects: "Feliz, Relaxado, Criativo", aromas: "Terroso, Amargo, Especiarias",
-    description: "Diz-se que uma 'rajada' é o suficiente. Sativa de floração rápida.",
-    growTip: "O cheiro é muito forte no final. Use filtros de carvão novos.",
-    medicalNote: "Muito versátil para dor, depressão e náusea."
-  },
-  "white widow auto": {
-    name: "White Widow Auto", type: "hybrid", thc: "14-18%", cbd: "1%", flowerWeeks: "8 semanas (total)",
-    effects: "Relaxado, Alerta, Feliz", aromas: "Terroso, Madeira, Ervas",
-    description: "Versão automática da clássica viúva branca. Ciclo muito rápido.",
-    growTip: "Evite transplantar. Comece no vaso definitivo para não estressar a raiz.",
-    medicalNote: "Alívio suave de ansiedade e tensão física."
-  }
-};
+          example: `⚪ <strong>Transparentes:</strong> Imaturos, pouco efeito.\n⚪ <strong>Leitosos:</strong> Ápice do THC, efeito cerebral.\n🟤 <strong>Âmbar:</strong> Efeito mais físico/relaxante.`,
+        },
+      ]
+    },
+    {
+      icon: '🌍', title: 'Protocolo SuperSoil — como funciona', color: '#e8a43a',
+      items: [
+        {
+          q: 'O que é SuperSoil?',
+          a: 'SuperSoil é um substrato vivo e pré-enriquecido com matéria orgânica suficiente para nutrir a planta por todo o ciclo. O solo tem um ecossistema de microorganismos que digerem a matéria orgânica e liberam os nutrientes lentamente para a planta.',
+        },
+      ]
+    }
+  ];
 
 async function fetchStrainInfo(strainName) {
   if (!strainName || strainName === 'Meu cultivo') return;
