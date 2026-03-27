@@ -1453,8 +1453,7 @@ function loadDetailScreen() {
   buildGuia();
   buildManual();
     populateStrainList();
-  if (c.strain && !c.strainInfo) fetchStrainInfo(c.strain);
-  else if (c.strainInfo) restoreStrainPanel();
+  if (c.strain) fetchStrainInfo(c.strain);
   else document.getElementById('strain-panel').style.display='none';
 }
 
@@ -1658,6 +1657,8 @@ function buildMIP() {
 // ═══════════════════════════════════════════════
 // STRAIN INFO (DATABASE INTEGRATION)
 // ═══════════════════════════════════════════════
+// STRAIN INFO (DATABASE INTEGRATION)
+// ═══════════════════════════════════════════════
 function fetchStrainInfo(strainName) {
   if (!strainName || strainName === 'Meu cultivo') return;
 
@@ -1669,27 +1670,18 @@ function fetchStrainInfo(strainName) {
   if (!panel || !loading || !dataEl || !errorEl) return;
 
   panel.style.display = '';
-  loading.style.display = '';
+  loading.style.display = 'none'; 
   dataEl.style.display = 'none';
   errorEl.style.display = 'none';
-  document.getElementById('strain-loading-name').textContent = strainName;
 
   const searchKey = strainName.toLowerCase().trim();
   const info = (typeof STRAIN_DB !== 'undefined') ? (STRAIN_DB[searchKey] || Object.values(STRAIN_DB).find(s => s.name.toLowerCase() === searchKey)) : null;
 
   if (info) {
-    setTimeout(() => {
-      loading.style.display = 'none';
-      renderStrainData(info);
-      const c = getActiveCultivo();
-      if (c) {
-        c.strainInfo = info;
-        saveJardim();
-      }
-    }, 400);
+    renderStrainData(info);
+    dataEl.style.display = '';
   } else {
-    loading.style.display = 'none';
-    if (errorEl) errorEl.style.display = '';
+    errorEl.style.display = '';
   }
 }
 
@@ -1745,18 +1737,8 @@ function renderStrainData(info) {
       }
     }
   }
-  dataEl.style.display = '';
 }
 
-function restoreStrainPanel() {
-  const c = getActiveCultivo();
-  if (!c?.strainInfo) return;
-  renderStrainData(c.strainInfo);
-  const panel = document.getElementById('strain-panel');
-  const loading = document.getElementById('strain-loading');
-  if (panel) panel.style.display = '';
-  if (loading) loading.style.display = 'none';
-}
 
 
 function buildGuia() {
