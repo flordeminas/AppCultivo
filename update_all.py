@@ -73,8 +73,8 @@ def sync_from_xlsx():
 # --- BANCO DE DADOS (DADOS ABAIXO) ---
 # [COFRE_START]
 DATABASE = {
-    "24k gold": {
-        "name": "24k Gold",
+    "24k": {
+        "name": "24k",
         "type": "indica-dominant",
         "lineage": "Kosher Kush x Tangie",
         "terpenes": "Limoneno, Mirceno e Cariofileno",
