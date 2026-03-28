@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d1f14">
 <title>CultivoApp — Jardim</title>
 <link rel="manifest" href="manifest.json">
@@ -39,14 +39,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-html {
-  height: 100%;
-  height: 100dvh;
-  overflow: hidden;
-}
-body {
-  height: 100%;
-  overflow: hidden;
+html, body {
+  height: 100%; overflow: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
@@ -55,7 +49,7 @@ body {
 
 /* ── App shell ────────────────────────────────── */
 #app {
-  height: 100%;
+  height: 100vh; height: 100dvh;
   display: flex; flex-direction: column;
   overflow: hidden;
   position: relative;
@@ -111,10 +105,10 @@ body {
 }
 
 /* ── Pages ─────────────────────────────────────── */
-#pages { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+#pages { flex: 1; overflow: hidden; position: relative; }
 .page {
   position: absolute; inset: 0;
-  overflow-y: auto; padding: 20px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto; padding: 20px 16px 100px;
   opacity: 0; pointer-events: none;
   transform: translateY(8px);
   transition: opacity .25s, transform .25s;
@@ -456,7 +450,6 @@ body {
 /* ── Jardim / Multi-cultivo ─────────────────── */
 #jardim-screen {
   position:absolute;inset:0;
-  height:100%;
   display:flex;flex-direction:column;
   background:var(--bg);
   z-index:10;
@@ -466,15 +459,14 @@ body {
   transform:translateY(-100%);opacity:0;pointer-events:none;
 }
 #jardim-header {
-  padding:calc(16px + env(safe-area-inset-top, 0px)) 20px 12px;
+  padding:16px 20px 12px;
   background:var(--bg);
   border-bottom:1px solid var(--border);
   flex-shrink:0;
   display:flex;align-items:center;gap:12px;
 }
 #jardim-body {
-  flex:1;min-height:0;overflow-y:auto;
-  padding:20px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+  flex:1;overflow-y:auto;padding:20px 16px 100px;
   scrollbar-width:thin;scrollbar-color:var(--border) transparent;
 }
 .jardim-hero {
@@ -698,13 +690,18 @@ body {
           </div>
           <div class="field">
             <label>🌸 Semanas de Floração</label>
-            <div class="field" style="margin:4px 0 8px">
-              <div style="font-size:11px;color:var(--text3);line-height:1.5">💡 Inclui o flush (últimas 1–2 sem sem adubo)</div>
-            </div>
             <div class="stepper">
               <button class="stepper-btn" onclick="mStep('flora',-1)">−</button>
               <div class="stepper-val" id="m-val-flora">9 <span class="stepper-unit">sem</span></div>
               <button class="stepper-btn" onclick="mStep('flora',1)">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>🚿 Semanas de Flush</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="mStep('flush',-1)">−</button>
+              <div class="stepper-val" id="m-val-flush">1 <span class="stepper-unit">sem</span></div>
+              <button class="stepper-btn" onclick="mStep('flush',1)">+</button>
             </div>
           </div>
         </div>
@@ -751,10 +748,10 @@ body {
   </div>
 
   <!-- ══ CULTIVO DETAIL SCREEN ══ -->
-  <div id="detail-screen" style="position:absolute;inset:0;display:flex;flex-direction:column;min-height:0;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)">
+  <div id="detail-screen" style="position:absolute;inset:0;height:100%;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)">
 
     <!-- Header do detalhe -->
-    <div id="header" style="padding:calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px">
+    <div id="header" style="padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px">
       <button class="btn-back" onclick="backToJardim()">‹</button>
       <div style="flex:1;min-width:0">
         <div style="font-family:var(--serif);font-size:16px;color:var(--text);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="detail-title">—</div>
@@ -774,7 +771,7 @@ body {
     </nav>
 
     <!-- Pages do detalhe -->
-    <div id="pages" style="flex:1;min-height:0;overflow:hidden;position:relative">
+    <div id="pages" style="flex:1;overflow:hidden;position:relative">
 
       <!-- PAGE 0: CRONOGRAMA -->
       <div class="page active" id="page-0">
@@ -887,8 +884,7 @@ body {
 // ═══════════════════════════════════════════════
 // MULTI-CULTIVO STATE
 // ═══════════════════════════════════════════════
-const LIMITS = { clone:[1,4], vega:[4,12], flora:[7,16] };
-// Flush integrado à flora: últimas 1–2 semanas sem adubo (água pura)
+const LIMITS = { clone:[1,4], vega:[4,12], flora:[8,16], flush:[1,2] };
 
 // jardimState: { cultivos: [...], activeId: null }
 let jardimState = { cultivos: [], activeId: null };
@@ -936,13 +932,6 @@ function loadJardim() {
   try {
     const s = JSON.parse(localStorage.getItem('jardimState') || 'null');
     if (s && Array.isArray(s.cultivos)) {
-      // Migrar cultivos antigos que tinham flush separado
-      s.cultivos.forEach(c => {
-        if (c.weeks && c.weeks.flush !== undefined) {
-          c.weeks.flora = (c.weeks.flora||9) + (c.weeks.flush||0);
-          delete c.weeks.flush;
-        }
-      });
       jardimState = s;
     }
     // Migrar estado antigo (single cultivo)
@@ -997,9 +986,9 @@ const PROTOCOLS = {
       {s:7, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.9', obs:'Amadurecimento'},
       {s:8, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.8', obs:'Pré-flush — analisar tricomas'},
       {s:9, p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.6', obs:'Semana extra (sativa)'},
-      {s:10,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–6.5', ec:'< 0.3', obs:'🚿 FLUSH — parar nutrição (sativa/flora longa)'},
-      {s:11,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–6.5', ec:'< 0.3', obs:'🚿 FLUSH — parar TODA nutrição. Lavar substrato com água pura.'},
-      {s:12,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–6.5', ec:'< 0.2', obs:'🚿 FLUSH S2 — analisar tricomas diariamente. Colheita próxima!'},
+      {s:10,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.6', obs:'Semana extra'},
+      {s:11,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'4 mL/L', supl:'Top·Max 4mL', ph:'6.2–6.5', ec:'1.4', obs:'Reduzir — semana final'},
+      {s:12,p1:'—', d1:'—', p2:'Bio·Bloom', d2:'2 mL/L', supl:'Top·Max 2mL', ph:'6.2–6.5', ec:'1.0', obs:'Último adubo antes flush'},
     ],
     flush: [
       {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'Enzimas 1mL', ph:'6.2', ec:'< 0.3', obs:'Lavar substrato'},
@@ -1035,9 +1024,9 @@ const PROTOCOLS = {
       {s:7, p1:'Micro', d1:'2.6 mL/L', p2:'Bloom', d2:'2.6 mL/L', supl:'Astroflower 1.0', ph:'6.0–6.3', ec:'1.8', obs:'Tabela oficial S7'},
       {s:8, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.6', obs:'Reduzir — semana final'},
       {s:9, p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.4', obs:'Semana extra (sativa)'},
-      {s:10,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.3', obs:'🚿 FLUSH Remo (sativa longa)'},
-      {s:11,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.3', obs:'🚿 FLUSH Remo — parar TODA nutrição'},
-      {s:12,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.2', obs:'🚿 FLUSH S2 — analisar tricomas. Colheita próxima!'},
+      {s:10,p1:'Micro', d1:'2.1 mL/L', p2:'Bloom', d2:'2.1 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.4', obs:'Semana extra'},
+      {s:11,p1:'Micro', d1:'1.5 mL/L', p2:'Bloom', d2:'1.5 mL/L', supl:'—', ph:'6.0–6.3', ec:'1.0', obs:'Reduzir para flush'},
+      {s:12,p1:'Micro', d1:'1.0 mL/L', p2:'Bloom', d2:'1.0 mL/L', supl:'—', ph:'6.0–6.3', ec:'0.8', obs:'Último adubo'},
     ],
     flush: [
       {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'5.8–6.0', ec:'< 0.3', obs:'Flush Remo — 1 semana padrão'},
@@ -1073,9 +1062,9 @@ const PROTOCOLS = {
       {s:7, p1:'BioThrive B', d1:'2.6 mL/L', p2:'BioBud', d2:'0.7 mL/L', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Reduzir CaMg+ final'},
       {s:8, p1:'BioThrive B', d1:'2.6 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Pré-flush GO'},
       {s:9, p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra'},
-      {s:10,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'🚿 FLUSH GO (sativa longa)'},
-      {s:11,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'🚿 FLUSH GO — parar toda nutrição'},
-      {s:12,p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'🚿 FLUSH S2 GO — analisar tricomas'},
+      {s:10,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra GO'},
+      {s:11,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Semana extra'},
+      {s:12,p1:'BioThrive B', d1:'1.3 mL/L', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Último adubo GO'},
     ],
     flush: [
       {s:1, p1:'Água pura', d1:'—', p2:'—', d2:'—', supl:'—', ph:'6.2–7.0', ec:'N/A', obs:'Ripen/Rinse — 1 semana GO'},
@@ -1086,12 +1075,10 @@ const PROTOCOLS = {
     name: 'SuperSoil', icon: '🌍', color: '#e8a43a',
     obs: 'Solo vivo autoregula. Coberturas secas liberam nutrientes lentamente. EC/pH auto.',
     clone: [
-      // Fase de enraizamento: NÃO nutrir — clones ainda sem raízes são extremamente sensíveis
-      // Foco: estimular formação de raízes, manter umidade e ambiente estável
-      {s:1, p1:'Extrato de babosa', d1:'30 mL/L (gel puro)', p2:'—', d2:'—', supl:'Micorrizas pó (aplicar na base)', ph:'auto', ec:'auto', obs:'Auxina natural — mergulhar base do clone 30min antes de plantar. Solo apenas levemente úmido.'},
-      {s:2, p1:'Extrato de babosa', d1:'30 mL/L (nebulização)', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Nebulizar folhas levemente. Não encharcar — raízes jovens apodrecem fácil.'},
-      {s:3, p1:'Água pura', d1:'regas mínimas', p2:'—', d2:'—', supl:'Fulvato de K (1 mL/L)', ph:'auto', ec:'auto', obs:'Raízes visíveis? Introduzir fulvato suave. Manter domo/umidade 75–85%.'},
-      {s:4, p1:'Molasses diluído', d1:'1 mL/L', p2:'—', d2:'—', supl:'Trichoderma (solo, 1g/L)', ph:'auto', ec:'auto', obs:'Clone com raízes estabelecidas — ativar microbioma suavemente antes da vega.'},
+      {s:1, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'Micorrizas', ph:'auto', ec:'auto', obs:'Solo vivo — sem adubação química'},
+      {s:2, p1:'Chá de compostagem', d1:'1–2 L/pl.', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Manter solo úmido e vivo'},
+      {s:3, p1:'Farinha de alga', d1:'5g/L solo', p2:'—', d2:'—', supl:'—', ph:'auto', ec:'auto', obs:'Alga = fósforo e K suave'},
+      {s:4, p1:'Molasses', d1:'2 mL/L', p2:'—', d2:'—', supl:'Micorrizas', ph:'auto', ec:'auto', obs:'Mel de cana alimenta microbioma'},
     ],
     vega: [
       {s:1, p1:'Chá de compostagem', d1:'2 L/pl.', p2:'—', d2:'—', supl:'Vermicomposto', ph:'auto', ec:'auto', obs:'SuperSoil já contém todos os nutrientes'},
@@ -1147,6 +1134,7 @@ const MIP_SCHEDULE = [
   {fase:'Flora', sem:3, prod:'Beauveria bassiana (5 g/L)', via:'Solo apenas', obs:'⚠️ Umidade < 45%'},
   {fase:'Flora', sem:4, prod:'Trichoderma (3 g/L)', via:'Solo (rega)', obs:'Inspecionar buds'},
   {fase:'Flora', sem:5, prod:'Inspeção + Trichoderma', via:'Solo', obs:'⚠️ Verificar Botrytis'},
+  {fase:'Flush', sem:1, prod:'Inspeção final', via:'Visual', obs:'Analisar tricomas diariamente'},
 ];
 
 
@@ -1166,15 +1154,11 @@ function getDates(cultivo) {
   if (!c || !c.date) return null;
   const d0 = new Date(c.date + 'T12:00:00');
   const w = c.weeks;
-  const dC=w.clone*7, dV=w.vega*7, dF=w.flora*7;
-  // Flush = últimas 2 semanas da floração (sem nutrição)
-  const dFl=Math.min(14, Math.floor(dF*0.22)); // ~2 semanas para floras ≥9sem, 1 para floras curtas
-  const dFlush = dF - dFl; // dias de flora com nutrição
+  const dC=w.clone*7, dV=w.vega*7, dF=w.flora*7, dFl=w.flush*7;
   return {
     d0, iniVega:addDays(d0,dC), iniFlora:addDays(d0,dC+dV),
-    iniFlush:addDays(d0,dC+dV+dFlush), harvest:addDays(d0,dC+dV+dF),
-    totalDays:dC+dV+dF,
-    flushWeeks: Math.round(dFl/7)
+    iniFlush:addDays(d0,dC+dV+dF), harvest:addDays(d0,dC+dV+dF+dFl),
+    totalDays:dC+dV+dF+dFl
   };
 }
 function getPhaseForDate(date, dates) {
@@ -1182,8 +1166,8 @@ function getPhaseForDate(date, dates) {
   const {d0,iniVega,iniFlora,iniFlush,harvest} = dates;
   if (date < iniVega)  return {name:'Clone',     color:'#52b778', short:'C'};
   if (date < iniFlora) return {name:'Vegetativo', color:'#2196F3', short:'V'};
-  if (date < iniFlush) return {name:'Floração',   color:'#9b72cf', short:'F', flush:false};
-  if (date <= harvest) return {name:'Floração',   color:'#e05c5c', short:'F🚿', flush:true};
+  if (date < iniFlush) return {name:'Floração',   color:'#9b72cf', short:'F'};
+  if (date <= harvest) return {name:'Flush',      color:'#e05c5c', short:'Fl'};
   return null;
 }
 function getRelWeek(date, phaseStart) {
@@ -1204,7 +1188,7 @@ function calcCurrentWeek(cultivo) {
   const d0 = new Date(c.date + 'T12:00:00');
   const now = new Date(); now.setHours(12,0,0,0);
   const passed = Math.floor((now - d0) / 86400000);
-  const total  = (c.weeks.clone+c.weeks.vega+c.weeks.flora)*7;
+  const total  = (c.weeks.clone+c.weeks.vega+c.weeks.flora+c.weeks.flush)*7;
   if (passed >= 0 && passed < total) return Math.floor(passed/7)+1;
   return 1;
 }
@@ -1296,7 +1280,7 @@ function renderJardim() {
         <div class="cc-bar-seg" style="background:#52b778;flex:${w.clone}"></div>
         <div class="cc-bar-seg" style="background:#2196F3;flex:${w.vega}"></div>
         <div class="cc-bar-seg" style="background:#9b72cf;flex:${w.flora}"></div>
-        <div class="cc-bar-seg" style="background:#e05c5c;flex:${Math.max(1,Math.round(w.flora*0.22))}"></div>
+        <div class="cc-bar-seg" style="background:#e05c5c;flex:${w.flush}"></div>
       </div>
       <div class="cc-meta">
         <span class="cc-chip" style="background:${badge.color}22;color:${badge.color}">${badge.label}</span>
@@ -1312,13 +1296,13 @@ function renderJardim() {
 // MODAL (novo / editar)
 // ═══════════════════════════════════════════════
 let _modalEditId = null;
-let _modalWeeks  = {clone:2,vega:6,flora:9};
+let _modalWeeks  = {clone:2,vega:6,flora:9,flush:1};
 let _modalColor  = '#52b778';
 let _modalProto  = 'biobizz';
 
 function openNewModal() {
   _modalEditId = null;
-  _modalWeeks  = {clone:2, vega:6, flora:9};
+  _modalWeeks  = {clone:2, vega:6, flora:9, flush:1};
   _modalColor  = '#52b778';
   _modalProto  = 'biobizz';
   const today  = new Date();
@@ -1382,7 +1366,7 @@ function mStep(key, delta) {
 }
 
 function refreshModalSteppers() {
-  ['clone','vega','flora'].forEach(k => {
+  ['clone','vega','flora','flush'].forEach(k => {
     document.getElementById('m-val-'+k).innerHTML =
       `${_modalWeeks[k]} <span class="stepper-unit">sem</span>`;
   });
@@ -1398,8 +1382,7 @@ function saveModal() {
     const c = jardimState.cultivos.find(x => x.id===_modalEditId);
     if (c) {
       c.name=name; c.strain=strain; c.color=_modalColor;
-      c.proto=_modalProto; c.date=date;
-      c.weeks={clone:_modalWeeks.clone, vega:_modalWeeks.vega, flora:_modalWeeks.flora};
+      c.proto=_modalProto; c.date=date; c.weeks={..._modalWeeks};
       c.currentWeek = calcCurrentWeek(c);
       // Limpar strainInfo se strain mudou
       if (c.strain !== strain) c.strainInfo = null;
@@ -1507,8 +1490,8 @@ function buildCronograma() {
   document.getElementById('phase-bar').innerHTML =
     `<div class="phase-seg" style="background:#52b778;flex:${w.clone}"></div>
      <div class="phase-seg" style="background:#2196F3;flex:${w.vega}"></div>
-     <div class="phase-seg" style="background:#9b72cf;flex:${w.flora-(dates.flushWeeks||1)}"></div>
-     <div class="phase-seg" style="background:#e05c5c;flex:${dates.flushWeeks||1}"></div>`;
+     <div class="phase-seg" style="background:#9b72cf;flex:${w.flora}"></div>
+     <div class="phase-seg" style="background:#e05c5c;flex:${w.flush}"></div>`;
   const daysLeft = Math.max(0,Math.ceil((harvest-today)/86400000));
   const phase = getPhaseForDate(today,dates);
   document.getElementById('stat-total').textContent    = totalDays;
@@ -1577,7 +1560,7 @@ function renderWeek() {
         <div style="font-size:11px;color:var(--text3)">${dayName} ${dayFmt} · Dia ${dayNum}</div>
         <div style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tasks.join(' · ')||'Dia normal'}</div>
       </div>
-      <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.flush?'🚿':phase.short}</span>
+      <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.short}</span>
       <span class="day-expand">${(adub||mip||isSpecial)?'⌄':''}</span>
     </div>
     <div class="day-detail">
@@ -1619,6 +1602,7 @@ function buildAdubacao() {
     {key:'clone',label:'🌱 Clone',     color:'#52b778',iniRef:dates?.d0},
     {key:'vega', label:'🌿 Vegetativo',color:'#2196F3',iniRef:dates?.iniVega},
     {key:'flora',label:'🌸 Floração',  color:'#9b72cf',iniRef:dates?.iniFlora},
+    {key:'flush',label:'🚿 Flush',     color:'#e05c5c',iniRef:dates?.iniFlush},
   ];
   let html='';
   for (const {key,label,color,iniRef} of fases) {
@@ -1649,13 +1633,13 @@ function buildAdubacao() {
 function buildMIP() {
   const c = getActiveCultivo();
   const dates = getDates(c);
-  const cols={Clone:'#52b778',Vega:'#2196F3',Flora:'#9b72cf'};
-  const inis={Clone:dates?.d0,Vega:dates?.iniVega,Flora:dates?.iniFlora};
+  const cols={Clone:'#52b778',Vega:'#2196F3',Flora:'#9b72cf',Flush:'#e05c5c'};
+  const inis={Clone:dates?.d0,Vega:dates?.iniVega,Flora:dates?.iniFlora,Flush:dates?.iniFlush};
   let html='';let cur='';
   for (const m of MIP_SCHEDULE) {
     const col=cols[m.fase]||'#52b778';
     if (m.fase!==cur) {
-      const lbl={Clone:'🌱 Clone',Vega:'🌿 Vegetativo',Flora:'🌸 Floração'}[m.fase];
+      const lbl={Clone:'🌱 Clone',Vega:'🌿 Vegetativo',Flora:'🌸 Floração',Flush:'🚿 Flush'}[m.fase];
       html+=`<div style="font-family:var(--serif);font-size:17px;color:${col};margin:${cur?'20px':'0'} 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${lbl}</div>`;
       cur=m.fase;
     }
@@ -2006,16 +1990,9 @@ function buildManual() {
           a: 'Sim! É só voltar na aba Configurar, ajustar as semanas e gerar novamente. O cronograma inteiro se recalcula. Por exemplo, se sua planta demorou mais para florir, aumente as semanas de floração.',
         },
         {
-          q: 'O que é flush e como ele funciona neste app?',
-          a: 'O flush (lavagem) são as últimas 1–2 semanas antes da colheita onde você rega SOMENTE com água pura, sem nenhum nutriente. Isso lava os sais e resíduos acumulados no substrato, resultando em produto final com sabor mais limpo e melhor combustão.',
-          example: `<strong>Como está configurado no app:</strong>\n\nO flush JÁ ESTÁ incluído nas semanas de Floração configuradas por você. As últimas 1–2 semanas da floração são automaticamente marcadas como flush na aba Adubação (aparece "Água pura").\n\n<strong>Exemplo:</strong> você configurou 9 semanas de flora → as semanas S8–S9 indicam somente água pura.`,
-          tip: '💡 Sinal de flush completo: folhas começando a amarelar = planta consumindo reservas internas. Ótimo sinal de que está pronta para colheita.',
-          warn: '⚠️ Não faça flush por mais de 2 semanas — causa mais prejuízo do que benefício ao esgotar demais a planta.',
-        },
-        {
-          q: 'Quantas semanas de floração devo configurar?',
-          a: 'Configure as semanas TOTAIS de floração, incluindo o período de flush. As semanas de flush estão embutidas.',
-          example: `<strong>Índica rápida (8 sem total):</strong> configure 8 semanas → app indica flush nas últimas 1–2 sem\n<strong>Híbrido padrão (10 sem total):</strong> configure 10 semanas\n<strong>Sativa longa (14 sem total):</strong> configure 14 semanas\n\nAs últimas semanas sempre mostrarão "Água pura" na adubação.`,
+          q: 'O que significa "flush" e por que fazer?',
+          a: 'Flush é a última fase antes da colheita: você rega só com água pura (sem nutrientes) por 1–2 semanas. O objetivo é "lavar" o excesso de sais e nutrientes do substrato e da planta para ter um produto final mais limpo, com melhor sabor e combustão.',
+          tip: '💡 Após o flush, observe as folhas: elas vão começar a amarelar — isso é sinal que a planta está consumindo suas reservas. Bom sinal!',
         },
       ]
     },

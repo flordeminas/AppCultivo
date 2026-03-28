@@ -1,928 +1,2227 @@
 import json
 import os
-
 target = r'c:\Projetos\ZHC\App\strains.js'
-
 DATABASE_FULL = {
   "24k gold": {
     "name": "24k Gold",
-    "type": "indica",
+    "type": "indica-dominant",
     "lineage": "Kosher x Tangie",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-24%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Eufórico, Feliz, Relaxado",
+    "aromas": "Tangerina, Cítrico, Terra",
+    "description": "Cruzamento de Kosher Kush e Tangie.",
+    "growTip": "Gosta de climas controlados.",
+    "medicalNote": "Alívio de estresse."
   },
   "acapulco gold": {
     "name": "Acapulco Gold",
-    "type": "sativa",
-    "lineage": "Mexico",
-    "terpenes": "Mirceno"
+    "type": "sativa-dominant",
+    "lineage": "Mexican Landrace",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "15-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas",
+    "effects": "Eufórico, Feliz",
+    "aromas": "Terra, Café",
+    "description": "Famosa landrace mexicana dourada.",
+    "growTip": "Desenvolve buds longos.",
+    "medicalNote": "Estresse."
   },
   "acdc": {
     "name": "ACDC",
-    "type": "hybrid",
-    "lineage": "Cannatonic",
-    "terpenes": "Mirceno"
+    "type": "sativa-dominant",
+    "lineage": "Cannatonic Selection",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "1-6%",
+    "cbd": "15-20%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Relaxamento total",
+    "aromas": "Pinho, Terra",
+    "description": "Extremamente alta em CBD.",
+    "growTip": "Vigorosa.",
+    "medicalNote": "Epilepsia."
   },
   "afghan kush": {
     "name": "Afghan Kush",
     "type": "indica",
-    "lineage": "Hindu Kush",
-    "terpenes": "Mirceno"
+    "lineage": "Landrace (Hindu Kush)",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "15-20%",
+    "cbd": "1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Relaxamento profundo",
+    "aromas": "Haxixe, Terra",
+    "description": "Resinosa e robusta.",
+    "growTip": "Muito resistente a mofo.",
+    "medicalNote": "Analgesia."
   },
   "agent orange": {
     "name": "Agent Orange",
     "type": "hybrid",
     "lineage": "Orange x Diesel",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "ak-47": {
     "name": "AK-47",
     "type": "sativa-dominant",
-    "lineage": "Landrace Mix",
-    "terpenes": "Mirceno"
+    "lineage": "Colômbia x México x Tailândia x Afeganistão",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "17-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Feliz, Relaxado",
+    "aromas": "Terroso, Especiarias",
+    "description": "Suave e criativa.",
+    "growTip": "Odor forte.",
+    "medicalNote": "Insônia."
   },
   "alien og": {
     "name": "Alien OG",
-    "type": "indica",
-    "lineage": "Tahoe x Alien",
-    "terpenes": "Limoneno"
+    "type": "indica-dominant",
+    "lineage": "Tahoe OG x Alien Kush",
+    "terpenes": "Limoneno, Mirceno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Cerebral, Relaxado",
+    "aromas": "Pinho, Cítrico",
+    "description": "Híbrida potente de Cali.",
+    "growTip": "Gosta de clima controlado.",
+    "medicalNote": "Dor crônica."
   },
   "alaskan thunder fuck": {
     "name": "ATF",
     "type": "sativa",
     "lineage": "North American",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "amnesia haze": {
     "name": "Amnesia Haze",
     "type": "sativa",
-    "lineage": "Thai x Afghan",
-    "terpenes": "Mirceno"
+    "lineage": "(Afghani x Hawaiian) x (Laos x Jamaica)",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-12 semanas",
+    "effects": "Eufórico, Energético",
+    "aromas": "Limão, Terroso",
+    "description": "Sativa potente e cítrica.",
+    "growTip": "Sensível a pragas.",
+    "medicalNote": "Foco."
   },
   "animal cookies": {
     "name": "Animal Cookies",
     "type": "indica",
     "lineage": "GSC x Fire OG",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "apple fritter": {
     "name": "Apple Fritter",
     "type": "hybrid",
-    "lineage": "Sour Apple x Cookies",
-    "terpenes": "Cariofileno"
+    "lineage": "Sour Apple x Animal Cookies",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "22-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Eufórico, Relaxado",
+    "aromas": "Maçã, Doce",
+    "description": "Perfil de sabor único.",
+    "growTip": "Estável.",
+    "medicalNote": "Estresse."
   },
   "atomic nl": {
     "name": "Atomic NL",
     "type": "indica",
     "lineage": "NL Selection",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "banana kush": {
     "name": "Banana Kush",
     "type": "indica",
     "lineage": "Ghost OG",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "berry white": {
     "name": "Berry White",
-    "type": "indica",
-    "lineage": "Blueberry x Widow",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Blueberry x White Widow",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "19-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxado, Feliz",
+    "aromas": "Baga, Pinho",
+    "description": "Sabor frutado clássico.",
+    "growTip": "Resistente.",
+    "medicalNote": "Ansiedade."
   },
   "big bud": {
     "name": "Big Bud",
-    "type": "indica",
-    "lineage": "Afghan x Skunk",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Afghan x Skunk #1 x NL",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Físico, Relaxado",
+    "aromas": "Doce, Terra",
+    "description": "Rendimento massivo.",
+    "growTip": "Suporte os galhos.",
+    "medicalNote": "Sono."
   },
   "biscotti": {
     "name": "Biscotti",
-    "type": "indica",
-    "lineage": "Gelato x OG",
-    "terpenes": "Cariofileno"
+    "type": "indica-dominant",
+    "lineage": "Gelato #25 x South Florida OG",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "25-28%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Criativo, Relaxado",
+    "aromas": "Biscoito, Gasolina",
+    "description": "Visual roxo escuro.",
+    "growTip": "Estável.",
+    "medicalNote": "Bem-estar."
   },
   "black domina": {
     "name": "Black Domina",
     "type": "indica",
-    "lineage": "Indica Mix",
-    "terpenes": "Mirceno"
+    "lineage": "NL x Ortega x Hash Plant x Afghani",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "18-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Sedativo, Pesado",
+    "aromas": "Pimenta, Terra",
+    "description": "Híbrida de 4 linhagens.",
+    "growTip": "Muito escura.",
+    "medicalNote": "Insônia."
   },
   "blackberry kush": {
     "name": "Blackberry Kush",
     "type": "indica",
-    "lineage": "Blackberry x Afghan",
-    "terpenes": "Mirceno"
+    "lineage": "Blackberry x Afghani",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "16-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Relaxado, Sonolento",
+    "aromas": "Amora, Doce",
+    "description": "Perfil doce e denso.",
+    "growTip": "Compacta.",
+    "medicalNote": "Dores."
   },
   "blue cheese": {
     "name": "Blue Cheese",
-    "type": "indica",
-    "lineage": "Blueberry x Cheese",
-    "terpenes": "Cariofileno"
+    "type": "indica-dominant",
+    "lineage": "Blueberry x UK Cheese",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "18-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxado, Feliz",
+    "aromas": "Queijo, Baga",
+    "description": "Sabor pungente.",
+    "growTip": "Resistente.",
+    "medicalNote": "Espasmos."
   },
   "blue dream": {
     "name": "Blue Dream",
-    "type": "sativa",
+    "type": "sativa-dominant",
     "lineage": "Blueberry x Haze",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno, Pineno",
+    "thc": "17-24%",
+    "cbd": "1-2%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Criativo, Relaxante",
+    "aromas": "Mirtilo, Doce",
+    "description": "Equilíbrio perfeito.",
+    "growTip": "Cuidado com oídio.",
+    "medicalNote": "Dores."
   },
   "blueberry": {
     "name": "Blueberry",
     "type": "indica",
-    "lineage": "Thai x Afghan",
-    "terpenes": "Mirceno"
+    "lineage": "Afghani x Thai x Purple Thai",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "16-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Relaxado, Feliz",
+    "aromas": "Mirtilo, Frutado",
+    "description": "Clássica premiada.",
+    "growTip": "Fica roxa no frio.",
+    "medicalNote": "Estresse."
   },
   "bruce banner": {
     "name": "Bruce Banner",
-    "type": "sativa",
-    "lineage": "OG x Diesel",
-    "terpenes": "Limoneno"
+    "type": "sativa-dominant",
+    "lineage": "OG Kush x Strawberry Diesel",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "24-29%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Eufórico, Forte",
+    "aromas": "Diesel, Doce",
+    "description": "Potência verde massiva.",
+    "growTip": "Estica muito.",
+    "medicalNote": "Humor."
   },
   "bubba kush": {
     "name": "Bubba Kush",
     "type": "indica",
-    "lineage": "OG x NL",
-    "terpenes": "Cariofileno"
+    "lineage": "OG Kush x Northern Lights",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "15-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Sonolento, Relaxado",
+    "aromas": "Café, Chocolate",
+    "description": "Indica pesada.",
+    "growTip": "Planta baixa.",
+    "medicalNote": "Espasmos."
   },
   "bubble gum": {
     "name": "Bubble Gum",
     "type": "hybrid",
     "lineage": "Unknown",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "candy kush": {
     "name": "Candy Kush",
     "type": "hybrid",
-    "lineage": "BD x OG",
-    "terpenes": "Limoneno"
+    "lineage": "Blue Dream x OG Kush",
+    "terpenes": "Limoneno, Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9 semanas",
+    "effects": "Feliz, Elevado",
+    "aromas": "Doce, Frutado",
+    "description": "Sabor adocicado.",
+    "growTip": "Fácil.",
+    "medicalNote": "Humor."
   },
   "cannatonic": {
     "name": "Cannatonic",
     "type": "hybrid",
-    "lineage": "MK Ultra x G13",
-    "terpenes": "Mirceno"
+    "lineage": "MK Ultra x G13 Haze",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "6%",
+    "cbd": "6-17%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Relaxo sem chapar",
+    "aromas": "Terra, Pinho",
+    "description": "Pioneira CBD.",
+    "growTip": "Sensível.",
+    "medicalNote": "Medicinal."
   },
   "casey jones": {
     "name": "Casey Jones",
     "type": "sativa",
     "lineage": "Oriental x Diesel",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "cat piss": {
     "name": "Cat Piss",
     "type": "sativa",
     "lineage": "SSH Pheno",
-    "terpenes": "Pineno"
+    "terpenes": "Pineno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "charlotte's web": {
     "name": "Charlotte's Web",
     "type": "indica",
     "lineage": "Medicinal Hemp",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "cheese": {
     "name": "Cheese",
     "type": "hybrid",
     "lineage": "Skunk #1 Pheno",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "chemdawg": {
     "name": "Chemdawg",
     "type": "hybrid",
     "lineage": "Thai x Nepalese",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno, Mirceno",
+    "thc": "18-26%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9 semanas",
+    "effects": "Cerebral, Eufórico",
+    "aromas": "Diesel, Químico",
+    "description": "Linhagem seminal.",
+    "growTip": "Cuidado com mofo.",
+    "medicalNote": "Dores."
   },
   "cherry bomb": {
     "name": "Cherry Bomb",
     "type": "hybrid",
     "lineage": "Big Bud x Cherry",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "cherry pie": {
     "name": "Cherry Pie",
-    "type": "indica",
-    "lineage": "GDP x Durban",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Granddaddy Purple x Durban Poison",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "16-24%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Gargalhante, Feliz",
+    "aromas": "Cereja, Doce",
+    "description": "Sabor de torta.",
+    "growTip": "Gosta de podas.",
+    "medicalNote": "Ansiedade."
   },
   "chocolope": {
     "name": "Chocolope",
     "type": "sativa",
     "lineage": "Chocolate x Cannalope",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "chronic": {
     "name": "Chronic",
     "type": "hybrid",
     "lineage": "NL x Skunk x AK",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "cinderella 99": {
     "name": "Cinderella 99",
-    "type": "sativa",
-    "lineage": "Princess x Jack",
-    "terpenes": "Terpinoleno"
+    "type": "sativa-dominant",
+    "lineage": "Princess x P.94",
+    "terpenes": "Terpinoleno, Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Sonhadora, Elevado",
+    "aromas": "Abacaxi, Frutas",
+    "description": "Sativa rápida.",
+    "growTip": "Rápida.",
+    "medicalNote": "Foco."
   },
   "clementine": {
     "name": "Clementine",
     "type": "sativa",
     "lineage": "Tangie x Lemon Skunk",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "colombian gold": {
     "name": "Colombian Gold",
     "type": "sativa",
-    "lineage": "Santa Marta Landrace",
-    "terpenes": "Mirceno"
+    "lineage": "Landrace (Santa Marta)",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "12-14 semanas",
+    "effects": "Energético, Focado",
+    "aromas": "Limão, Especiarias",
+    "description": "Landrace clássica.",
+    "growTip": "Aguenta calor.",
+    "medicalNote": "Foco."
   },
   "cookies and cream": {
     "name": "Cookies and Cream",
     "type": "hybrid",
     "lineage": "Starfighter x GSC",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "20-26%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Eufórico, Relaxado",
+    "aromas": "Doce, Baunilha",
+    "description": "Resina densa.",
+    "growTip": "Solo rico.",
+    "medicalNote": "Estresse."
   },
   "cream caramel": {
     "name": "Cream Caramel",
     "type": "indica",
-    "lineage": "3-way mix",
-    "terpenes": "Mirceno"
+    "lineage": "Blue Black x Maple Leaf x White Rhino",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "15-20%",
+    "cbd": "1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxado, Doce",
+    "aromas": "Caramelo, Terra",
+    "description": "Ganhadora de muitas taças.",
+    "growTip": "Gosta de LST.",
+    "medicalNote": "Estresse."
   },
   "critical kush": {
     "name": "Critical Kush",
     "type": "indica",
     "lineage": "Critical x OG",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "critical mass": {
     "name": "Critical Mass",
-    "type": "indica",
-    "lineage": "Afghani x Skunk",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Afghani x Skunk #1",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Relaxado, Pesado",
+    "aromas": "Doce, Terroso",
+    "description": "Rendimento gigante.",
+    "growTip": "Suporte os galhos.",
+    "medicalNote": "Dores."
   },
   "death star": {
     "name": "Death Star",
     "type": "indica",
     "lineage": "Sensi Star x Sour D",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "diamond og": {
     "name": "Diamond OG",
     "type": "indica",
     "lineage": "OG Kush Hybrid",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "diesel": {
-    "name": "Original Diesel",
-    "type": "hybrid",
-    "lineage": "Chemdawg x NL",
-    "terpenes": "Cariofileno"
+    "name": "NYC Diesel",
+    "type": "sativa-dominant",
+    "lineage": "Sour Diesel x Afghan x Hawaiian",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas",
+    "effects": "Social, Elevado",
+    "aromas": "Toranja, Diesel",
+    "description": "Sativa cítrica.",
+    "growTip": "Control altura.",
+    "medicalNote": "Ansiedade social."
   },
   "do-si-dos": {
     "name": "Do-Si-Dos",
-    "type": "indica",
-    "lineage": "GSC x Face Off",
-    "terpenes": "Limoneno"
+    "type": "indica-dominant",
+    "lineage": "OGKB x Face Off OG",
+    "terpenes": "Limoneno, Cariofileno",
+    "thc": "25-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Total relaxamento",
+    "aromas": "Doce, Terra",
+    "description": "Poderosa e escura.",
+    "growTip": "Umidade baixa.",
+    "medicalNote": "Dor crônica."
   },
   "durban poison": {
     "name": "Durban Poison",
     "type": "sativa",
-    "lineage": "South African Landrace",
-    "terpenes": "Terpinoleno"
+    "lineage": "Landrace (África do Sul)",
+    "terpenes": "Terpinoleno, Mirceno",
+    "thc": "15-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Focado, Energético",
+    "aromas": "Doce, Picante",
+    "description": "Energia pura.",
+    "growTip": "Gosta de calor.",
+    "medicalNote": "Fadiga."
   },
   "early skunk": {
     "name": "Early Skunk",
     "type": "hybrid",
     "lineage": "Skunk x Pearl",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "el patron": {
     "name": "El Patron",
     "type": "hybrid",
     "lineage": "AMG x Shiva",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "euphoria": {
     "name": "Euphoria",
-    "type": "hybrid",
-    "lineage": "Medic x Shark",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Royal Medic x Shark Shock",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "9%",
+    "cbd": "10%",
+    "flowerWeeks": "8 semanas",
+    "effects": "Social, Relaxado",
+    "aromas": "Doce, Frutado",
+    "description": "Alta em CBD.",
+    "growTip": "Compacta.",
+    "medicalNote": "Inflamação."
   },
   "fat banana": {
     "name": "Fat Banana",
-    "type": "indica",
-    "lineage": "Banana OG x OG",
-    "terpenes": "Limoneno"
+    "type": "indica-dominant",
+    "lineage": "Banana OG x OG Kush",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxado, Fome",
+    "aromas": "Banana, Fruta",
+    "description": "Extrema potência.",
+    "growTip": "Muita luz.",
+    "medicalNote": "Apetite."
   },
   "fire og": {
     "name": "Fire OG",
     "type": "indica",
     "lineage": "OG x SFV OG",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "forbidden fruit": {
     "name": "Forbidden Fruit",
-    "type": "indica",
-    "lineage": "GDP x Tangie",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Cherry Pie x Tangie",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Fome, Relaxado",
+    "aromas": "Cereja, Tropical",
+    "description": "Visual roxo.",
+    "growTip": "Resistente.",
+    "medicalNote": "Apetite."
   },
   "fruit spirit": {
     "name": "Fruit Spirit",
     "type": "indica",
     "lineage": "Blueberry x Widow",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "g13": {
     "name": "G13",
     "type": "indica",
     "lineage": "Gov Seed",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "garlic cookies": {
     "name": "GMO Cookies",
     "type": "indica",
     "lineage": "GSC x Chem",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "gelato": {
     "name": "Gelato #33",
     "type": "hybrid",
-    "lineage": "Sunset x Thin Mint",
-    "terpenes": "Cariofileno"
+    "lineage": "Sunset Sherbet x Thin Mint GSC",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Eufórico, Relaxado",
+    "aromas": "Cremoso, Doce",
+    "description": "Favorita cosmopolita.",
+    "growTip": "Sensível.",
+    "medicalNote": "Bem-estar."
   },
   "ghost train haze": {
     "name": "Ghost Train Haze",
     "type": "sativa",
-    "lineage": "Ghost OG x Neville",
-    "terpenes": "Terpinoleno"
+    "lineage": "Ghost OG x Neville's Wreck",
+    "terpenes": "Terpinoleno, Mirceno",
+    "thc": "25-28%",
+    "cbd": "< 1%",
+    "flowerWeeks": "11-13 semanas",
+    "effects": "Criativo, Alerta",
+    "aromas": "Floral, Cítrico",
+    "description": "Potência extrema.",
+    "growTip": "Paciência.",
+    "medicalNote": "Depressão."
   },
   "girl scout cookies": {
     "name": "Girl Scout Cookies (GSC)",
-    "type": "indica",
-    "lineage": "OG x Durban",
-    "terpenes": "Cariofileno"
+    "type": "indica-dominant",
+    "lineage": "OG Kush x Durban Poison",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "25-28%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Relaxo físico pesado",
+    "aromas": "Menta, Doce",
+    "description": "Fenômeno global.",
+    "growTip": "Cálcio.",
+    "medicalNote": "Apetite."
   },
   "godfather og": {
     "name": "Godfather OG",
     "type": "indica",
-    "lineage": "Triple OG x Cherry",
-    "terpenes": "Mirceno"
+    "lineage": "Triple OG x Cherry Pie x GDP",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "25-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Narcótico, Pesado",
+    "aromas": "Terra, Pinho",
+    "description": "O 'Chefão' da potência.",
+    "growTip": "Densa.",
+    "medicalNote": "Dores."
   },
   "golden goat": {
     "name": "Golden Goat",
     "type": "sativa",
     "lineage": "Hawaiian x Romulan",
-    "terpenes": "Terpinoleno"
+    "terpenes": "Terpinoleno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "gorilla glue": {
     "name": "Gorilla Glue #4 (GG4)",
     "type": "hybrid",
-    "lineage": "Mix Sour P.",
-    "terpenes": "Cariofileno"
+    "lineage": "Sour Dubb x Chem Sister x Chocolate Diesel",
+    "terpenes": "Cariofileno, Mirceno",
+    "thc": "25-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Colado no sofá",
+    "aromas": "Pungente, Pinheiro",
+    "description": "Resina super pegajosa.",
+    "growTip": "Cresce muito.",
+    "medicalNote": "Espasmos."
   },
   "granddaddy purple": {
     "name": "Granddaddy Purple (GDP)",
     "type": "indica",
-    "lineage": "Purps x Big Bud",
-    "terpenes": "Mirceno"
+    "lineage": "Mendo Purps x Skunk x Afghanistan",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "17-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-11 semanas",
+    "effects": "Soninho, Feliz",
+    "aromas": "Uva, Baga",
+    "description": "Clássica roxa.",
+    "growTip": "Frieza ajuda a cor.",
+    "medicalNote": "Insônia."
   },
   "grape ape": {
     "name": "Grape Ape",
     "type": "indica",
     "lineage": "Mendo Purps x Afghani",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "green crack": {
     "name": "Green Crack",
     "type": "sativa",
-    "lineage": "Skunk x Afghani",
-    "terpenes": "Mirceno"
+    "lineage": "Skunk #1 x Afghani",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Energético, Focado",
+    "aromas": "Manga, Frutado",
+    "description": "Energia diurna.",
+    "growTip": "Sensível.",
+    "medicalNote": "Fadiga."
   },
   "harlequin": {
     "name": "Harlequin",
-    "type": "sativa",
-    "lineage": "Landrace Mix",
-    "terpenes": "Mirceno"
+    "type": "sativa-dominant",
+    "lineage": "Colombian Gold x Thai x Swiss",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "4-7%",
+    "cbd": "8-16%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Mente limpa, Relaxado",
+    "aromas": "Terra, Madeira",
+    "description": "Consistente em CBD.",
+    "growTip": "Luz média.",
+    "medicalNote": "Ansiedade."
   },
   "headbanger": {
     "name": "Headbanger",
-    "type": "sativa",
-    "lineage": "Sour D x Kush",
-    "terpenes": "Limoneno"
+    "type": "sativa-dominant",
+    "lineage": "Sour Diesel (AJ) x Biker Kush",
+    "terpenes": "Limoneno, Cariofileno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-12 semanas",
+    "effects": "Cerebral, Eufórico",
+    "aromas": "Sour, Diesel",
+    "description": "Alta potência Sativa.",
+    "growTip": "Estica muito.",
+    "medicalNote": "Estresse."
   },
   "hindu kush": {
     "name": "Hindu Kush",
     "type": "indica",
-    "lineage": "Afghan Landrace",
-    "terpenes": "Mirceno"
+    "lineage": "Landrace (Afghanistan/Pakistan)",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Calmo, Relaxado",
+    "aromas": "Terra, Sândalo",
+    "description": "Indica original.",
+    "growTip": "Resistente.",
+    "medicalNote": "Náuseas."
   },
   "holy grail kush": {
     "name": "Holy Grail Kush",
     "type": "hybrid",
     "lineage": "Kosher x OG 18",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "ice": {
     "name": "ICE",
     "type": "hybrid",
-    "lineage": "NL x Skunk x Afghan",
-    "terpenes": "Mirceno"
+    "lineage": "Afghan x Northern Lights x Skunk",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "18-21%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Físico, Relaxado",
+    "aromas": "Fresco, Pinheiro",
+    "description": "Gelo nos buds.",
+    "growTip": "Extrações.",
+    "medicalNote": "Náuseas."
   },
   "ice cream cake": {
     "name": "Ice Cream Cake",
-    "type": "indica",
-    "lineage": "Wedding x Gelato",
-    "terpenes": "Limoneno"
+    "type": "indica-dominant",
+    "lineage": "Wedding Cake x Gelato #33",
+    "terpenes": "Limoneno, Cariofileno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Sedativo, Feliz",
+    "aromas": "Baunilha, Doce",
+    "description": "Híbrida gourmet.",
+    "growTip": "Muita luz.",
+    "medicalNote": "Insônia."
   },
   "jack herer": {
     "name": "Jack Herer",
-    "type": "sativa",
-    "lineage": "Haze x Mix",
-    "terpenes": "Terpinoleno"
+    "type": "sativa-dominant",
+    "lineage": "Haze x NL#5 x Shiva Skunk",
+    "terpenes": "Terpinoleno, Cariofileno",
+    "thc": "18-24%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Elevado, Criativo",
+    "aromas": "Pinho, Madeira",
+    "description": "Homenagem ao Jack.",
+    "growTip": "Solo rico.",
+    "medicalNote": "Humor."
   },
   "kali mist": {
     "name": "Kali Mist",
     "type": "sativa",
-    "lineage": "Unknown Haze",
-    "terpenes": "Mirceno"
+    "lineage": "Haze x Unknown",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-12 semanas",
+    "effects": "Cerebral puro",
+    "aromas": "Ervas, Incenso",
+    "description": "Rainha Sativa.",
+    "growTip": "Fácil.",
+    "medicalNote": "Pms."
   },
   "king louie xiii": {
     "name": "King Louie XIII",
     "type": "indica",
     "lineage": "OG x Confid.",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "kosher kush": {
     "name": "Kosher Kush",
     "type": "indica",
-    "lineage": "Indica Kush",
-    "terpenes": "Mirceno"
+    "lineage": "Unknown Indica",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Sedação pesada",
+    "aromas": "Frutado, Terroso",
+    "description": "Pura calma.",
+    "growTip": "Muito adubo.",
+    "medicalNote": "Insônia."
   },
   "kush mints": {
     "name": "Kush Mints",
     "type": "hybrid",
     "lineage": "Animal x Bubba",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "la confidential": {
     "name": "LA Confidential",
     "type": "indica",
-    "lineage": "Afghan x Cali Indica",
-    "terpenes": "Mirceno"
+    "lineage": "OG Kush x Afghani",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "19-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Psicodélico, Físico",
+    "aromas": "Pinho, Terroso",
+    "description": "Favorita de LA.",
+    "growTip": "Curta.",
+    "medicalNote": "Espasmos."
   },
   "lavender": {
     "name": "Lavender",
-    "type": "indica",
-    "lineage": "Skunk x Mix",
-    "terpenes": "Linalol"
+    "type": "indica-dominant",
+    "lineage": "Super Skunk x BSK x Afghan",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "17-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Calmo, Zen",
+    "aromas": "Lavanda, Especiarias",
+    "description": "Visual quase negro.",
+    "growTip": "Sensível.",
+    "medicalNote": "Ansiedade."
   },
   "lemon haze": {
     "name": "Lemon Haze",
-    "type": "sativa",
-    "lineage": "Skunk x Haze",
-    "terpenes": "Limoneno"
+    "type": "sativa-dominant",
+    "lineage": "Lemon Skunk x Silver Haze",
+    "terpenes": "Limoneno, Terpinoleno",
+    "thc": "17-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Social, Feliz",
+    "aromas": "Limão",
+    "description": "Refresco cítrico.",
+    "growTip": "Regenta pH.",
+    "medicalNote": "Fadiga."
   },
   "lsd": {
     "name": "LSD",
-    "type": "indica",
-    "lineage": "Skunk x Mazar",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Skunk #1 x Mazar",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "20-24%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Visual, Corporal",
+    "aromas": "Noz, Almíscar",
+    "description": "Híbrida indestrutível.",
+    "growTip": "Pode abusar.",
+    "medicalNote": "Estímulo."
   },
   "manga rosa": {
     "name": "Manga Rosa",
     "type": "sativa",
     "lineage": "Brazilian Landrace",
-    "terpenes": "Terpinoleno"
+    "terpenes": "Terpinoleno, Mirceno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "12-14 semanas",
+    "effects": "Eufórico, Mental",
+    "aromas": "Manga, Doce",
+    "description": "Orgulho brasileiro.",
+    "growTip": "Giga-planta.",
+    "medicalNote": "Depressão."
   },
   "master kush": {
     "name": "Master Kush",
     "type": "indica",
-    "lineage": "Hindu x Skunk",
-    "terpenes": "Mirceno"
+    "lineage": "Hindu Kush x Skunk",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Corpo relaxado",
+    "aromas": "Cítrico, Terra",
+    "description": "Haxixe puro.",
+    "growTip": "Hidro.",
+    "medicalNote": "Estresse."
   },
   "mazar": {
     "name": "Mazar",
     "type": "indica",
-    "lineage": "Afghan x Skunk",
-    "terpenes": "Mirceno"
+    "lineage": "Afghan x Skunk #1",
+    "terpenes": "Mirceno, Pineno",
+    "thc": "17-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Dormência física",
+    "aromas": "Pinheiro, Haxixe",
+    "description": "Super resistente.",
+    "growTip": "Treine bem.",
+    "medicalNote": "Insônia."
   },
   "mimosa": {
     "name": "Mimosa",
-    "type": "sativa",
-    "lineage": "Clementine x Punch",
-    "terpenes": "Limoneno"
+    "type": "hybrid",
+    "lineage": "Clementine x Purple Punch",
+    "terpenes": "Limoneno, Mirceno",
+    "thc": "19-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9 semanas",
+    "effects": "Energético, Feliz",
+    "aromas": "Laranja, Champagne",
+    "description": "Brinde de aromas.",
+    "growTip": "Fresco.",
+    "medicalNote": "Depressão."
   },
   "northern lights": {
     "name": "Northern Lights",
     "type": "indica",
-    "lineage": "Afghan x Thai",
-    "terpenes": "Mirceno"
+    "lineage": "Afghani x Thai",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "16-21%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Puro relaxamento",
+    "aromas": "Pinho, Doce",
+    "description": "Imortal da Aurora.",
+    "growTip": "Fácil.",
+    "medicalNote": "Analgesia."
   },
   "og kush": {
     "name": "OG Kush",
     "type": "hybrid",
-    "lineage": "Chem x Hindu Kush",
-    "terpenes": "Mirceno"
+    "lineage": "Chemdawg x Hindu Kush",
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "19-26%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxante, Eufórico",
+    "aromas": "Pinho, Terra",
+    "description": "Origem mística.",
+    "growTip": "Seco.",
+    "medicalNote": "Estresse."
   },
   "panama red": {
     "name": "Panama Red",
     "type": "sativa",
-    "lineage": "Central American",
-    "terpenes": "Mirceno"
+    "lineage": "Panama Landrace",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "11-12 semanas",
+    "effects": "Lúdico, Feliz",
+    "aromas": "Terra, Antigo",
+    "description": "Old School pura.",
+    "growTip": "Tropical.",
+    "medicalNote": "Felicidade."
   },
   "pineapple express": {
     "name": "Pineapple Express",
     "type": "hybrid",
     "lineage": "Trainwreck x Hawaiian",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Vibe de festa",
+    "aromas": "Abacaxi, Tropical",
+    "description": "Sabor doce.",
+    "growTip": "Mofo.",
+    "medicalNote": "Ansiedade."
   },
   "purple haze": {
     "name": "Purple Haze",
     "type": "sativa",
     "lineage": "Purple Thai x Haze",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "16-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Visual, Trippy",
+    "aromas": "Uva, Doce",
+    "description": "Vibe psicodélica.",
+    "growTip": "Luz intensa.",
+    "medicalNote": "Humor."
   },
   "purple punch": {
     "name": "Purple Punch",
     "type": "indica",
-    "lineage": "GDP x Larry OG",
-    "terpenes": "Cariofileno"
+    "lineage": "Larry OG x GDP",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "18-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Soninho",
+    "aromas": "Uva, Doce",
+    "description": "Roxa escura.",
+    "growTip": "Baixa.",
+    "medicalNote": "Insônia."
   },
   "quantum kush": {
     "name": "Quantum Kush",
-    "type": "sativa",
-    "lineage": "Irish x Wreck",
-    "terpenes": "Terpinoleno"
+    "type": "sativa-dominant",
+    "lineage": "Sweet Irish x Timewreck",
+    "terpenes": "Terpinoleno, Mirceno",
+    "thc": "25-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Eufórico, Mental",
+    "aromas": "Earthy, Sweet",
+    "description": "Níveis extremos de THC.",
+    "growTip": "Cuidado.",
+    "medicalNote": "Depressão."
   },
   "runtz": {
     "name": "Runtz",
     "type": "hybrid",
     "lineage": "Zkittlez x Gelato",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "24-29%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Extrema euforia",
+    "aromas": "Bala, Frutas",
+    "description": "Favorita da vez.",
+    "growTip": "Comida.",
+    "medicalNote": "Bem-estar."
   },
   "santa maria": {
     "name": "Santa Maria",
     "type": "sativa",
-    "lineage": "Brazil",
-    "terpenes": "Limoneno"
+    "lineage": "Brazilian (Amazônia)",
+    "terpenes": "Limoneno, Mirceno",
+    "thc": "16-19%",
+    "cbd": "< 1%",
+    "flowerWeeks": "11-12 semanas",
+    "effects": "Zen, Mental",
+    "aromas": "Floral, Ervas",
+    "description": "Rito espiritual.",
+    "growTip": "Orgânico.",
+    "medicalNote": "Ansiedade."
   },
   "shiva skunk": {
     "name": "Shiva Skunk",
-    "type": "indica",
-    "lineage": "Skunk 1 x NL 5",
-    "terpenes": "Mirceno"
+    "type": "indica-dominant",
+    "lineage": "Skunk #1 x NL #5",
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "17-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-8 semanas",
+    "effects": "Eufórico, Relaxado",
+    "aromas": "Skunk, Doce",
+    "description": "Resina densa.",
+    "growTip": "Fácil.",
+    "medicalNote": "Apetite."
   },
   "sour diesel": {
     "name": "Sour Diesel",
     "type": "sativa",
-    "lineage": "Chem x Skunk",
-    "terpenes": "Cariofileno"
+    "lineage": "Chemdawg x Skunk #1",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas",
+    "effects": "Enégetico, Criativo",
+    "aromas": "Gasolina, Pungente",
+    "description": "Lenda de NY.",
+    "growTip": "Espaço alto.",
+    "medicalNote": "Fadiga."
   },
   "strawberry cough": {
     "name": "Strawberry Cough",
     "type": "sativa",
     "lineage": "Strawberry Fields x Haze",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno, Pineno",
+    "thc": "15-20%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Gargalhante, Feliz",
+    "aromas": "Morango",
+    "description": "Dura na tosse.",
+    "growTip": "Fácil.",
+    "medicalNote": "Ansiedade social."
   },
   "super lemon haze": {
     "name": "Super Lemon Haze",
-    "type": "sativa",
+    "type": "sativa-dominant",
     "lineage": "Lemon Skunk x SSH",
-    "terpenes": "Limoneno"
+    "terpenes": "Limoneno, Terpinoleno",
+    "thc": "20-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Ativo, Criativo",
+    "aromas": "Limão",
+    "description": "Consagrada pela Cup.",
+    "growTip": "Ramifica.",
+    "medicalNote": "Cansaço."
   },
   "tangerine dream": {
     "name": "Tangerine Dream",
-    "type": "sativa",
+    "type": "sativa-dominant",
     "lineage": "G13 x Haze",
-    "terpenes": "Limoneno"
+    "terpenes": "Mirceno, Limoneno",
+    "thc": "20-23%",
+    "cbd": "1-2%",
+    "flowerWeeks": "9-10 semanas",
+    "effects": "Ativo, Mental",
+    "aromas": "Laranja",
+    "description": "Sabor de casca.",
+    "growTip": "Firme.",
+    "medicalNote": "Tensão."
   },
   "wedding cake": {
     "name": "Wedding Cake",
-    "type": "indica",
-    "lineage": "TK x Mints",
-    "terpenes": "Cariofileno"
+    "type": "indica-dominant",
+    "lineage": "Triangle Kush x Mints",
+    "terpenes": "Cariofileno, Limoneno",
+    "thc": "23-27%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9 semanas",
+    "effects": "Feliz, Relaxado",
+    "aromas": "Baunilha, Doce",
+    "description": "Buds de açúcar.",
+    "growTip": "Ar.",
+    "medicalNote": "Insônia."
   },
   "white widow": {
     "name": "White Widow",
     "type": "hybrid",
     "lineage": "Brazilian x Indian",
-    "terpenes": "Mirceno"
+    "terpenes": "Mirceno, Cariofileno",
+    "thc": "18-25%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Conversador, Feliz",
+    "aromas": "Pinho",
+    "description": "Imortal nevada.",
+    "growTip": "Variac temp.",
+    "medicalNote": "Ansiedade."
   },
   "zkittlez": {
     "name": "Zkittlez",
-    "type": "indica",
+    "type": "indica-dominant",
     "lineage": "Grape Ape x Grapefruit",
-    "terpenes": "Cariofileno"
+    "terpenes": "Cariofileno, Humuleno",
+    "thc": "19-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Pura alegria",
+    "aromas": "Doces",
+    "description": "Sabor de bala única.",
+    "growTip": "Poda neles.",
+    "medicalNote": "Estresse."
   },
   "amnesia gold": {
     "name": "Amnesia Gold",
     "type": "sativa",
-    "lineage": "Amnesia x Lennon"
+    "lineage": "Amnesia x Lennon",
+    "thc": "18-21%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-12 semanas",
+    "effects": "Energético, Cerebral",
+    "aromas": "Cítrico, Doce",
+    "description": "Sativa expansiva e potente.",
+    "growTip": "Cresce muito em altura.",
+    "medicalNote": "Fadiga."
   },
   "ayahuasca purple": {
     "name": "Ayahuasca Purple",
     "type": "indica",
-    "lineage": "Red River x Master Kush"
+    "lineage": "Red River x Master Kush",
+    "thc": "21-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Relaxamento profundo, Fome",
+    "aromas": "Nutty, Papaya",
+    "description": "Indica roxa de visual incrível.",
+    "growTip": "Suporta bem o frio.",
+    "medicalNote": "Insônia severa."
   },
   "bcn critical xxl": {
     "name": "BCN Critical XXL",
-    "type": "indica",
-    "lineage": "Kritikal x Afghan"
+    "type": "indica-dominant",
+    "lineage": "Kritikal x Afghan",
+    "thc": "18-21%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxado, Pesado",
+    "aromas": "Citrus, Earthy",
+    "description": "Rendimento massivo.",
+    "growTip": "Galhos pesados, use escoras.",
+    "medicalNote": "Músculos."
   },
   "beaver cookies": {
     "name": "Beaver Cookies",
     "type": "hybrid",
-    "lineage": "GSC x GMO"
+    "lineage": "GSC x GMO",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "blue magoo": {
     "name": "Blue Magoo",
     "type": "indica",
-    "lineage": "Blueberry x Major Pink"
+    "lineage": "Blueberry x Major Pink",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "bubble kush": {
     "name": "Bubble Kush",
     "type": "indica",
-    "lineage": "Bubble Gum x OG Kush"
+    "lineage": "Bubble Gum x OG Kush",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "candy kush auto": {
     "name": "Candy Kush Auto",
     "type": "hybrid",
-    "lineage": "Candy x Ruderalis"
+    "lineage": "Candy x Ruderalis",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "cbd kush": {
     "name": "CBD Kush",
     "type": "hybrid",
-    "lineage": "Kanchi x Quaze"
+    "lineage": "Kanchi x Quaze",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "dark phoenix": {
     "name": "Dark Phoenix",
     "type": "sativa",
-    "lineage": "Trainwreck x Jack Herer"
+    "lineage": "Trainwreck x Jack Herer",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "fat banana auto": {
     "name": "Fat Banana Auto",
     "type": "indica",
-    "lineage": "FB x Ruderalis"
+    "lineage": "FB x Ruderalis",
+    "thc": "22%",
+    "cbd": "1%",
+    "flowerWeeks": "9-10 semanas (Total)",
+    "effects": "Relaxado, Fome",
+    "aromas": "Banana, Doce",
+    "description": "Uma auto muito potente.",
+    "growTip": "Rápida.",
+    "medicalNote": "Apetite."
   },
   "fast eddy": {
     "name": "Fast Eddy",
-    "type": "hybrid",
-    "lineage": "Cheese x Juanita"
+    "type": "sativa-dominant",
+    "lineage": "Cheese x Juanita",
+    "thc": "9%",
+    "cbd": "Alta (10% approx)",
+    "flowerWeeks": "8-9 semanas (Total)",
+    "effects": "Focado, Relaxado",
+    "aromas": "Citrus, Cheese",
+    "description": "Strain rica em CBD automática.",
+    "growTip": "Não precisa de muito adubo.",
+    "medicalNote": "Pms / Ansiedade."
   },
   "green gelato": {
     "name": "Green Gelato",
     "type": "hybrid",
-    "lineage": "Sunset x Thin Mint"
+    "lineage": "Sunset x Thin Mint",
+    "thc": "25-27%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Relaxado, Conversador",
+    "aromas": "Mentol, Biscoito",
+    "description": "Perfil de sabor Cookies/Gelato.",
+    "growTip": "Responde bem a LST.",
+    "medicalNote": "Espasmos."
   },
   "hulkberry": {
     "name": "HulkBerry",
-    "type": "sativa",
-    "lineage": "OG Kush x Strawberry Diesel"
+    "type": "sativa-dominant",
+    "lineage": "OG Kush x Strawberry Diesel",
+    "thc": "25-28%",
+    "cbd": "< 1%",
+    "flowerWeeks": "9-11 semanas",
+    "effects": "Cerebral, Ativo",
+    "aromas": "Berry, Diesel",
+    "description": "Bruce Banner #3 seleção elite.",
+    "growTip": "Odor muito forte.",
+    "medicalNote": "Foco diurno."
   },
   "quick one": {
     "name": "Quick One",
-    "type": "indica",
-    "lineage": "Lowryder x NL"
+    "type": "indica-dominant",
+    "lineage": "Lowryder x NL",
+    "thc": "13-16%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas (Total)",
+    "effects": "Suave, Físico",
+    "aromas": "Herbal, Citrus",
+    "description": "Uma das mais rápidas autoflorescentes.",
+    "growTip": "Ideal para iniciantes no verão.",
+    "medicalNote": "Limpante."
   },
   "royal gorilla": {
     "name": "Royal Gorilla",
     "type": "hybrid",
-    "lineage": "Sour Dubb x Chem Sister"
+    "lineage": "Sour Dubb x Chem Sister",
+    "thc": "25-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Total relaxamento, Eufórico",
+    "aromas": "Diesel, Pinho",
+    "description": "A versão RQS da lendária GG4.",
+    "growTip": "Resina em excesso, boa para extrações.",
+    "medicalNote": "Dor crônica."
   },
   "royal medic": {
     "name": "Royal Medic",
-    "type": "sativa",
-    "lineage": "Juanita x Critical"
+    "type": "sativa-dominant",
+    "lineage": "Juanita x Critical",
+    "thc": "10%",
+    "cbd": "12%",
+    "flowerWeeks": "9 semanas",
+    "effects": "Medicinal, Funcional",
+    "aromas": "Fruta, Madeira",
+    "description": "Equilíbrio THC/CBD para uso diário.",
+    "growTip": "Gosta de luz solar direta.",
+    "medicalNote": "Dores inflamatórias."
   },
   "royal runtz": {
     "name": "Royal Runtz",
     "type": "hybrid",
-    "lineage": "Zkittlez x Gelato"
+    "lineage": "Zkittlez x Gelato",
+    "thc": "27-30%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Elevado, Criativo",
+    "aromas": "Candy, Frutas",
+    "description": "Uma das mais potentes do catálogo.",
+    "growTip": "Exigente em nutrientes.",
+    "medicalNote": "Depressão."
   },
   "sour diesel auto": {
     "name": "Sour Diesel Auto",
     "type": "sativa",
-    "lineage": "SD x Ruderalis"
+    "lineage": "SD x Ruderalis",
+    "thc": "15-19%",
+    "cbd": "1%",
+    "flowerWeeks": "10-12 semanas (Total)",
+    "effects": "Ativo, Cerebral",
+    "aromas": "Combustível, Cítrico",
+    "description": "Energia diesel compacta.",
+    "growTip": "Odor forte.",
+    "medicalNote": "Fadiga."
   },
   "sweet zz": {
     "name": "Sweet ZZ",
-    "type": "indica",
-    "lineage": "Grape Ape x Grapefruit"
+    "type": "indica-dominant",
+    "lineage": "Grape Ape x Grapefruit",
+    "thc": "20-23%",
+    "cbd": "< 1%",
+    "flowerWeeks": "7-9 semanas",
+    "effects": "Felicidade, Calma",
+    "aromas": "Candy, Fruta",
+    "description": "A versão de Zkittlez de alta qualidade.",
+    "growTip": "Rápida maturação.",
+    "medicalNote": "Ansiedade."
   },
   "triple g": {
     "name": "Triple G",
-    "type": "indica",
-    "lineage": "Gorilla x Gelato"
+    "type": "indica-dominant",
+    "lineage": "Gorilla x Gelato",
+    "thc": "26-29%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Eufórico, Narcótico",
+    "aromas": "Pinho, Chocolate",
+    "description": "Gorilla Glue x Gelato #33.",
+    "growTip": "Alta densidade de flores.",
+    "medicalNote": "Insônia severa."
   },
   "watermelon": {
     "name": "Watermelon",
     "type": "indica",
-    "lineage": "Unknown"
+    "lineage": "Unknown",
+    "thc": "20-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Relaxamento físico",
+    "aromas": "Melancia, Doce",
+    "description": "Sabor refrescante.",
+    "growTip": "Cuidado com umidade.",
+    "medicalNote": "Sono."
   },
   "white widow auto": {
     "name": "White Widow Auto",
     "type": "hybrid",
-    "lineage": "WW x Ruderalis"
+    "lineage": "WW x Ruderalis",
+    "thc": "15-18%",
+    "cbd": "1%",
+    "flowerWeeks": "10-12 semanas (Total)",
+    "effects": "Relaxado, Equilibrado",
+    "aromas": "Terra, Pinheiro",
+    "description": "A lenda WW em versão automática.",
+    "growTip": "Mantenha o solo aerado.",
+    "medicalNote": "Tensões."
   },
   "707 headband": {
     "name": "707 Headband",
     "type": "hybrid",
-    "lineage": "Sour D x OG"
+    "lineage": "Sour D x OG",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "afghan pearl": {
     "name": "Afghan Pearl",
     "type": "indica",
-    "lineage": "Afghan x Pearl"
+    "lineage": "Afghan x Pearl",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "alien dawg": {
     "name": "Alien Dawg",
     "type": "indica",
-    "lineage": "Alien x Chem"
+    "lineage": "Alien x Chem",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "amnesia auto": {
     "name": "Amnesia Auto",
     "type": "sativa",
-    "lineage": "Amnesia x Ruder."
+    "lineage": "Amnesia x Ruder.",
+    "thc": "16-19%",
+    "cbd": "1%",
+    "flowerWeeks": "11-12 semanas (Total)",
+    "effects": "Cerebral, Trippy",
+    "aromas": "Limão, Haze",
+    "description": "Amnesia para colheita rápida.",
+    "growTip": "Cresce bem.",
+    "medicalNote": "Criatividade."
   },
   "animal mints": {
     "name": "Animal Mints",
     "type": "hybrid",
-    "lineage": "Animal x GSC"
+    "lineage": "Animal x GSC",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "aurora borealis": {
     "name": "Aurora Borealis",
     "type": "indica",
-    "lineage": "NL x Skunk"
+    "lineage": "NL x Skunk",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "bc big bud": {
     "name": "BC Big Bud",
     "type": "indica",
-    "lineage": "Big Bud x Sativa"
+    "lineage": "Big Bud x Sativa",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "blue magoo auto": {
     "name": "Blue Magoo Auto",
     "type": "indica",
-    "lineage": "Blueberry x Major"
+    "lineage": "Blueberry x Major",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "bubba kush auto": {
     "name": "Bubba Kush Auto",
     "type": "indica",
-    "lineage": "Bubba x Ruder."
+    "lineage": "Bubba x Ruder.",
+    "thc": "17-20%",
+    "cbd": "1%",
+    "flowerWeeks": "9-10 semanas (Total)",
+    "effects": "Narcótico, Físico",
+    "aromas": "Café, Terra",
+    "description": "Indica clássica compacta.",
+    "growTip": "Gosta de pouco N.",
+    "medicalNote": "Sono."
   },
   "california orange": {
     "name": "Cali Orange",
     "type": "hybrid",
-    "lineage": "Cali Landrace"
+    "lineage": "Cali Landrace",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "chocolate haze": {
     "name": "Chocolate Haze",
     "type": "sativa",
-    "lineage": "Thai x Cannalope"
+    "lineage": "Thai x Cannalope",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "cookies gelato": {
     "name": "Cookies Gelato",
     "type": "hybrid",
-    "lineage": "GSC x Gelato"
+    "lineage": "GSC x Gelato",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "critical auto": {
     "name": "Critical Auto",
     "type": "indica",
-    "lineage": "Critical x Ruder."
+    "lineage": "Critical x Ruder.",
+    "thc": "14-16%",
+    "cbd": "1%",
+    "flowerWeeks": "9-10 semanas (Total)",
+    "effects": "Relaxado, Leve",
+    "aromas": "Skunk, Doce",
+    "description": "Versátil e rápida.",
+    "growTip": "Resiliente.",
+    "medicalNote": "Relaxamento."
   },
   "dinamex": {
     "name": "Dinamex",
     "type": "hybrid",
-    "lineage": "Cali x Mexico"
+    "lineage": "Cali x Mexico",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "glueberry og": {
     "name": "Glueberry OG",
     "type": "hybrid",
-    "lineage": "GG x Berry"
+    "lineage": "GG x Berry",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "green gelat auto": {
     "name": "Green Gelato Auto",
     "type": "hybrid",
-    "lineage": "Gelato x Ruder."
+    "lineage": "Gelato x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "kali dog": {
     "name": "Kali Dog",
     "type": "hybrid",
-    "lineage": "Chemdawg x Sour D"
+    "lineage": "Chemdawg x Sour D",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "medical mass": {
     "name": "Medical Mass",
     "type": "hybrid",
-    "lineage": "Critical x Medic"
+    "lineage": "Critical x Medic",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "mother's helper": {
     "name": "Mother's Helper",
     "type": "hybrid",
-    "lineage": "Chocolope x NL"
+    "lineage": "Chocolope x NL",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "northern light auto": {
     "name": "NL Auto",
     "type": "indica",
-    "lineage": "NL x Ruder."
+    "lineage": "NL x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "og kush auto": {
     "name": "OG Kush Auto",
     "type": "hybrid",
-    "lineage": "OG x Ruder."
+    "lineage": "OG x Ruder.",
+    "thc": "19-21%",
+    "cbd": "1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Elevado, Calmo",
+    "aromas": "Terra, Petróleo",
+    "description": "Lenda californiana em 75 dias.",
+    "growTip": "Solo seco entre regas.",
+    "medicalNote": "Estresse."
   },
   "painkiller xl": {
     "name": "Painkiller XL",
-    "type": "sativa",
-    "lineage": "Respect x Juanita"
+    "type": "sativa-dominant",
+    "lineage": "Respect x Juanita",
+    "thc": "9%",
+    "cbd": "9%",
+    "flowerWeeks": "8-9 semanas",
+    "effects": "Mente limpa, Alívio",
+    "aromas": "Citrus, Pinho",
+    "description": "Especialmente focada em CBD.",
+    "growTip": "Compacta para uma sativa.",
+    "medicalNote": "Analgesia local."
   },
   "purple queen auto": {
     "name": "Purple Queen Auto",
     "type": "indica",
-    "lineage": "Queen x Ruder."
+    "lineage": "Queen x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "royal ak": {
     "name": "Royal AK",
     "type": "sativa",
-    "lineage": "AK-47 x Mix"
+    "lineage": "AK-47 x Mix",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal bluematic": {
     "name": "Royal Bluematic",
     "type": "indica",
-    "lineage": "Blueberry x Ruder."
+    "lineage": "Blueberry x Ruder.",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal cheese": {
     "name": "Royal Cheese",
     "type": "hybrid",
-    "lineage": "Cheese x Mix"
+    "lineage": "Cheese x Mix",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal cookies": {
     "name": "Royal Cookies",
     "type": "indica",
-    "lineage": "Cookies Mix"
+    "lineage": "Cookies Mix",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal critical": {
     "name": "Royal Critical",
     "type": "indica",
-    "lineage": "Critical Mix"
+    "lineage": "Critical Mix",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal dwarf": {
     "name": "Royal Dwarf",
     "type": "indica",
-    "lineage": "Skunk x Ruder."
+    "lineage": "Skunk x Ruder.",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "royal gorila auto": {
     "name": "Royal Gorilla Auto",
     "type": "hybrid",
-    "lineage": "Gorilla x Ruder."
+    "lineage": "Gorilla x Ruder.",
+    "thc": "20%",
+    "cbd": "1%",
+    "flowerWeeks": "10-12 semanas (Total)",
+    "effects": "Pesado, Narcótico",
+    "aromas": "Diesel, Pinho",
+    "description": "Potência Glue em 75 dias.",
+    "growTip": "Resinosa.",
+    "medicalNote": "Dores."
   },
   "royal haze auto": {
     "name": "Royal Haze Auto",
     "type": "sativa",
-    "lineage": "Haze x Ruder."
+    "lineage": "Haze x Ruder.",
+    "thc": "15%",
+    "cbd": "1%",
+    "flowerWeeks": "10-12 semanas (Total)",
+    "effects": "Eufórico, Mental",
+    "aromas": "Limão, Terra",
+    "description": "Haze automática social.",
+    "growTip": "Não exagere no adubo.",
+    "medicalNote": "Depressão."
   },
   "royal jack auto": {
     "name": "Royal Jack Auto",
     "type": "sativa",
-    "lineage": "Jack Herer x Ruder."
+    "lineage": "Jack Herer x Ruder.",
+    "thc": "16%",
+    "cbd": "1%",
+    "flowerWeeks": "10 semanas (Total)",
+    "effects": "Equilibrado, Criativo",
+    "aromas": "Madeira, Especiarias",
+    "description": "Jack Herer automática.",
+    "growTip": "Compacta.",
+    "medicalNote": "Foco."
   },
   "shining silver haze": {
     "name": "Shining Silver Haze",
     "type": "sativa",
-    "lineage": "Haze x Skunk"
+    "lineage": "Haze x Skunk",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "solomatic cbd": {
     "name": "Solomatic CBD",
     "type": "hybrid",
-    "lineage": "Asia CBD Mix"
+    "lineage": "Asia CBD Mix",
+    "thc": "1%",
+    "cbd": "21%",
+    "flowerWeeks": "9-10 semanas (Total)",
+    "effects": "Zen, Sem psicodelia",
+    "aromas": "Sweet, Ginger",
+    "description": "Puro CBD no formato autoflor.",
+    "growTip": "Sensível a excessos de nitrogênio.",
+    "medicalNote": "Epilepsia/Ansiedade."
   },
   "special kush auto": {
     "name": "Special Kush Auto",
     "type": "indica",
-    "lineage": "Kush x Ruder."
+    "lineage": "Kush x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "speedy chile": {
     "name": "Speedy Chile",
     "type": "indica",
-    "lineage": "Early Skunk x Chile"
+    "lineage": "Early Skunk x Chile",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   },
   "stress killer auto": {
     "name": "Stress Killer Auto",
-    "type": "sativa",
-    "lineage": "Lemon x Ruder."
+    "type": "sativa-dominant",
+    "lineage": "Lemon x Ruder.",
+    "thc": "11%",
+    "cbd": "Alta",
+    "flowerWeeks": "11 semanas (Total)",
+    "effects": "Focado, Relaxado",
+    "aromas": "Lemon, Mint",
+    "description": "Lemon Haze x Juanita x Ruderalis.",
+    "growTip": "Estica um pouco na flora.",
+    "medicalNote": "Estresse mental."
   },
   "sweet zz auto": {
     "name": "Sweet ZZ Auto",
     "type": "indica",
-    "lineage": "Sweet ZZ x Ruder."
+    "lineage": "Sweet ZZ x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "watermelon auto": {
     "name": "Watermelon Auto",
     "type": "indica",
-    "lineage": "Watermelon x Ruder."
+    "lineage": "Watermelon x Ruder.",
+    "thc": "15-18%",
+    "cbd": "< 1%",
+    "flowerWeeks": "10-11 semanas (Total)",
+    "effects": "Relaxado, Funcional",
+    "aromas": "Herbal, Terra",
+    "description": "Variedade automática estável.",
+    "growTip": "Evite transplantes.",
+    "medicalNote": "Uso geral."
   },
   "wedding gelato": {
     "name": "Wedding Gelato",
     "type": "hybrid",
-    "lineage": "Wedding x Gelato"
+    "lineage": "Wedding x Gelato",
+    "thc": "18-22%",
+    "cbd": "< 1%",
+    "flowerWeeks": "8-10 semanas",
+    "effects": "Equilibrado, Feliz",
+    "aromas": "Cítrico, Terra",
+    "description": "Genética selecionada de alto vigor.",
+    "growTip": "Observe as folhas nas semanas 4-5 flora.",
+    "medicalNote": "Uso terapêutico sugerido."
   }
 }
-
-js_content = 'const STRAIN_DB = ' + json.dumps(DATABASE_FULL) + ';'
-with open(target, 'w', encoding='utf-8') as f:
-    f.write('const STRAIN_DB = ' + json.dumps(DATABASE_FULL) + ';')
-print('SUCESSO: Banco de dados regenerado!')
+js_content = 'const STRAIN_DB = ' + json.dumps(DATABASE_FULL, ensure_ascii=False) + ';'
+with open(target, 'w', encoding='utf-8') as f: f.write(js_content)
