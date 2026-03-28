@@ -90,7 +90,7 @@ DATABASE = {
     "707 headband": {
         "name": "707 Headband",
         "type": "hybrid",
-        "lineage": "Sour D x OG lução",
+        "lineage": "Sour D x OG",
         "terpenes": "",
         "thc": "18-22%",
         "cbd": "< 1%",
