@@ -2,10 +2,12 @@ import json
 import pandas as pd
 import os
 import re
+import time
 
 # CONFIGURAÇÕES DE CAMINHOS
 source_xlsx = r"c:\Projetos\ZHC\App\strains_database.xlsx"
 target_js = r"c:\Projetos\ZHC\App\strains.js"
+target_index = r"c:\Projetos\ZHC\App\index.html"
 script_file = r"c:\Projetos\ZHC\App\update_all.py"
 
 def sync_from_xlsx():
@@ -21,50 +23,52 @@ def sync_from_xlsx():
         print(f"ERRO ao ler o Excel: {e}")
         return
     
-    # Criar dicionário a partir das linhas
+    # Criar dicionário
     new_db = {}
     for _, row in df.iterrows():
         name = str(row.get('name', '')).strip()
         if not name: continue
-        
         key = name.lower()
         item = {}
         cols = ["name", "type", "lineage", "terpenes", "thc", "cbd", "flowerWeeks", "effects", "aromas", "description", "growTip", "medicalNote"]
         for col in cols:
             val = row.get(col, "")
             item[col] = str(val).strip()
-        
         new_db[key] = item
 
     # 2. GERAR strains.js (PARA O APP)
-    js_header = "// ═══════════════════════════════════════════════\n"
-    js_header += "// STRAIN DATABASE (LOCAL) - V6.5 DEFINITIVE (Sincronizado via Excel)\n"
-    js_header += "// ═══════════════════════════════════════════════\n"
+    js_header = "// Sincronizado: " + time.ctime() + "\n"
     js_content = js_header + "const STRAIN_DB = " + json.dumps(new_db, ensure_ascii=False) + ";"
     
     with open(target_js, "w", encoding="utf-8") as f:
         f.write(js_content)
 
-    # 3. ATUALIZAR O "COFRE" (Backup dentro deste próprio script)
+    # 3. ATUALIZAR index.html (CACHE BUSTER)
+    # Vamos mudar o src="strains.js?v=..." para forçar o navegador
+    if os.path.exists(target_index):
+        with open(target_index, "r", encoding="utf-8") as f:
+            index_content = f.read()
+        
+        # Gera um timestamp único
+        version = str(int(time.time()))
+        new_index = re.sub(r'src="strains\.js(\?v=[^"]*)?"', f'src="strains.js?v={version}"', index_content)
+        
+        with open(target_index, "w", encoding="utf-8") as f:
+            f.write(new_index)
+
+    # 4. ATUALIZAR O "COFRE" (Backup interno)
     with open(script_file, "r", encoding="utf-8") as f:
         script_content = f.read()
-    
-    # Marcadores definidos de forma que o script NÃO encontre a si mesmo
-    # Truque: quebramos a string para ela não aparecer inteira aqui
     M_START = "# " + "[COFRE_START]"
     M_END   = "# " + "[COFRE_END]"
-    
     db_json = json.dumps(new_db, indent=4, ensure_ascii=False)
     db_block = f"{M_START}\nDATABASE = {db_json}\n{M_END}"
-    
-    # Regex robusta: procuramos apenas quando o marcador está no INÍCIO de uma linha
     pattern = rf"^{re.escape(M_START)}.*?^{re.escape(M_END)}"
     new_script = re.sub(pattern, db_block, script_content, flags=re.DOTALL | re.MULTILINE)
-    
     with open(script_file, "w", encoding="utf-8") as f:
         f.write(new_script)
 
-    print(f"SUCESSO: {len(new_db)} strains lidas da planilha e sincronizadas com o App!")
+    print(f"SUCESSO: {len(new_db)} strains sincronizadas (Cache Buster Ativado!).")
 
 # --- BANCO DE DADOS (DADOS ABAIXO) ---
 # [COFRE_START]
@@ -72,7 +76,7 @@ DATABASE = {
     "24k gold": {
         "name": "24k Gold",
         "type": "indica-dominant",
-        "lineage": "Kosher x Tangie",
+        "lineage": "Kosher Kush x Tangie",
         "terpenes": "Limoneno, Mirceno e Cariofileno",
         "thc": "18-24%",
         "cbd": "< 1%",
@@ -86,7 +90,7 @@ DATABASE = {
     "707 headband": {
         "name": "707 Headband",
         "type": "hybrid",
-        "lineage": "Sour D x OG",
+        "lineage": "Sour D x OG lução",
         "terpenes": "",
         "thc": "18-22%",
         "cbd": "< 1%",
