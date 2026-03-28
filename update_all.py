@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import os
+import re
 
 # CONFIGURAÇÕES DE CAMINHOS
 source_xlsx = r"c:\Projetos\ZHC\App\strains_database.xlsx"
@@ -13,8 +14,12 @@ def sync_from_xlsx():
         return
 
     # 1. LER DA PLANILHA (A CHEFE AGORA)
-    df = pd.read_excel(source_xlsx)
-    df = df.fillna("") # Remover NaNs
+    try:
+        df = pd.read_excel(source_xlsx)
+        df = df.fillna("") # Remover NaNs
+    except Exception as e:
+        print(f"ERRO ao ler o Excel: {e}")
+        return
     
     # Criar dicionário a partir das linhas
     new_db = {}
@@ -44,13 +49,13 @@ def sync_from_xlsx():
     with open(script_file, "r", encoding="utf-8") as f:
         script_content = f.read()
     
-    # Marcadores de substitunção
-    start_marker = "# BANCO DE DADOS MESTRE (SYNC)
+    # Marcadores ÚNICOS para não confundir o re.sub
+    M_START = "# [COFRE_START]
 DATABASE = {
     "24k gold": {
         "name": "24k Gold",
         "type": "indica-dominant",
-        "lineage": "Kosher x Tangie",
+        "lineage": "Kosher Kush x Tangie",
         "terpenes": "Limoneno, Mirceno e Cariofileno",
         "thc": "18-24%",
         "cbd": "< 1%",
@@ -2330,14 +2335,13 @@ DATABASE = {
         "medicalNote": "Estresse."
     }
 }
-# --- FIM DO BANCO ---"
+# [COFRE_END]"
     
     db_json = json.dumps(new_db, indent=4, ensure_ascii=False)
-    db_block = f"{start_marker}\nDATABASE = {db_json}\n{end_marker}"
+    db_block = f"{M_START}\nDATABASE = {db_json}\n{M_END}"
     
-    import re
-    # Busca e substitui o bloco antigo pelo novo
-    pattern = rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}"
+    # Regex robusta para substituir apenas o bloco do banco
+    pattern = rf"{re.escape(M_START)}.*?{re.escape(M_END)}"
     new_script = re.sub(pattern, db_block, script_content, flags=re.DOTALL)
     
     with open(script_file, "w", encoding="utf-8") as f:
@@ -2345,12 +2349,13 @@ DATABASE = {
 
     print(f"SUCESSO: {len(new_db)} strains lidas da planilha e sincronizadas com o App!")
 
-# BANCO DE DADOS MESTRE (SYNC)
+# --- BANCO DE DADOS (DADOS ABAIXO) ---
+# [COFRE_START]
 DATABASE = {
     "24k gold": {
         "name": "24k Gold",
         "type": "indica-dominant",
-        "lineage": "Kosher x Tangie",
+        "lineage": "Kosher Kush x Tangie",
         "terpenes": "Limoneno, Mirceno e Cariofileno",
         "thc": "18-24%",
         "cbd": "< 1%",
@@ -4630,6 +4635,7 @@ DATABASE = {
         "medicalNote": "Estresse."
     }
 }
+# [COFRE_END]
 # --- FIM DO BANCO ---
 
 if __name__ == "__main__":
