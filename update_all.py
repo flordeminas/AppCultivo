@@ -24,7 +24,8 @@ def sync_from_xlsx():
         
         key = name.lower()
         item = {}
-        for col in ["name", "type", "lineage", "terpenes", "thc", "cbd", "flowerWeeks", "effects", "aromas", "description", "growTip", "medicalNote"]:
+        cols = ["name", "type", "lineage", "terpenes", "thc", "cbd", "flowerWeeks", "effects", "aromas", "description", "growTip", "medicalNote"]
+        for col in cols:
             val = row.get(col, "")
             item[col] = str(val).strip()
         
@@ -50,7 +51,7 @@ DATABASE = {
         "name": "24k Gold",
         "type": "indica-dominant",
         "lineage": "Kosher x Tangie",
-        "terpenes": "Limoneno",
+        "terpenes": "Limoneno, Mirceno e Cariofileno",
         "thc": "18-24%",
         "cbd": "< 1%",
         "flowerWeeks": "9-10 semanas",
@@ -2331,9 +2332,11 @@ DATABASE = {
 }
 # --- FIM DO BANCO ---"
     
-    db_block = f"{start_marker}\nDATABASE = {json.dumps(new_db, indent=4, ensure_ascii=False)}\n{end_marker}"
+    db_json = json.dumps(new_db, indent=4, ensure_ascii=False)
+    db_block = f"{start_marker}\nDATABASE = {db_json}\n{end_marker}"
     
     import re
+    # Busca e substitui o bloco antigo pelo novo
     pattern = rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}"
     new_script = re.sub(pattern, db_block, script_content, flags=re.DOTALL)
     
@@ -2348,7 +2351,7 @@ DATABASE = {
         "name": "24k Gold",
         "type": "indica-dominant",
         "lineage": "Kosher x Tangie",
-        "terpenes": "Limoneno",
+        "terpenes": "Limoneno, Mirceno e Cariofileno",
         "thc": "18-24%",
         "cbd": "< 1%",
         "flowerWeeks": "9-10 semanas",
