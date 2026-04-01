@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d1f14">
 <title>CultivoApp — Jardim</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
 :root {
@@ -605,11 +607,146 @@ body {
   color:var(--green);border:1px solid var(--border2);
   letter-spacing:.04em;flex-shrink:0;
 }
+
+/* ── Auth Screen ─────────────────── */
+#auth-screen {
+  position:fixed;inset:0;background:var(--bg);
+  z-index:100;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+}
+#auth-screen.hidden { display:none; }
+.auth-card {
+  width:100%;max-width:400px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:32px 24px;
+  text-align:center;
+}
+.auth-logo { font-size:48px;margin-bottom:16px; }
+.auth-title { font-family:var(--serif);font-size:28px;margin-bottom:8px; }
+.auth-sub { font-size:14px;color:var(--text3);margin-bottom:32px; }
+.auth-form { text-align:left; }
+.auth-form .field input.invalid {
+  border-color:var(--red) !important;
+  box-shadow:0 0 0 2px rgba(220,60,60,.15);
+}
+.auth-error { color:var(--red);font-size:12px;margin-top:12px;text-align:center;display:none; }
+.auth-success { color:var(--green);font-size:12px;margin-top:12px;text-align:center;display:none; }
+.auth-switch { margin-top:20px;font-size:13px;color:var(--text3);cursor:pointer; }
+.auth-switch span { color:var(--green);font-weight:600; }
+.auth-forgot { margin-top:12px;font-size:12px;color:var(--text3);text-align:center;cursor:pointer; }
+.auth-forgot span { color:var(--green);text-decoration:underline; }
+.premium-lock {
+  position:absolute;inset:0;background:rgba(13,31,20,0.9);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:20px;z-index:20;
+}
+.lock-icon { font-size:40px;margin-bottom:12px; }
+
+/* ── Doctor Screen ──────────────────────────── */
+.doctor-edu-card {
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:13px;display:flex;align-items:flex-start;gap:12px;
+}
+.doctor-edu-icon { font-size:26px;flex-shrink:0;line-height:1;margin-top:1px; }
+.doctor-edu-name { font-size:13px;font-weight:700;margin-bottom:2px; }
+.doctor-edu-desc { font-size:12px;color:var(--text2);line-height:1.45; }
+.sd-art {
+  width:100%;position:relative;overflow:hidden;
+  padding-bottom:56.25%; /* 16:9 */
+  flex-shrink:0;
+}
+.sd-art > svg, .sd-art > * {
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.sd-body { padding:20px; }
+.sd-name { font-family:var(--serif);font-size:26px;color:var(--text);margin-bottom:4px;line-height:1.2; }
+.sd-type-row { display:flex;align-items:center;gap:8px;margin-bottom:16px; }
+.sd-stats-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px; }
+.sd-stat { background:var(--bg3);border-radius:10px;padding:10px;text-align:center; }
+.sd-stat-val { font-family:var(--serif);font-size:18px;color:var(--text);line-height:1; }
+.sd-stat-lbl { font-size:10px;color:var(--text3);margin-top:3px;font-weight:500; }
+.sd-section { margin-bottom:14px; }
+.sd-section-title { font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px; }
+.sd-section-body { font-size:13px;color:var(--text2);line-height:1.6; }
+.sd-tag { display:inline-block;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);margin:2px; }
+.sd-medical { background:var(--green-dim);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;margin-bottom:14px; }
+.sd-medical-title { font-size:11px;font-weight:700;color:var(--green);letter-spacing:.05em;margin-bottom:4px; }
+.sd-medical-body { font-size:13px;color:var(--text2);line-height:1.6; }
+.sd-grow-tip { background:var(--amber-dim);border:1px solid rgba(232,164,58,.25);border-radius:12px;padding:12px 14px;margin-bottom:14px; }
+.sd-grow-tip-title { font-size:11px;font-weight:700;color:var(--amber);letter-spacing:.05em;margin-bottom:4px; }
+.sd-grow-tip-body { font-size:13px;color:var(--text2);line-height:1.6; }
+.sd-use-btn { width:100%;padding:14px;background:var(--green);color:var(--bg);font-family:var(--serif);font-size:16px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:opacity .15s; }
+.sd-use-btn:active { opacity:.85; }
+.quiz-option { width:100%;padding:14px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;text-align:left;color:var(--text);font-family:var(--sans);font-size:14px;cursor:pointer;margin-bottom:8px;transition:all .15s; }
+.quiz-option:active,.quiz-option.selected { border-color:var(--green);background:var(--green-dim);color:var(--green); }
+.quiz-step { font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px; }
+.quiz-question { font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:16px;line-height:1.3; }
+.quiz-result-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px; }
+
+/* ── Premium lock overlay ───────────────────── */
+#premium-lock-overlay {
+  position:absolute;inset:0;
+  background:rgba(13,31,20,0.93);
+  z-index:10;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:32px;
+}
+#premium-lock-overlay.visible { display:flex; }
+
+/* ── Custom Protocol (Adubação Personalizável) ── */
+.custom-field {
+  background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);font-family:var(--sans);font-size:12px;padding:5px 8px;
+  width:100%;outline:none;transition:border-color .15s;
+}
+.custom-field:focus { border-color:var(--green); }
+.custom-phase-row { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px; }
+.custom-save-notice { font-size:11px;color:var(--green);text-align:right;padding:4px 0;display:none; }
 </style>
 <script src="strains.js?v=1774699561"></script>
 </head>
 <body>
 <div id="app">
+  
+  <!-- ══ AUTH SCREEN ══ -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-title" id="auth-card-title">Flor de Minas</div>
+      <div class="auth-sub" id="auth-card-sub">Acesse sua jornada de cultivo</div>
+
+      <div class="auth-form">
+        <div class="field" id="auth-name-group" style="display:none">
+          <label>Nome</label>
+          <input type="text" id="auth-name" placeholder="Seu nome" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="auth-email" placeholder="seu@email.com" autocomplete="email" onkeydown="authKeyDown(event)">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" onkeydown="authKeyDown(event)">
+        </div>
+        <div class="field" id="auth-confirm-group" style="display:none">
+          <label>Confirmar Senha</label>
+          <input type="password" id="auth-confirm-password" placeholder="••••••••" autocomplete="new-password" onkeydown="authKeyDown(event)">
+        </div>
+        <button class="btn-primary" id="auth-submit" onclick="handleAuth()" style="margin-top:8px">Entrar →</button>
+        <div class="auth-error" id="auth-error"></div>
+        <div class="auth-success" id="auth-success"></div>
+        <div class="auth-forgot" id="auth-forgot" onclick="handleForgotPassword()">Esqueceu a senha? <span>Recuperar acesso</span></div>
+        <div class="auth-switch" id="auth-switch" onclick="toggleAuthMode()">Não tem conta? <span>Cadastre-se grátis</span></div>
+      </div>
+    </div>
+    <p style="margin-top:32px;font-size:11px;color:var(--text3);max-width:280px;text-align:center">
+      Ao entrar, você concorda com nossos Termos de Uso e Política de Privacidade.
+    </p>
+  </div>
 
   <!-- ══ JARDIM SCREEN (home) ══ -->
   <div id="jardim-screen">
@@ -620,6 +757,10 @@ body {
         <span id="jardim-subtitle">Meu Jardim</span>
       </div>
       <span class="jardim-tag" id="jardim-count">0 cultivos</span>
+      <div class="header-actions" style="display: flex; gap: 8px; margin-left: auto;">
+        <button id="btn-upgrade" onclick="window.open('#upgrade', '_blank')" class="header-badge" style="cursor: pointer; display: none; background: var(--amber-dim); color: var(--amber); border-color: var(--amber-dim); font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">PRO 🚀</button>
+        <button onclick="onLogout()" class="header-badge" style="cursor: pointer; background: rgba(255,255,255,0.05); color: var(--text3); border-color: rgba(255,255,255,0.1); font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">Sair</button>
+      </div>
     </div>
 
     <div id="jardim-body">
@@ -771,6 +912,7 @@ body {
       <button class="nav-tab" onclick="gotoPage(2)" id="tab-2"><span class="icon">🐛</span>MIP</button>
       <button class="nav-tab" onclick="gotoPage(3)" id="tab-3"><span class="icon">📖</span>Guia</button>
       <button class="nav-tab" onclick="gotoPage(4)" id="tab-4"><span class="icon">📘</span>Manual</button>
+      <button class="nav-tab" onclick="openDoctorScreen()" id="tab-5"><span class="icon">🩺</span>Doctor</button>
     </nav>
 
     <!-- Pages do detalhe -->
@@ -864,8 +1006,7 @@ body {
         <div id="mip-content"></div>
       </div>
 
-      <!-- PAGE 3: GUIA -->
-      <div class="page" id="page-3">
+              <div class="page" id="page-3">
         <p class="section-title">Guia Rápido</p>
         <p class="section-sub">Parâmetros ideais para cannabis medicinal indoor.</p>
         <div id="guia-content"></div>
@@ -878,35 +1019,294 @@ body {
         <div id="manual-content"></div>
       </div>
 
+      <!-- PREMIUM LOCK overlay (aparece sobre as abas bloqueadas) -->
+      <div id="premium-lock-overlay">
+        <div style="font-size:48px;margin-bottom:16px">🔒</div>
+        <div style="font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:10px" id="plo-title">Recurso Premium</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:280px;margin-bottom:28px" id="plo-desc">Esta aba está disponível apenas para assinantes do Plano Premium.</div>
+        <button onclick="window.open('#upgrade','_blank')" style="width:100%;max-width:280px;padding:14px;background:var(--green);color:var(--bg);font-family:var(--serif);font-size:16px;border:none;border-radius:12px;cursor:pointer;margin-bottom:12px">🚀 Assinar Premium</button>
+        <button onclick="gotoPage(0)" style="width:100%;max-width:280px;padding:12px;background:transparent;color:var(--text3);border:1px solid var(--border2);border-radius:12px;cursor:pointer;font-size:13px">← Voltar ao Cronograma</button>
+      </div>
+
     </div><!-- /pages -->
+
+    <!-- ══ DOCTOR SCREEN ══ -->
+    <div id="doctor-screen" style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20">
+      <div style="padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px">
+        <button class="btn-back" onclick="closeDoctorScreen()">‹</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--serif);font-size:17px;color:var(--text)">🩺 Doctor ZHC</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px">Orientação educativa · Não é prescrição médica</div>
+        </div>
+      </div>
+      <div id="doctor-content" style="flex:1;min-height:0;overflow-y:auto;padding:24px 20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent"></div>
+      <!-- Strain detail modal -->
+      <div id="strain-detail-modal" class="modal-backdrop hidden" onclick="closeStrainDetail(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()" style="padding:0;overflow:hidden;border-radius:20px 20px 0 0;max-height:92vh">
+          <div id="strain-detail-content" style="overflow-y:auto;max-height:92vh;padding-bottom:env(safe-area-inset-bottom,16px)"></div>
+        </div>
+      </div>
+    </div><!-- /doctor-screen -->
+
   </div><!-- /detail-screen -->
 
 </div><!-- /app -->
 
 <script>
 // ═══════════════════════════════════════════════
-// MULTI-CULTIVO STATE
+// ESTADO GLOBAL (inicialização padrão)
 // ═══════════════════════════════════════════════
-const LIMITS = { clone:[1,4], vega:[4,12], flora:[7,16] };
-// Flush integrado à flora: últimas 1–2 semanas sem adubo (água pura)
+let jardimState = { cultivos: [], activeId: null, user: null, isPremium: false };
 
-// jardimState: { cultivos: [...], activeId: null }
-let jardimState = { cultivos: [], activeId: null };
+// ═══════════════════════════════════════════════
+// SUPABASE CONFIG (Preencher com as chaves do projeto)
+// ═══════════════════════════════════════════════
+const SUPABASE_URL = "https://eqyhbbiizmckjcfuqwrv.supabase.co"; 
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeWhiYmlpem1ja2pjZnVxd3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NDc2MzUsImV4cCI6MjA5MDUyMzYzNX0.4X3r0ATjKoUQ9lvL_dmcpJzeIqZ6l103QVdpP0JjG0U";
 
-// Cultivo em edição no modal
-let modalState = {
-  id: null, // null = novo
-  name: '', strain: '', color: '#52b778', proto: 'biobizz',
-  date: '', weeks: {clone:2, vega:6, flora:9, flush:1}, currentWeek: 1,
-  strainInfo: null
-};
+let supabaseClient = null;
 
-// Estado do cultivo ATIVO (para as funções de cronograma/adub/mip)
-// É um ponteiro para jardimState.cultivos[activeIdx]
+if (SUPABASE_URL && SUPABASE_KEY) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+// ═══════════════════════════════════════════════
+// AUTH LOGIC
+// ═══════════════════════════════════════════════
+let authMode = 'login'; 
+
+async function initAuth() {
+  if (!supabaseClient) {
+    console.warn("Supabase não configurado.");
+    document.getElementById('auth-screen').classList.add('hidden');
+    return;
+  }
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session) onLoginSuccess(session.user);
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) onLoginSuccess(session.user);
+    else if (event === 'SIGNED_OUT') onLogout();
+    else if (event === 'PASSWORD_RECOVERY') {
+      const newPass = prompt('Digite sua nova senha (mínimo 6 caracteres):');
+      if (newPass && newPass.length >= 6) {
+        supabaseClient.auth.updateUser({ password: newPass }).then(({ error }) => {
+          if (error) alert('Erro ao atualizar senha: ' + translateAuthError(error.message));
+          else alert('✅ Senha atualizada com sucesso! Faça login com a nova senha.');
+        });
+      }
+    }
+  });
+}
+
+async function onLoginSuccess(user) {
+  try {
+    jardimState.user = user;
+    document.getElementById('auth-screen').classList.add('hidden');
+    const { data, error } = await supabaseClient.from('profiles').select('is_premium, jardim_data').eq('id', user.id).single();
+    
+    if (error) {
+      console.warn("Perfil não encontrado, usando local ou vazio.");
+      jardimState.isPremium = false;
+    } else if (data) {
+      jardimState.isPremium = !!data.is_premium;
+      const sub = document.getElementById('jardim-subtitle');
+      if (sub) sub.innerText = jardimState.isPremium ? "🚀 Plano Premium" : "🌱 Plano Free (Grátis)";
+
+      const btnUpgrade = document.getElementById('btn-upgrade');
+      if (btnUpgrade) btnUpgrade.style.display = jardimState.isPremium ? 'none' : 'block';
+
+      
+      if (data.jardim_data?.cultivos) {
+        jardimState.cultivos = data.jardim_data.cultivos;
+        jardimState.activeId = data.jardim_data.activeId;
+      }
+    }
+    renderJardim();
+  } catch (e) {
+    console.error("Erro no login post-auth:", e);
+    renderJardim();
+    document.getElementById('auth-screen').classList.add('hidden');
+  }
+}
+
+async function onLogout() {
+  await supabaseClient.auth.signOut();
+  jardimState.user = null;
+  jardimState.cultivos = [];
+  document.getElementById('auth-screen').classList.remove('hidden');
+  const btnUpgrade = document.getElementById('btn-upgrade');
+  if (btnUpgrade) btnUpgrade.style.display = 'none';
+  renderJardim();
+}
+
+function authKeyDown(e) {
+  if (e.key === 'Enter') handleAuth();
+}
+
+function translateAuthError(msg) {
+  if (!msg) return 'Ocorreu um erro. Tente novamente.';
+  const m = msg.toLowerCase();
+  if (m.includes('invalid login credentials') || m.includes('invalid email or password'))
+    return 'E-mail ou senha incorretos.';
+  if (m.includes('email not confirmed'))
+    return 'Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.';
+  if (m.includes('user already registered') || m.includes('already been registered'))
+    return 'Este e-mail já está cadastrado. Faça login ou recupere sua senha.';
+  if (m.includes('password should be at least'))
+    return 'A senha deve ter no mínimo 6 caracteres.';
+  if (m.includes('unable to validate email address'))
+    return 'Endereço de e-mail inválido.';
+  if (m.includes('rate limit') || m.includes('too many requests'))
+    return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+  if (m.includes('network') || m.includes('fetch'))
+    return 'Sem conexão. Verifique sua internet e tente novamente.';
+  return msg;
+}
+
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const confirmPassword = document.getElementById('auth-confirm-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  const errEl = document.getElementById('auth-error');
+  const successEl = document.getElementById('auth-success');
+  const btn = document.getElementById('auth-submit');
+
+  // Limpa mensagens
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+  document.getElementById('auth-email').classList.remove('invalid');
+  document.getElementById('auth-password').classList.remove('invalid');
+
+  // Validação básica
+  if (!email) {
+    document.getElementById('auth-email').classList.add('invalid');
+    errEl.innerText = 'Preencha seu e-mail.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!password) {
+    document.getElementById('auth-password').classList.add('invalid');
+    errEl.innerText = 'Preencha sua senha.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (authMode === 'signup') {
+    if (password.length < 6) {
+      document.getElementById('auth-password').classList.add('invalid');
+      errEl.innerText = 'A senha deve ter no mínimo 6 caracteres.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (password !== confirmPassword) {
+      document.getElementById('auth-confirm-password').classList.add('invalid');
+      errEl.innerText = 'As senhas não coincidem.';
+      errEl.style.display = 'block';
+      return;
+    }
+  }
+
+  btn.disabled = true;
+  btn.innerText = 'Processando...';
+
+  try {
+    let result;
+    if (authMode === 'login') {
+      result = await supabaseClient.auth.signInWithPassword({ email, password });
+    } else {
+      const opts = { email, password };
+      if (name) opts.options = { data: { full_name: name } };
+      result = await supabaseClient.auth.signUp(opts);
+    }
+    if (result.error) throw result.error;
+
+    if (authMode === 'signup') {
+      // Supabase pode exigir confirmação de e-mail (identities vazio = e-mail já existe)
+      const identities = result.data?.user?.identities;
+      if (identities && identities.length === 0) {
+        errEl.innerText = 'Este e-mail já está cadastrado. Faça login ou recupere sua senha.';
+        errEl.style.display = 'block';
+      } else {
+        successEl.innerText = '✅ Cadastro realizado! Verifique seu e-mail para confirmar a conta.';
+        successEl.style.display = 'block';
+        setTimeout(() => toggleAuthMode(), 2500);
+      }
+    }
+  } catch (e) {
+    errEl.innerText = translateAuthError(e.message);
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.innerText = authMode === 'login' ? 'Entrar →' : 'Cadastrar →';
+  }
+}
+
+async function handleForgotPassword() {
+  const email = document.getElementById('auth-email').value.trim();
+  const errEl = document.getElementById('auth-error');
+  const successEl = document.getElementById('auth-success');
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!email) {
+    document.getElementById('auth-email').classList.add('invalid');
+    errEl.innerText = 'Digite seu e-mail acima para recuperar a senha.';
+    errEl.style.display = 'block';
+    document.getElementById('auth-email').focus();
+    return;
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    if (error) throw error;
+    successEl.innerText = '📧 E-mail de recuperação enviado! Verifique sua caixa de entrada.';
+    successEl.style.display = 'block';
+  } catch (e) {
+    errEl.innerText = translateAuthError(e.message);
+    errEl.style.display = 'block';
+  }
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  const btn = document.getElementById('auth-submit');
+  const switchTxt = document.getElementById('auth-switch');
+  const cardTitle = document.getElementById('auth-card-title');
+  const cardSub = document.getElementById('auth-card-sub');
+  const confirmGroup = document.getElementById('auth-confirm-group');
+  const nameGroup = document.getElementById('auth-name-group');
+  const forgotEl = document.getElementById('auth-forgot');
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-success').style.display = 'none';
+
+  if (authMode === 'signup') {
+    btn.innerText = 'Cadastrar →';
+    switchTxt.innerHTML = 'Já tem conta? <span>Faça login</span>';
+    cardTitle.innerText = 'Criar conta';
+    cardSub.innerText = 'Comece sua jornada de cultivo';
+    confirmGroup.style.display = 'block';
+    nameGroup.style.display = 'block';
+    forgotEl.style.display = 'none';
+  } else {
+    btn.innerText = 'Entrar →';
+    switchTxt.innerHTML = 'Não tem conta? <span>Cadastre-se grátis</span>';
+    cardTitle.innerText = 'Flor de Minas';
+    cardSub.innerText = 'Acesse sua jornada de cultivo';
+    confirmGroup.style.display = 'none';
+    nameGroup.style.display = 'none';
+    forgotEl.style.display = 'block';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// COMPAT SHIM
+// ═══════════════════════════════════════════════
 function getActiveCultivo() {
   return jardimState.cultivos.find(c => c.id === jardimState.activeId) || null;
 }
-// Compat shim: state.xxx usado pelas funções de detalhe
+
 const state = new Proxy({}, {
   get(_, k) {
     const c = getActiveCultivo();
@@ -929,8 +1329,13 @@ const state = new Proxy({}, {
 // ═══════════════════════════════════════════════
 // PERSISTENCE
 // ═══════════════════════════════════════════════
-function saveJardim() {
+async function saveJardim() {
   localStorage.setItem('jardimState', JSON.stringify(jardimState));
+  if (jardimState.user && supabaseClient) {
+    await supabaseClient.from('profiles').update({ 
+      jardim_data: { cultivos: jardimState.cultivos, activeId: jardimState.activeId } 
+    }).eq('id', jardimState.user.id);
+  }
 }
 function loadJardim() {
   try {
@@ -1190,10 +1595,15 @@ function getRelWeek(date, phaseStart) {
   return Math.floor((date - phaseStart)/(7*86400000)) + 1;
 }
 function getAdubForWeek(fase, sem) {
+  const c = getActiveCultivo();
+  const key = {Clone:'clone',Vegetativo:'vega',Floração:'flora',Flush:'flush'}[fase];
+  // Protocolo customizado tem precedência
+  if (c?.proto === 'generic' && c.customProto) {
+    return c.customProto[key]?.find(r => r.s === sem) || null;
+  }
   const p = PROTOCOLS[state.proto];
   if (!p) return null;
-  const key = {Clone:'clone',Vegetativo:'vega',Floração:'flora',Flush:'flush'}[fase];
-  return p[key]?.find(r => r.s===sem) || null;
+  return p[key]?.find(r => r.s === sem) || null;
 }
 function getMipForWeek(fase, sem) {
   return MIP_SCHEDULE.find(m => m.fase===fase && m.sem===sem);
@@ -1317,6 +1727,11 @@ let _modalColor  = '#52b778';
 let _modalProto  = 'biobizz';
 
 function openNewModal() {
+  if (!jardimState.isPremium && jardimState.cultivos.length >= 1) {
+    alert("🔒 Versão Gratuita: Limite de 1 cultivo ativo.\n\nTorne-se PREMIUM para gerenciar cultivos ilimitados e sincronizar com a nuvem!");
+    return;
+  }
+
   _modalEditId = null;
   _modalWeeks  = {clone:2, vega:6, flora:9};
   _modalColor  = '#52b778';
@@ -1397,18 +1812,24 @@ function saveModal() {
   if (_modalEditId) {
     const c = jardimState.cultivos.find(x => x.id===_modalEditId);
     if (c) {
+      if (c.strain !== strain) c.strainInfo = null;
+      // Se mudou de generic para outro protocolo, reseta customProto
+      if (c.proto !== _modalProto && _modalProto !== 'generic') c.customProto = null;
+      // Se mudou as semanas no modo generic, reseta customProto para reinicializar
+      if (_modalProto === 'generic' && c.customProto &&
+          (c.weeks.clone !== _modalWeeks.clone || c.weeks.vega !== _modalWeeks.vega || c.weeks.flora !== _modalWeeks.flora)) {
+        c.customProto = null;
+      }
       c.name=name; c.strain=strain; c.color=_modalColor;
       c.proto=_modalProto; c.date=date;
       c.weeks={clone:_modalWeeks.clone, vega:_modalWeeks.vega, flora:_modalWeeks.flora};
       c.currentWeek = calcCurrentWeek(c);
-      // Limpar strainInfo se strain mudou
-      if (c.strain !== strain) c.strainInfo = null;
     }
   } else {
     const c = {
       id:genId(), name, strain, color:_modalColor,
       proto:_modalProto, date, weeks:{..._modalWeeks},
-      currentWeek:1, strainInfo:null
+      currentWeek:1, strainInfo:null, customProto:null
     };
     c.currentWeek = calcCurrentWeek(c);
     jardimState.cultivos.push(c);
@@ -1466,8 +1887,10 @@ function loadDetailScreen() {
   document.getElementById('detail-title').textContent  = c.name;
   document.getElementById('detail-strain').textContent = c.strain || 'Sem strain';
   document.getElementById('status-badge').textContent  = getPhaseBadge(c).label;
-  // Reset to crono tab
+  // Reset to crono tab (sempre liberado)
+  document.getElementById('premium-lock-overlay').classList.remove('visible');
   gotoPage(0);
+  applyPremiumTabState();
   buildCronograma();
   buildAdubacao();
   buildMIP();
@@ -1482,8 +1905,45 @@ function loadDetailScreen() {
 // NAVIGATION (detail tabs)
 // ═══════════════════════════════════════════════
 function gotoPage(idx) {
-  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===idx));
-  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  const overlay = document.getElementById('premium-lock-overlay');
+
+  // Aba 0 (Cronograma) é livre para todos
+  if (idx > 0 && !jardimState.isPremium) {
+    const tabNames = ['','Adubação','MIP','Guia','Manual'];
+    const tabName  = tabNames[idx] || 'Strains';
+    document.getElementById('plo-title').textContent = `🔒 ${tabName}`;
+    document.getElementById('plo-desc').textContent  =
+      `A aba "${tabName}" é exclusiva do Plano Premium. Faça upgrade para acessar protocolos de adubação, controle de pragas, guias e o banco completo de strains.`;
+    overlay.classList.add('visible');
+    // Atualiza visual das tabs sem mudar a página ativa
+    document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', i === idx));
+    return;
+  }
+
+  overlay.classList.remove('visible');
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i === idx));
+  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', i === idx));
+}
+
+function applyPremiumTabState() {
+  // Adiciona/remove indicador visual de lock nas abas premium
+  const tabs = document.querySelectorAll('.nav-tab');
+  tabs.forEach((t, i) => {
+    if (i === 0) return; // Cronograma: livre
+    const icon = t.querySelector('.icon');
+    if (!jardimState.isPremium) {
+      if (!t.querySelector('.tab-lock')) {
+        const lock = document.createElement('span');
+        lock.className = 'tab-lock';
+        lock.textContent = '🔒';
+        lock.style.cssText = 'font-size:8px;position:absolute;top:4px;right:4px;opacity:0.6';
+        t.style.position = 'relative';
+        t.appendChild(lock);
+      }
+    } else {
+      t.querySelectorAll('.tab-lock').forEach(l => l.remove());
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -1562,7 +2022,7 @@ function renderWeek() {
     const dayFmt  = fmtDate(date,true);
     const tasks=[];
     if (isFirstDayOfWeek) tasks.push(`${phaseLabel} S${relWeek}`);
-    if (adub&&adub.p1!=='—') tasks.push(adub.p1);
+    if (adub&&adub.p1&&adub.p1!=='—') tasks.push(adub.p1);
     if (mip) tasks.push('MIP');
     if (date.toDateString()===iniVega.toDateString())  tasks.push('🌿 INÍCIO VEGA');
     if (date.toDateString()===iniFlora.toDateString()) tasks.push('🌸 INÍCIO FLORA');
@@ -1578,16 +2038,17 @@ function renderWeek() {
         <div style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tasks.join(' · ')||'Dia normal'}</div>
       </div>
       <span class="day-phase-tag" style="background:${phase.color}22;color:${phase.color}">${phase.flush?'🚿':phase.short}</span>
-      <span class="day-expand">${(adub||mip||isSpecial)?'⌄':''}</span>
+      <span class="day-expand">${(mip||isSpecial||(adub&&(adub.p1||adub.p2||adub.supl||adub.obs)))?'⌄':''}</span>
     </div>
     <div class="day-detail">
       ${isSpecial?`<div class="day-detail-row"><span class="day-detail-label">Marco</span><span class="day-detail-val" style="color:var(--amber);font-weight:600">${tasks.filter(t=>t.includes('INÍCIO')||t.includes('COLHEITA')).join(', ')}</span></div>`:''}
-      ${adub?`<div class="day-detail-row"><span class="day-detail-label">💊 Adubo</span><span class="day-detail-val">${adub.p1!=='—'?adub.p1+' '+adub.d1:''}${adub.p2!=='—'?' + '+adub.p2+' '+adub.d2:''}</span></div>
-      ${adub.supl!=='—'?`<div class="day-detail-row"><span class="day-detail-label">Supl.</span><span class="day-detail-val">${adub.supl}</span></div>`:''}
-      <div class="day-detail-row"><span class="day-detail-label">pH/EC</span><span class="day-detail-val">${adub.ph} / EC ${adub.ec}</span></div>
-      <div class="day-detail-row"><span class="day-detail-label">Obs.</span><span class="day-detail-val">${adub.obs}</span></div>`:''}
+      ${adub&&(adub.p1||adub.p2||adub.supl||adub.obs||adub.ph||adub.ec)?`
+      <div class="day-detail-row"><span class="day-detail-label">💊 Adubo</span><span class="day-detail-val">${[adub.p1&&adub.p1!=='—'?adub.p1+(adub.d1?' '+adub.d1:''):'',adub.p2&&adub.p2!=='—'?adub.p2+(adub.d2?' '+adub.d2:''):''].filter(Boolean).join(' + ')||'—'}</span></div>
+      ${adub.supl&&adub.supl!=='—'?`<div class="day-detail-row"><span class="day-detail-label">Supl.</span><span class="day-detail-val">${adub.supl}</span></div>`:''}
+      ${adub.ph||adub.ec?`<div class="day-detail-row"><span class="day-detail-label">pH/EC</span><span class="day-detail-val">${adub.ph||'—'} / EC ${adub.ec||'—'}</span></div>`:''}
+      ${adub.obs&&adub.obs!=='—'?`<div class="day-detail-row"><span class="day-detail-label">Obs.</span><span class="day-detail-val">${adub.obs}</span></div>`:''}`:''}
       ${mip?`<div class="day-detail-row"><span class="day-detail-label">🐛 MIP</span><span class="day-detail-val" style="color:var(--red)">${mip.prod} — ${mip.via}</span></div>${mip.obs?`<div class="day-detail-row"><span class="day-detail-label"></span><span class="day-detail-val">${mip.obs}</span></div>`:''}`:''}
-      ${!adub&&!mip&&!isSpecial?`<div class="day-detail-row"><span class="day-detail-val" style="color:var(--text3)">Nenhuma ação programada.</span></div>`:''}
+      ${!(adub&&(adub.p1||adub.p2||adub.supl||adub.obs||adub.ph||adub.ec))&&!mip&&!isSpecial?`<div class="day-detail-row"><span class="day-detail-val" style="color:var(--text3)">Nenhuma ação programada.</span></div>`:''}
     </div>`;
     container.appendChild(el);
   }
@@ -1603,17 +2064,110 @@ function toggleDay(header) {
 // ═══════════════════════════════════════════════
 // ADUBAÇÃO
 // ═══════════════════════════════════════════════
+
+// Inicializa o customProto com linhas vazias baseado nas semanas configuradas
+function initCustomProto(c) {
+  const fases = { clone: c.weeks.clone||2, vega: c.weeks.vega||4, flora: c.weeks.flora||8, flush: 1 };
+  c.customProto = {};
+  for (const [fase, maxSem] of Object.entries(fases)) {
+    c.customProto[fase] = [];
+    for (let s = 1; s <= maxSem; s++) {
+      c.customProto[fase].push({ s, p1:'', d1:'', p2:'', d2:'', supl:'', ph:'', ec:'', obs:'' });
+    }
+  }
+  saveJardim();
+}
+
+// Salva um campo do customProto
+function saveCustomField(fase, sem, field, value) {
+  const c = getActiveCultivo();
+  if (!c || c.proto !== 'generic') return;
+  if (!c.customProto) initCustomProto(c);
+  const row = c.customProto[fase]?.find(r => r.s === sem);
+  if (row) {
+    row[field] = value;
+    saveJardim();
+    buildCronograma();
+    // Feedback visual discreto
+    const notice = document.getElementById('custom-save-notice');
+    if (notice) { notice.style.display = 'block'; clearTimeout(notice._t); notice._t = setTimeout(() => notice.style.display = 'none', 1500); }
+  }
+}
+
 function buildAdubacao() {
   const c = getActiveCultivo();
   if (!c) return;
   const p = PROTOCOLS[c.proto];
   if (!p) return;
+
   document.getElementById('adub-proto-badge').innerHTML =
     `<div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px">
       <span style="font-size:22px">${p.icon}</span>
       <div><div style="font-size:14px;font-weight:600;color:var(--text)">${p.name}</div>
       <div style="font-size:11px;color:var(--text3);margin-top:2px">${p.obs}</div></div>
     </div>`;
+
+  // ── MODO PERSONALIZADO (Genérico) ─────────────────────
+  if (c.proto === 'generic') {
+    if (!c.customProto) initCustomProto(c);
+    // Garantir que semanas configuradas tenham linhas (se o usuário aumentou semanas depois)
+    const faseMap = { clone: c.weeks.clone||2, vega: c.weeks.vega||4, flora: c.weeks.flora||8, flush: 1 };
+    for (const [fase, maxSem] of Object.entries(faseMap)) {
+      if (!c.customProto[fase]) c.customProto[fase] = [];
+      while (c.customProto[fase].length < maxSem) {
+        c.customProto[fase].push({ s: c.customProto[fase].length + 1, p1:'', d1:'', p2:'', d2:'', supl:'', ph:'', ec:'', obs:'' });
+      }
+    }
+    const dates = getDates(c);
+    const fases = [
+      { key:'clone', label:'🌱 Clone',      color:'#52b778', iniRef:dates?.d0 },
+      { key:'vega',  label:'🌿 Vegetativo', color:'#2196F3', iniRef:dates?.iniVega },
+      { key:'flora', label:'🌸 Floração',   color:'#9b72cf', iniRef:dates?.iniFlora },
+    ];
+    const f = (fase, sem, field) =>
+      `onchange="saveCustomField('${fase}',${sem},'${field}',this.value)"`;
+    let html = `<div id="custom-save-notice" class="custom-save-notice">✓ Salvo</div>`;
+    for (const { key, label, color, iniRef } of fases) {
+      const rows = c.customProto[key] || [];
+      if (!rows.length) continue;
+      html += `<div style="margin-bottom:24px">
+        <div style="font-family:var(--serif);font-size:17px;color:${color};margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">${label}</div>`;
+      for (const r of rows) {
+        const dateStr = iniRef ? fmtDate(addDays(iniRef, (r.s-1)*7)) : '—';
+        html += `<div class="mip-card" style="margin-bottom:10px">
+          <div class="mip-card-header">
+            <div style="width:32px;height:32px;border-radius:8px;background:${color}22;display:grid;place-items:center;font-size:13px;font-weight:700;color:${color};flex-shrink:0">S${r.s}</div>
+            <div style="flex:1"><div class="mip-name" style="margin-bottom:2px">Semana ${r.s}</div><div class="mip-phase">${dateStr}</div></div>
+          </div>
+          <div class="custom-phase-row">
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">Produto 1</div>
+              <input class="custom-field" value="${r.p1||''}" placeholder="Nome do produto" ${f(key,r.s,'p1')}></div>
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">Dose</div>
+              <input class="custom-field" value="${r.d1||''}" placeholder="ex: 2mL/L" ${f(key,r.s,'d1')}></div>
+          </div>
+          <div class="custom-phase-row">
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">Produto 2</div>
+              <input class="custom-field" value="${r.p2||''}" placeholder="Opcional" ${f(key,r.s,'p2')}></div>
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">Dose</div>
+              <input class="custom-field" value="${r.d2||''}" placeholder="ex: 1mL/L" ${f(key,r.s,'d2')}></div>
+          </div>
+          <div class="custom-phase-row">
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">Suplemento</div>
+              <input class="custom-field" value="${r.supl||''}" placeholder="Opcional" ${f(key,r.s,'supl')}></div>
+            <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">pH alvo</div>
+              <input class="custom-field" value="${r.ph||''}" placeholder="ex: 6.2" ${f(key,r.s,'ph')}></div>
+          </div>
+          <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">EC alvo / Observações</div>
+            <input class="custom-field" value="${r.ec||''}" placeholder="EC: ex: 1.2 — Obs: molhar quando seco" ${f(key,r.s,'ec')}></div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+    document.getElementById('adub-content').innerHTML = html;
+    return;
+  }
+
+  // ── PROTOCOLOS PADRÃO ─────────────────────────────────
   const dates = getDates(c);
   const fases=[
     {key:'clone',label:'🌱 Clone',     color:'#52b778',iniRef:dates?.d0},
@@ -2061,6 +2615,255 @@ function toggleManual(header) {
 // INIT
 // ═══════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════
+// STRAINS SCREEN
+// ═══════════════════════════════════════════════
+
+function getStrainsArray() {
+  if (typeof STRAIN_DB === 'undefined') return [];
+  return Object.values(STRAIN_DB);
+}
+function openDoctorScreen() {
+  if (!jardimState.isPremium) {
+    document.getElementById('plo-title').textContent = '🔒 Doctor ZHC';
+    document.getElementById('plo-desc').textContent  =
+      'O Doctor ZHC com quiz de recomendação terapêutica personalizada é exclusivo do Plano Premium.';
+    document.getElementById('premium-lock-overlay').classList.add('visible');
+    document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', i === 5));
+    return;
+  }
+  document.getElementById('doctor-screen').style.transform = 'translateX(0)';
+  renderDoctorLanding();
+}
+function closeDoctorScreen() {
+  document.getElementById('doctor-screen').style.transform = 'translateX(100%)';
+}
+function renderDoctorLanding() {
+  const EDU = [
+    ['🍁','Índica','#9b72cf','Efeito corporal e relaxante. Ideal para noite, insônia e dor crônica.'],
+    ['☀️','Sativa','#e8a43a','Efeito cerebral e energizante. Ideal para foco e uso diurno.'],
+    ['🌿','Híbrida','#52b778','Combina características das duas. Versátil para vários perfis.'],
+    ['💚','CBD Alto','#3abf94','Pouco ou sem psicoatividade. Perfil terapêutico amplo e seguro.'],
+  ];
+  document.getElementById('doctor-content').innerHTML = `
+    <div style="text-align:center;padding:4px 0 28px">
+      <div style="font-size:60px;margin-bottom:14px">🩺</div>
+      <div style="font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:8px">Doctor ZHC</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:22px">Responda algumas perguntas e receba indicações de cultivares alinhadas ao seu perfil terapêutico.</div>
+      <div style="background:rgba(232,164,58,.1);border:1px solid rgba(232,164,58,.3);border-radius:12px;padding:13px 15px;text-align:left;margin-bottom:28px">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:.07em;margin-bottom:5px">⚠️ AVISO IMPORTANTE</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.55">As sugestões aqui são <strong style="color:var(--text)">apenas educativas</strong> e não substituem orientação médica. Sempre consulte um profissional de saúde habilitado antes de usar cannabis para fins terapêuticos.</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Conheça os tipos</div>
+    <div style="display:grid;gap:9px;margin-bottom:30px">
+      ${EDU.map(([ico,name,col,desc])=>`
+        <div class="doctor-edu-card">
+          <div class="doctor-edu-icon">${ico}</div>
+          <div>
+            <div class="doctor-edu-name" style="color:${col}">${name}</div>
+            <div class="doctor-edu-desc">${desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <button onclick="startDoctorQuiz()" style="width:100%;padding:17px;background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.02em;box-shadow:0 4px 20px rgba(82,183,120,.3)">🎯 Iniciar Consulta</button>`;
+}
+function startDoctorQuiz() {
+  _quizAnswers = {}; _quizStep = 0;
+  renderDoctorQuiz();
+}
+function renderDoctorQuiz() {
+  if (_quizStep >= QUIZ_STEPS.length) { renderDoctorResults(); return; }
+  const step = QUIZ_STEPS[_quizStep];
+  const prog = Math.round((_quizStep / QUIZ_STEPS.length) * 100);
+  document.getElementById('doctor-content').innerHTML = `
+    <div style="margin-bottom:28px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;color:var(--text3);font-weight:600">Pergunta ${_quizStep+1} de ${QUIZ_STEPS.length}</div>
+        <div style="font-size:11px;color:var(--green);font-weight:600">${prog}%</div>
+      </div>
+      <div style="height:5px;background:var(--bg3);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:4px;transition:width .4s"></div>
+      </div>
+    </div>
+    <div style="font-family:var(--serif);font-size:20px;color:var(--text);line-height:1.35;margin-bottom:26px">${step.q}</div>
+    <div style="display:grid;gap:10px">
+      ${step.opts.map((o,i)=>`
+        <button onclick="doctorQuizAnswer(${i})" style="text-align:left;padding:15px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:13px;color:var(--text);font-size:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;width:100%">
+          <span style="font-size:22px;flex-shrink:0">${o.label.split(' ')[0]}</span>
+          <span>${o.label.split(' ').slice(1).join(' ')}</span>
+        </button>`).join('')}
+    </div>
+    ${_quizStep > 0 ? `<button onclick="_quizStep--;renderDoctorQuiz()" style="width:100%;padding:12px;margin-top:16px;background:transparent;color:var(--text3);border:1px solid var(--border2);border-radius:12px;cursor:pointer;font-size:13px">← Voltar</button>` : ''}`;
+}
+function doctorQuizAnswer(optIdx) {
+  _quizAnswers[QUIZ_STEPS[_quizStep].id] = { optIdx, ...QUIZ_STEPS[_quizStep].opts[optIdx] };
+  _quizStep++;
+  renderDoctorQuiz();
+}
+function renderDoctorResults() {
+  const all = getStrainsArray();
+  if (!all.length) {
+    document.getElementById('doctor-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Banco de cultivares não disponível.</div>';
+    return;
+  }
+  const goalAns = _quizAnswers['goal'], thcAns = _quizAnswers['thc'];
+  let scored = all.map(s => {
+    let score = 0;
+    const medTxt = ((s.medicalNote||'')+(s.effects||'')+(s.description||'')).toLowerCase();
+    if (goalAns?.tags?.length) { for (const tag of goalAns.tags) if (medTxt.includes(tag)) score += 3; }
+    else score += 2;
+    const thcNum = parseInt((s.thc||'').match(/\d+/)?.[0]||'0');
+    const cbdNum = parseFloat((s.cbd||'').replace(/[<>%]/g,'').trim()||'0');
+    if (thcAns) {
+      if (thcAns.thcMax && thcNum <= thcAns.thcMax) score += 2;
+      if (thcAns.thcMin && thcNum >= thcAns.thcMin) score += 2;
+      if (thcAns.cbdMin && cbdNum >= thcAns.cbdMin) score += 2;
+    }
+    score += (stringHash(s.name) % 3);
+    return { s, score };
+  });
+  scored.sort((a,b) => b.score - a.score);
+  const top = scored.slice(0,5);
+  const typeColors = {'indica':'#9b72cf','indica-dominant':'#b472cf','sativa':'#e8a43a','sativa-dominant':'#d4943a','hybrid':'#52b778'};
+  const typeLabels = {'indica':'Índica','indica-dominant':'Índ-Dom','sativa':'Sativa','sativa-dominant':'Sat-Dom','hybrid':'Híbrida'};
+  const typeBg     = {'indica':['#3d1f6e','#7b52b8'],'indica-dominant':['#4a1f7a','#9262cc'],'sativa':['#6b4500','#d4a030'],'sativa-dominant':['#5c3a00','#c49028'],'hybrid':['#0d3320','#3a8f60']};
+  const typeEmoji  = {'indica':'🍁','indica-dominant':'🍂','sativa':'☀️','sativa-dominant':'🌞','hybrid':'🌿'};
+  document.getElementById('doctor-content').innerHTML = `
+    <div style="text-align:center;padding:4px 0 22px">
+      <div style="font-size:44px;margin-bottom:10px">✅</div>
+      <div style="font-family:var(--serif);font-size:21px;color:var(--text);margin-bottom:5px">Suas indicações</div>
+      <div style="font-size:12px;color:var(--text3)">Baseado no seu perfil terapêutico</div>
+    </div>
+    <div style="background:rgba(232,164,58,.1);border:1px solid rgba(232,164,58,.25);border-radius:10px;padding:11px 13px;margin-bottom:20px;font-size:12px;color:var(--amber);line-height:1.5">
+      ⚠️ Sugestões educativas. Consulte sempre um profissional de saúde antes de qualquer uso terapêutico.
+    </div>
+    ${top.map(({s},i) => {
+      const col = typeColors[s.type]||'#52b778';
+      const lbl = typeLabels[s.type]||s.type;
+      const bg  = typeBg[s.type]||typeBg['hybrid'];
+      const ico = typeEmoji[s.type]||'🌿';
+      const key = s.name.toLowerCase().replace(/\s+/g,'-');
+      const note = (s.medicalNote||s.effects||'').slice(0,90);
+      return `<div onclick="openStrainDetail('${key}')" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:border-color .2s,transform .15s" onmouseenter="this.style.borderColor='${col}'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:stretch">
+          <div style="width:68px;flex-shrink:0;background:linear-gradient(160deg,${bg[0]},${bg[1]});display:flex;align-items:center;justify-content:center;font-size:30px">${ico}</div>
+          <div style="padding:12px 12px;flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+              <span style="font-size:12px;font-weight:800;color:${col}">#${i+1}</span>
+              <span style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</span>
+            </div>
+            <div style="font-size:11px;color:${col};font-weight:600;margin-bottom:4px">${lbl} · THC ${s.thc||'—'}</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.4">${note}${note.length>=90?'…':''}</div>
+          </div>
+          <div style="padding:0 10px;display:flex;align-items:center;color:var(--text3);font-size:18px">›</div>
+        </div>
+      </div>`;
+    }).join('')}
+    <button onclick="startDoctorQuiz()" style="width:100%;padding:13px;margin-top:4px;background:var(--green-dim);color:var(--green);border:1px solid var(--border2);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600">🔄 Refazer consulta</button>
+    <button onclick="renderDoctorLanding()" style="width:100%;padding:12px;margin-top:8px;background:transparent;color:var(--text3);border:1px solid var(--border2);border-radius:12px;cursor:pointer;font-size:13px">← Início</button>`;
+}
+
+function openStrainDetail(key) {
+  if (typeof STRAIN_DB === 'undefined') return;
+  const info = STRAIN_DB[key] || Object.values(STRAIN_DB).find(s => s.name.toLowerCase().replace(/\s+/g,'-') === key);
+  if (!info) return;
+  const typeColors = {'indica':'#9b72cf','indica-dominant':'#b472cf','sativa':'#e8a43a','sativa-dominant':'#d4943a','hybrid':'#52b778'};
+  const typeLabels = {'indica':'Índica','indica-dominant':'Índica-Dominante','sativa':'Sativa','sativa-dominant':'Sativa-Dominante','hybrid':'Híbrida'};
+  const typeEmojis = {'indica':'🍁','indica-dominant':'🍂','sativa':'☀️','sativa-dominant':'🌞','hybrid':'🌿'};
+  const col = typeColors[info.type] || '#52b778';
+  const lbl = typeLabels[info.type] || info.type;
+  const emo = typeEmojis[info.type] || '🌿';
+  const effectTags = (info.effects||'').split(/,|;/).map(e=>e.trim()).filter(Boolean).map(e=>`<span class="sd-tag">${e}</span>`).join('');
+  const aromaTags  = (info.aromas||'').split(/,|;/).map(a=>a.trim()).filter(Boolean).map(a=>`<span class="sd-tag">${a}</span>`).join('');
+  const terpTags   = (info.terpenes||'').split(/,|;/).map(t=>t.trim()).filter(Boolean).map(t=>`<span class="sd-tag" style="background:var(--purple-dim);color:var(--purple)">${t}</span>`).join('');
+  const thcNum = parseInt((info.thc||'').match(/\d+/)?.[0]||'0');
+  const thcBar = Math.min(100, thcNum*4);
+  const activeCultivo = getActiveCultivo?.();
+  const useBtn = activeCultivo
+    ? `<button class="sd-use-btn" onclick="useStrainInCultivo('${key}');closeStrainDetail()">✅ Usar esta strain no meu cultivo</button>`
+    : `<button class="sd-use-btn" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2)" onclick="closeStrainDetail()">← Voltar</button>`;
+  const sdBg = {'indica':['#3d1f6e','#7b52b8'],'indica-dominant':['#4a1f7a','#9262cc'],'sativa':['#6b4500','#d4a030'],'sativa-dominant':['#5c3a00','#c49028'],'hybrid':['#0d3320','#3a8f60']}[info.type]||['#0d3320','#3a8f60'];
+  document.getElementById('strain-detail-content').innerHTML = `
+    <div style="height:120px;background:linear-gradient(135deg,${sdBg[0]},${sdBg[1]});display:flex;align-items:center;justify-content:center;font-size:64px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))">${emo}</div>
+    <div class="sd-body">
+      <div class="sd-name">${info.name}</div>
+      <div class="sd-type-row">
+        <span style="font-size:20px">${emo}</span>
+        <span style="font-size:13px;font-weight:600;color:${col}">${lbl}</span>
+        ${info.lineage ? `<span style="font-size:11px;color:var(--text3)">· ${info.lineage}</span>` : ''}
+      </div>
+      <div class="sd-stats-grid">
+        <div class="sd-stat"><div class="sd-stat-val" style="color:var(--amber)">${info.thc||'—'}</div><div class="sd-stat-lbl">THC</div></div>
+        <div class="sd-stat"><div class="sd-stat-val" style="color:var(--green)">${info.cbd||'—'}</div><div class="sd-stat-lbl">CBD</div></div>
+        <div class="sd-stat"><div class="sd-stat-val" style="color:var(--purple)">${info.flowerWeeks||'—'}</div><div class="sd-stat-lbl">Floração</div></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Potência THC</div>
+        <div style="height:6px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${thcBar}%;background:linear-gradient(90deg,var(--green),var(--amber));border-radius:4px"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>Baixo</span><span>Alto</span></div>
+      </div>
+      ${info.description ? `<div class="sd-section"><div class="sd-section-title">Sobre a strain</div><div class="sd-section-body">${info.description}</div></div>` : ''}
+      ${info.medicalNote ? `<div class="sd-medical"><div class="sd-medical-title">🏥 Uso Medicinal</div><div class="sd-medical-body">${info.medicalNote}</div></div>` : ''}
+      ${effectTags ? `<div class="sd-section"><div class="sd-section-title">Efeitos</div><div>${effectTags}</div></div>` : ''}
+      ${aromaTags  ? `<div class="sd-section"><div class="sd-section-title">Aromas & Sabores</div><div>${aromaTags}</div></div>` : ''}
+      ${terpTags   ? `<div class="sd-section"><div class="sd-section-title">Terpenos Dominantes</div><div>${terpTags}</div></div>` : ''}
+      ${info.growTip ? `<div class="sd-grow-tip"><div class="sd-grow-tip-title">🌱 Dica de Cultivo</div><div class="sd-grow-tip-body">${info.growTip}</div></div>` : ''}
+      ${useBtn}
+    </div>`;
+  document.getElementById('strain-detail-modal').classList.remove('hidden');
+}
+function closeStrainDetail(e) {
+  if (e && e.target !== document.getElementById('strain-detail-modal')) return;
+  document.getElementById('strain-detail-modal').classList.add('hidden');
+}
+function useStrainInCultivo(key) {
+  const info = STRAIN_DB[key] || Object.values(STRAIN_DB).find(s => s.name.toLowerCase().replace(/\s+/g,'-') === key);
+  if (!info) return;
+  const c = getActiveCultivo?.();
+  if (c) {
+    c.strain = info.name;
+    saveJardim();
+    if (typeof fetchStrainInfo === 'function') fetchStrainInfo(info.name);
+    if (typeof buildCronograma === 'function') buildCronograma();
+    document.getElementById('detail-strain').textContent = info.name;
+  }
+  closeDoctorScreen();
+}
+
+// ── Quiz ─────────────────────────────────────────────
+const QUIZ_STEPS = [
+  { id:'goal', q:'Qual é seu principal objetivo terapêutico?', opts:[
+    {label:'😴 Dormir melhor / insônia',  tags:['sedativ','sleep','insônia','sonolên']},
+    {label:'😤 Dor crônica / inflamação', tags:['dor','inflamaç','analgés','artrite','crohn']},
+    {label:'🧠 Ansiedade / estresse',     tags:['ansiedade','estresse','pânico','taq']},
+    {label:'🎯 Foco / clareza mental',    tags:['foco','clareza','cognit','produtiv']},
+    {label:'😊 Humor / depressão',        tags:['humor','depressão','ânimo','alívio']},
+    {label:'🧬 Uso geral / bem-estar',    tags:[]},
+  ]},
+  { id:'thc', q:'Qual sua relação com THC?', opts:[
+    {label:'🌿 Prefiro baixo THC / CBD alto', thcMax:10, cbdMin:5},
+    {label:'⚖️ Equilibrado (10–18%)',         thcMin:10, thcMax:18},
+    {label:'💪 Alto THC (18%+)',              thcMin:18},
+  ]},
+  { id:'exp', q:'Qual sua experiência como cultivador?', opts:[
+    {label:'🌱 Iniciante — quero algo fácil'},
+    {label:'🌿 Intermediário'},
+    {label:'🔬 Avançado — aceito desafios'},
+  ]},
+];
+let _quizAnswers = {}, _quizStep = 0;
+
+function stringHash(str) {
+  let h = 0;
+  for (let i=0;i<str.length;i++) h = ((h<<5)-h)+str.charCodeAt(i), h|=0;
+  return Math.abs(h);
+}
+
+// ═══════════════════════════════════════════════
+
 function populateStrainList() {
   const list = document.getElementById('strain-list');
   if (!list || typeof STRAIN_DB === 'undefined') return;
@@ -2070,6 +2873,7 @@ function populateStrainList() {
 
 (function init() {
   loadJardim();
+  initAuth();
   renderJardim();
   buildGuia();
   buildManual();
